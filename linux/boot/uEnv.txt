@@ -1,17 +1,5 @@
-boot_img=BOOT.BIN
-bootargs=earlycon clk_ignore_unused root=/dev/mmcblk0p2 rw rootwait
-kernel_img=Image
-bootcmd=mmc dev 0 && mmcinfo && run uenvboot; load mmc 0 0x1012A00000 system.dtb && load mmc 0 0x1013000000 Image && booti 0x1013000000 - 0x1012A00000
-boot_targets=mmc0
-bootdelay=4
-bootenv=uEnv.txt
 fdt_high=0xffffffffffffffff
 initrd_high=0xffffffffffffffff
-sd_uEnvtxt_existence_test=test -e mmc $sdbootdev:$partid /${bootenv}
-uenvboot=if run sd_uEnvtxt_existence_test; then run loadbootenv; echo Loaded environment from ${bootenv}; run importbootenv; fi; if test -n $uenvcmd; then echo Running uenvcmd ...; run uenvcmd; fi
-loadbootenv=load mmc $sdbootdev:$partid ${loadbootenv_addr} ${bootenv}
-loadbootenv_addr=0x00100000
-importbootenv=echo "Importing environment from SD ..."; env import -t ${loadbootenv_addr} $filesize
-eraseenv=sf probe 0 && sf erase ${bootenvstart} ${bootenvsize}
-bootenvsize=0x40000
-bootenvstart=0x100000
+fdt_addr=0x1000200000
+kernel_addr=0x1000280000
+uenvcmd=run sdroot$sdbootdev

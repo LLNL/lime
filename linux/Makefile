@@ -36,13 +36,13 @@ linux-xlnx/Makefile:
 # These are all built together because the SDK leaves a history in .metadata
 sdk/pmufw/Release/pmufw.elf: $(HDF)
 	mkdir -p sdk
-	rm -rf sdk/* sdk/.metadata
+	-$(RM) -r sdk/* sdk/.metadata
 	xsct sdk.tcl $(HDF)
 
 # Build DTS
 # Dependent on sdk/hw_platform_0 but using pmufw.elf instead
 dts/system-top.dts: sdk/pmufw/Release/pmufw.elf device-tree-xlnx
-	rm -rf dts
+	$(RM) -r dts
 	xsct dts.tcl
 ifeq "$(BOARD)" "sidewinder"
 	sed -i.bak '/memory {/,/};/c\memory {\n\tdevice_type = "memory";\n\tlinux,usable-memory = <0x0 0x0 0x0 0x8000000>, <0x10 0x00000000 0x4 0x00000000>;\n};' dts/system-top.dts
@@ -95,6 +95,7 @@ boot/bootfiles.tar.xz: \
 sdk/pmufw/Release/pmufw.elf \
 arm-trusted-firmware/build/zynqmp/release/bl31/bl31.elf \
 u-boot-xlnx/u-boot.elf \
+boot/uEnv.txt \
 dts/system.dtb \
 linux-xlnx/arch/arm64/boot/Image
 	cd boot && $(MAKE) clean
@@ -102,12 +103,12 @@ linux-xlnx/arch/arm64/boot/Image
 
 .PHONY: clean
 clean:
-	rm -rf .Xil
-	rm -rf sdk
-	rm -rf device-tree-xlnx
-	rm -rf dts
-	rm -rf dtc
-	rm -rf arm-trusted-firmware
-	rm -rf u-boot-xlnx
-	rm -rf linux-xlnx
+	$(RM) -r .Xil
+	$(RM) -r sdk
+	$(RM) -r device-tree-xlnx
+	$(RM) -r dts
+	$(RM) -r dtc
+	$(RM) -r arm-trusted-firmware
+	$(RM) -r u-boot-xlnx
+	$(RM) -r linux-xlnx
 	cd boot && $(MAKE) clean

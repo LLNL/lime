@@ -31,5 +31,5 @@ $(IMPL)/$(SYSTEM).sysdef compile: $(PROJ).xpr
 
 .PHONY: clean
 clean:
-	rm -rf $(PROJ).*
-	rm -rf *.jou *.log .Xil
+	$(RM) -r $(PROJ).* .Xil
+	$(RM) *.jou *.log

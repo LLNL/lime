@@ -22,10 +22,10 @@ all: sdk/standalone_bsp_a53/psu_cortexa53_0/lib/libxil.a
 # Also built: sdk/standalone_bsp_mb/engine_0_microblaze_0/lib/libxil.a
 sdk/standalone_bsp_a53/psu_cortexa53_0/lib/libxil.a: $(HDF)
 	mkdir -p sdk
-	rm -rf sdk/* sdk/.metadata
+	-$(RM) -r sdk/* sdk/.metadata
 	xsct sdk.tcl $(HDF)
 
 .PHONY: clean
 clean:
-	rm -rf .Xil
-	rm -rf sdk
+	$(RM) -r .Xil
+	$(RM) -r sdk

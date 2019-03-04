@@ -26,9 +26,9 @@ all: bootfiles.tar.xz
 BOOT.BIN:
 	bootgen -arch zynqmp -image bootgen.bif -o i BOOT.BIN -w on
 
-bootfiles.tar.xz: BOOT.BIN uboot.env
-	tar -cJf bootfiles.tar.xz BOOT.BIN uboot.env -C ../dts system.dtb -C ../linux-xlnx/arch/arm64/boot Image
+bootfiles.tar.xz: BOOT.BIN uEnv.txt
+	tar -cJf bootfiles.tar.xz BOOT.BIN uEnv.txt -C ../dts system.dtb -C ../linux-xlnx/arch/arm64/boot Image
 
 .PHONY: clean
 clean:
-	rm -rf BOOT.BIN bootfiles.tar.xz
+	$(RM) BOOT.BIN bootfiles.tar.xz

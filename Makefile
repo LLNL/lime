@@ -20,14 +20,14 @@ all:
 
 .PHONY: ip
 ip:
-	# TODO: Create a make for ip subdirectory
+	cd ip && $(MAKE)
 
 .PHONY: sidewinder
-sidewinder:
+sidewinder: ip
 	cd system && $(MAKE) sidewinder
 
 .PHONY: zcu102
-zcu102:
+zcu102: ip
 	cd system && $(MAKE) zcu102
 
 .PHONY: standalone
@@ -48,7 +48,7 @@ sdcard: linux
 
 .PHONY: clean
 clean:
-	# cd ip && $(MAKE) clean
+	cd ip && $(MAKE) clean
 	cd system && $(MAKE) clean
 	cd standalone && $(MAKE) clean
 	cd linux && $(MAKE) clean

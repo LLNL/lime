@@ -1,11 +1,13 @@
 open_project psu_lime.xpr
 make_wrapper -files [get_files ./psu_lime.srcs/sources_1/bd/system/system.bd] -top
 add_files -norecurse ./psu_lime.srcs/sources_1/bd/system/hdl/system_wrapper.v
+set_property top system_wrapper [current_fileset]
 launch_runs synth_1 -jobs 6
 wait_on_run synth_1
 open_run synth_1 -name synth_1
 set_clock_groups -asynchronous -group clk_pl_0 -group clk_pl_1 -group [get_clocks -include_generated_clocks PL_DDR_CLK_clk_p]
-set_property PACKAGE_PIN A4 [get_ports c0_init_calib_complete_0]
+# TODO: link calib_complete with GPIO_LED_0_LS
+set_property PACKAGE_PIN B5 [get_ports c0_init_calib_complete_0]
 set_property IOSTANDARD LVCMOS33 [get_ports c0_init_calib_complete_0]
 set_property PROHIBIT true [get_bels IOB_X0Y100/PAD]
 set_property PROHIBIT true [get_bels IOB_X0Y103/PAD]

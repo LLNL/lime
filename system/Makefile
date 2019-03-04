@@ -31,4 +31,4 @@ clean:
 	@for i in $(SUBDIR); do \
 		$(MAKE) -C $$i clean; \
 	done
-	rm -f $(SYSTEM).hdf
+	$(RM) $(SYSTEM).hdf

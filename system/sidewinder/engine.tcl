@@ -138,9 +138,9 @@ proc create_hier_cell_mcu_0 { parentCell nameHier } {
 CONFIG.C_BASE_VECTORS {0xD0000000} \
 CONFIG.C_CACHE_BYTE_SIZE {8192} \
 CONFIG.C_DCACHE_ALWAYS_USED {1} \
-CONFIG.C_DCACHE_BASEADDR {0x0000000040000000} \
+CONFIG.C_DCACHE_BASEADDR {0x00000000} \
 CONFIG.C_DCACHE_BYTE_SIZE {16384} \
-CONFIG.C_DCACHE_HIGHADDR {0x000000007FFFFFFF} \
+CONFIG.C_DCACHE_HIGHADDR {0x7FFFFFFF} \
 CONFIG.C_DCACHE_USE_WRITEBACK {1} \
 CONFIG.C_DCACHE_VICTIMS {4} \
 CONFIG.C_DEBUG_ENABLED {1} \
@@ -149,8 +149,6 @@ CONFIG.C_D_LMB {1} \
 CONFIG.C_FAULT_TOLERANT {0} \
 CONFIG.C_FSL_LINKS {1} \
 CONFIG.C_ICACHE_ALWAYS_USED {0} \
-CONFIG.C_ICACHE_BASEADDR {0x00000000} \
-CONFIG.C_ICACHE_HIGHADDR {0x3FFFFFFF} \
 CONFIG.C_ICACHE_STREAMS {0} \
 CONFIG.C_I_LMB {1} \
 CONFIG.C_USE_BARREL {1} \
@@ -161,6 +159,8 @@ CONFIG.C_USE_ICACHE {0} \
 CONFIG.C_USE_INTERRUPT {0} \
 CONFIG.C_USE_REORDER_INSTR {0} \
  ] $microblaze_0
+# CONFIG.C_ICACHE_BASEADDR {0x00000000} \
+# CONFIG.C_ICACHE_HIGHADDR {0x7FFFFFFF} \
 
   # Create instance: microblaze_0_local_memory
   create_hier_cell_microblaze_0_local_memory $hier_obj microblaze_0_local_memory
@@ -352,20 +352,26 @@ proc create_hier_cell_engine_0 { parentCell nameHier } {
 #CONFIG.HAS_TKEEP {1} \
 # ] [get_bd_intf_pins /engine_0/axi_lsu_1/m_axis_dat]
 #CONFIG.ARB_ON_MAX_XFERS {0} 
-	
+
   # Create instance: axis_ctl_0, and set properties
   set axis_ctl_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axis_switch:1.1 axis_ctl_0 ]
   set_property -dict [ list \
-CONFIG.ARB_ON_TLAST {1} \
+CONFIG.NUM_MI {3} \
+CONFIG.NUM_SI {3} \
+CONFIG.M00_AXIS_BASETDEST {0x00000000} \
 CONFIG.M00_AXIS_HIGHTDEST {0x00000001} \
 CONFIG.M01_AXIS_BASETDEST {0x00000002} \
 CONFIG.M01_AXIS_HIGHTDEST {0x00000003} \
 CONFIG.M02_AXIS_BASETDEST {0x00000004} \
 CONFIG.M02_AXIS_HIGHTDEST {0x00000005} \
-CONFIG.NUM_MI {3} \
-CONFIG.NUM_SI {3} \
  ] $axis_ctl_0
-
+#validate_bd_design -quiet -design $axis_ctl_0
+#  set_property -quiet -dict [ list \
+#CONFIG.ARB_ON_TLAST {1} \
+#CONFIG.ARB_ON_MAX_XFERS {0} \
+#CONFIG.ARB_ON_NUM_CYCLES {1024} \
+# ] [get_bd_cells axis_ctl_0]
+#report_property -all [get_bd_cells axis_ctl_0]
 
  # Create instance: axis_hash_0, and set properties
 #  set axis_hash_0 [ create_bd_cell -type ip -vlnv llnl.gov:user:axis_hash:1.0 axis_hash_0 ]
@@ -386,46 +392,16 @@ CONFIG.NUM_SI {3} \
 
   # Create instance: host_0
   create_hier_cell_host_0 $hier_obj host_0
-  
-  
-  set microblaze_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:microblaze:10.0 microblaze_0 ]
-  set_property -dict [ list \
-CONFIG.C_BASE_VECTORS {0xD0000000} \
-CONFIG.C_CACHE_BYTE_SIZE {8192} \
-CONFIG.C_DCACHE_ALWAYS_USED {1} \
-CONFIG.C_DCACHE_BASEADDR {0x0000000040000000} \
-CONFIG.C_DCACHE_BYTE_SIZE {16384} \
-CONFIG.C_DCACHE_HIGHADDR {0x000000007FFFFFFF} \
-CONFIG.C_DCACHE_USE_WRITEBACK {1} \
-CONFIG.C_DCACHE_VICTIMS {4} \
-CONFIG.C_DEBUG_ENABLED {1} \
-CONFIG.C_D_AXI {0} \
-CONFIG.C_D_LMB {1} \
-CONFIG.C_FAULT_TOLERANT {0} \
-CONFIG.C_FSL_LINKS {1} \
-CONFIG.C_ICACHE_ALWAYS_USED {0} \
-CONFIG.C_ICACHE_BASEADDR {0x00000000} \
-CONFIG.C_ICACHE_HIGHADDR {0x3FFFFFFF} \
-CONFIG.C_ICACHE_STREAMS {0} \
-CONFIG.C_I_LMB {1} \
-CONFIG.C_USE_BARREL {1} \
-CONFIG.C_USE_DCACHE {1} \
-CONFIG.C_USE_DIV {1} \
-CONFIG.C_USE_HW_MUL {1} \
-CONFIG.C_USE_ICACHE {0} \
-CONFIG.C_USE_INTERRUPT {0} \
-CONFIG.C_USE_REORDER_INSTR {0} \
- ] $microblaze_0
- 
- 
-apply_bd_automation -rule xilinx.com:bd_rule:microblaze -config {local_mem "8KB" ecc "None" cache "8KB" debug_module "Debug Only" axi_periph "Disabled" axi_intc "0" clk "New External Port (100 MHz)" }  [get_bd_cells microblaze_0]
+
+set microblaze_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:microblaze:10.0 microblaze_0 ]
 set_property -dict [ list \
 CONFIG.C_BASE_VECTORS {0xD0000000} \
-CONFIG.C_CACHE_BYTE_SIZE {8192} \
+CONFIG.C_USE_DCACHE {1} \
 CONFIG.C_DCACHE_ALWAYS_USED {1} \
-CONFIG.C_DCACHE_BASEADDR {0x0000000040000000} \
+CONFIG.C_DCACHE_BASEADDR {0x00000000} \
+CONFIG.C_DCACHE_HIGHADDR {0x7FFFFFFF} \
 CONFIG.C_DCACHE_BYTE_SIZE {16384} \
-CONFIG.C_DCACHE_HIGHADDR {0x000000007FFFFFFF} \
+CONFIG.C_DCACHE_ADDR_TAG {17} \
 CONFIG.C_DCACHE_USE_WRITEBACK {1} \
 CONFIG.C_DCACHE_VICTIMS {4} \
 CONFIG.C_DEBUG_ENABLED {1} \
@@ -433,19 +409,22 @@ CONFIG.C_D_AXI {0} \
 CONFIG.C_D_LMB {1} \
 CONFIG.C_FAULT_TOLERANT {0} \
 CONFIG.C_FSL_LINKS {1} \
+CONFIG.C_USE_ICACHE {1} \
 CONFIG.C_ICACHE_ALWAYS_USED {0} \
 CONFIG.C_ICACHE_BASEADDR {0x00000000} \
-CONFIG.C_ICACHE_HIGHADDR {0x3FFFFFFF} \
+CONFIG.C_ICACHE_HIGHADDR {0x7FFFFFFF} \
+CONFIG.C_CACHE_BYTE_SIZE {16384} \
+CONFIG.C_ADDR_TAG_BITS {17} \
 CONFIG.C_ICACHE_STREAMS {0} \
 CONFIG.C_I_LMB {1} \
 CONFIG.C_USE_BARREL {1} \
-CONFIG.C_USE_DCACHE {1} \
 CONFIG.C_USE_DIV {1} \
 CONFIG.C_USE_HW_MUL {1} \
-CONFIG.C_USE_ICACHE {0} \
 CONFIG.C_USE_INTERRUPT {0} \
 CONFIG.C_USE_REORDER_INSTR {0} \
  ] $microblaze_0
+apply_bd_automation -rule xilinx.com:bd_rule:microblaze -config {local_mem "64KB" ecc "None" cache "16KB" debug_module "Debug Only" axi_periph "Disabled" axi_intc "0" clk "New External Port (100 MHz)" }  [get_bd_cells microblaze_0]
+set_property -dict [list CONFIG.C_USE_ICACHE {0} CONFIG.C_ADDR_TAG_BITS {0}] $microblaze_0
 
 current_bd_instance $oldCurInst
 move_bd_cells [get_bd_cells engine_0] [get_bd_cells rst_microblaze_0_Clk_100M]
@@ -453,7 +432,6 @@ move_bd_cells [get_bd_cells engine_0] [get_bd_cells mdm_1]
 delete_bd_objs [get_bd_nets microblaze_0_Clk_1] [get_bd_ports microblaze_0_Clk]
 set_property name Clk [get_bd_pins engine_0/microblaze_0_Clk]
 connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk0]
-
 
 connect_bd_net [get_bd_pins engine_0/rst_microblaze_0_Clk_100M/interconnect_aresetn] [get_bd_pins engine_0/axis_ctl_0/aresetn]
 startgroup
@@ -468,7 +446,6 @@ connect_bd_intf_net [get_bd_intf_pins engine_0/axis_hdr_0/m_axis_hdr] [get_bd_in
 connect_bd_intf_net [get_bd_intf_pins engine_0/axis_hdr_0/s_axis_hdr] [get_bd_intf_pins engine_0/microblaze_0/M0_AXIS]
 connect_bd_intf_net [get_bd_intf_pins engine_0/S_AXI] -boundary_type upper [get_bd_intf_pins engine_0/host_0/S_AXI]
 
-
 connect_bd_intf_net -boundary_type upper [get_bd_intf_pins engine_0/host_0/M_AXIS] [get_bd_intf_pins engine_0/axis_ctl_0/S00_AXIS]
 connect_bd_intf_net [get_bd_intf_pins engine_0/axis_ctl_0/M00_AXIS] -boundary_type upper [get_bd_intf_pins engine_0/host_0/S_AXIS]
 connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/host_0/aclk]
@@ -476,23 +453,16 @@ connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axis_ctl_0/aclk]
 connect_bd_intf_net [get_bd_intf_pins engine_0/axis_hdr_0/m_axis_sig] [get_bd_intf_pins engine_0/axis_ctl_0/S01_AXIS]
 connect_bd_intf_net [get_bd_intf_pins engine_0/axis_hdr_0/s_axis_sig] [get_bd_intf_pins engine_0/axis_ctl_0/M01_AXIS]
 
-set_property -dict [list CONFIG.PSU__USE__S_AXI_GP5 {1} CONFIG.PSU__SAXIGP5__DATA_WIDTH {32}] [get_bd_cells zynq_ultra_ps_e_0]
 connect_bd_intf_net [get_bd_intf_pins engine_0/microblaze_0/M_AXI_DC] [get_bd_intf_pins zynq_ultra_ps_e_0/S_AXI_HP3_FPD]
 
 apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config {Master "/zynq_ultra_ps_e_0/M_AXI_HPM1_FPD" intc_ip "Auto" Clk_xbar "Auto" Clk_master "Auto" Clk_slave "Auto" }  [get_bd_intf_pins engine_0/host_0/axi_fifo_mm_s_0/S_AXI]
 
-assign_bd_address [get_bd_addr_segs {zynq_ultra_ps_e_0/SAXIGP5/HP3_DDR_LOW }]
-assign_bd_address [get_bd_addr_segs {zynq_ultra_ps_e_0/SAXIGP5/HP3_QSPI }]
-assign_bd_address [get_bd_addr_segs {zynq_ultra_ps_e_0/SAXIGP5/HP3_LPS_OCM }]
-
 connect_bd_net [get_bd_pins engine_0/rst_microblaze_0_Clk_100M/ext_reset_in] [get_bd_pins zynq_ultra_ps_e_0/pl_resetn0]
-connect_bd_net [get_bd_pins zynq_ultra_ps_e_0/saxihp3_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk0]
 
 connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axis_hdr_0/h2s_aclk]
 connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axis_hdr_0/s2h_aclk]
 
 create_bd_cell -type ip -vlnv llnl.gov:user:axi_lsu:2.2 engine_0/axi_lsu_0
-set_property -dict [list CONFIG.NUM_SI {3} CONFIG.NUM_MI {3}] [get_bd_cells engine_0/axis_ctl_0]
 connect_bd_intf_net [get_bd_intf_pins engine_0/axi_lsu_0/s_axis_ctl] [get_bd_intf_pins engine_0/axis_ctl_0/M02_AXIS]
 connect_bd_intf_net [get_bd_intf_pins engine_0/axi_lsu_0/m_axis_ctl] [get_bd_intf_pins engine_0/axis_ctl_0/S02_AXIS]
 connect_bd_intf_net [get_bd_intf_pins engine_0/axi_lsu_0/s_axis_dat] [get_bd_intf_pins engine_0/axi_lsu_0/m_axis_dat]
@@ -500,121 +470,101 @@ connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axi_lsu_0/ctl_ac
 connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axi_lsu_0/data_aclk]
 connect_bd_net [get_bd_pins engine_0/axi_lsu_0/ctl_aresetn] [get_bd_pins engine_0/rst_microblaze_0_Clk_100M/interconnect_aresetn]
 connect_bd_net [get_bd_pins engine_0/axi_lsu_0/data_aresetn] [get_bd_pins engine_0/rst_microblaze_0_Clk_100M/interconnect_aresetn]
+
 create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 engine_0/axi_interconnect_0
 set_property -dict [list CONFIG.NUM_SI {2} CONFIG.NUM_MI {1}] [get_bd_cells engine_0/axi_interconnect_0]
+set_property -dict [list CONFIG.XBAR_DATA_WIDTH.VALUE_SRC USER] [get_bd_cells engine_0/axi_interconnect_0]
+set_property -dict [list CONFIG.ENABLE_ADVANCED_OPTIONS {1} CONFIG.XBAR_DATA_WIDTH {64}] [get_bd_cells engine_0/axi_interconnect_0]
 delete_bd_objs [get_bd_intf_nets engine_0/Conn1]
 connect_bd_intf_net [get_bd_intf_pins engine_0/microblaze_0/M_AXI_DC] -boundary_type upper [get_bd_intf_pins engine_0/axi_interconnect_0/S00_AXI]
 connect_bd_intf_net [get_bd_intf_pins engine_0/axi_lsu_0/m_axi] -boundary_type upper [get_bd_intf_pins engine_0/axi_interconnect_0/S01_AXI]
 connect_bd_intf_net [get_bd_intf_pins engine_0/M_AXI_DC] -boundary_type upper [get_bd_intf_pins engine_0/axi_interconnect_0/M00_AXI]
-connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axi_interconnect_0/ACLK]
-connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axi_interconnect_0/S00_ACLK]
-connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axi_interconnect_0/M00_ACLK]
-connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axi_interconnect_0/S01_ACLK]
-connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/ARESETN] [get_bd_pins engine_0/rst_microblaze_0_Clk_100M/interconnect_aresetn]
+connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/ACLK] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/M00_ACLK] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/S00_ACLK] [get_bd_pins engine_0/Clk]
+connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/S01_ACLK] [get_bd_pins engine_0/Clk]
+connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/ARESETN] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
+connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/M00_ARESETN] [get_bd_pins rst_pl_clk1/peripheral_aresetn]
+# TODO: Put these on engine_0/rst_microblaze_0_Clk_100M/peripheral_aresetn.
 connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/S00_ARESETN] [get_bd_pins engine_0/rst_microblaze_0_Clk_100M/interconnect_aresetn]
-connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/M00_ARESETN] [get_bd_pins engine_0/rst_microblaze_0_Clk_100M/interconnect_aresetn]
 connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/S01_ARESETN] [get_bd_pins engine_0/rst_microblaze_0_Clk_100M/interconnect_aresetn]
+# TODO: Make sure that axi_interconnect_0 will support 16 outstanding read and write transactions. The following override gives an error.
+# ERROR: [BD 41-738] Exec TCL: the object '/engine_0/axi_interconnect_0/xbar' is part of the appcore 'axi_interconnect_0' and cannot be modified directly.
+# set_property -dict [list CONFIG.M00_READ_ISSUING.VALUE_SRC USER CONFIG.M00_WRITE_ISSUING.VALUE_SRC USER] [get_bd_cells engine_0/axi_interconnect_0/xbar]
+# set_property CONFIG.M00_READ_ISSUING 16 [get_bd_cells engine_0/axi_interconnect_0/xbar]
+# set_property CONFIG.M00_WRITE_ISSUING 16 [get_bd_cells engine_0/axi_interconnect_0/xbar]
 
-set_property -dict [list CONFIG.ARB_ON_TLAST {1}] [get_bd_cells engine_0/axis_ctl_0]
-
-
-# Creating delays and setting their propoerties
+# Creating delays and setting their properties
 set axi_delay_2 [ create_bd_cell -type ip -vlnv llnl.gov:user:axi_delay:1.2 axi_delay_2 ]
 set axi_delay_3 [ create_bd_cell -type ip -vlnv llnl.gov:user:axi_delay:1.2 axi_delay_3 ]
 set_property -dict [list CONFIG.C_AXI_PROTOCOL {0} CONFIG.C_MEM_ADDR_WIDTH {36} CONFIG.C_FIFO_DEPTH_B {32} CONFIG.C_FIFO_DEPTH_R {512} CONFIG.C_AXI_ID_WIDTH {6} CONFIG.C_AXI_ADDR_WIDTH {40} CONFIG.C_AXI_DATA_WIDTH {64}] [get_bd_cells axi_delay_2]
 set_property -dict [list CONFIG.C_AXI_PROTOCOL {0} CONFIG.C_MEM_ADDR_WIDTH {36} CONFIG.C_FIFO_DEPTH_B {32} CONFIG.C_FIFO_DEPTH_R {512} CONFIG.C_AXI_ID_WIDTH {6} CONFIG.C_AXI_ADDR_WIDTH {40} CONFIG.C_AXI_DATA_WIDTH {64}] [get_bd_cells axi_delay_3]
 
-# Creating shims and setting their propoerties
+# Creating shims and setting their properties
 set axi_shim_2 [ create_bd_cell -type ip -vlnv llnl.gov:user:axi_shim:1.4 axi_shim_2 ]
 set_property -dict [list CONFIG.C_AXI_PROTOCOL {0} CONFIG.C_MAP_WIDTH {20} CONFIG.C_MAP_IN {00000000000000000000} CONFIG.C_MAP_OUT {00001000000000000000} CONFIG.C_AXI_ID_WIDTH {4} CONFIG.C_AXI_ADDR_WIDTH {40} CONFIG.C_AXI_DATA_WIDTH {64}] [get_bd_cells axi_shim_2]
+set_property -dict [list CONFIG.C_AXI_ID_WIDTH {4}] [get_bd_cells axi_shim_2]
 set axi_shim_3 [ create_bd_cell -type ip -vlnv llnl.gov:user:axi_shim:1.4 axi_shim_3 ]
 set_property -dict [list CONFIG.C_AXI_PROTOCOL {0} CONFIG.C_MAP_WIDTH {8} CONFIG.C_MAP_IN {00000000} CONFIG.C_MAP_OUT {00011000} CONFIG.C_AXI_ID_WIDTH {4} CONFIG.C_AXI_ADDR_WIDTH {40} CONFIG.C_AXI_DATA_WIDTH {64}] [get_bd_cells axi_shim_3]
+set_property -dict [list CONFIG.C_AXI_ID_WIDTH {4}] [get_bd_cells axi_shim_3]
 
 # connecting shims back to back
 connect_bd_intf_net [get_bd_intf_pins axi_shim_2/m_axi] [get_bd_intf_pins axi_shim_3/s_axi]
 
+# adding axi_interconnect IP to connect shim with delays
+create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_1
+set_property -dict [list CONFIG.NUM_MI {2} CONFIG.NUM_SI {1}] [get_bd_cells axi_interconnect_1]
+set_property -dict [list CONFIG.XBAR_DATA_WIDTH.VALUE_SRC USER] [get_bd_cells axi_interconnect_1]
+set_property -dict [list CONFIG.ENABLE_ADVANCED_OPTIONS {1} CONFIG.XBAR_DATA_WIDTH {64}] [get_bd_cells axi_interconnect_1]
 
-# adding smartconnect IP to connect shim with delays
-create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 smartconnect_1
-set_property -dict [list CONFIG.NUM_MI {2} CONFIG.NUM_SI {1}] [get_bd_cells smartconnect_1]
+# connect shim and delays to axi_interconnect
+connect_bd_intf_net [get_bd_intf_pins axi_shim_3/m_axi] -boundary_type upper [get_bd_intf_pins axi_interconnect_1/S00_AXI]
+connect_bd_intf_net [get_bd_intf_pins axi_delay_2/s_axi] -boundary_type upper [get_bd_intf_pins axi_interconnect_1/M00_AXI]
+connect_bd_intf_net [get_bd_intf_pins axi_delay_3/s_axi] -boundary_type upper [get_bd_intf_pins axi_interconnect_1/M01_AXI]
 
-# connecting shim with smartconnect
-connect_bd_intf_net [get_bd_intf_pins smartconnect_1/S00_AXI] [get_bd_intf_pins axi_shim_3/m_axi]
-
-# connecting smartconenct with delays  
-connect_bd_intf_net [get_bd_intf_pins smartconnect_1/M00_AXI] [get_bd_intf_pins axi_delay_2/s_axi]
-connect_bd_intf_net [get_bd_intf_pins smartconnect_1/M01_AXI] [get_bd_intf_pins axi_delay_3/s_axi]
+connect_bd_net [get_bd_pins axi_interconnect_1/ACLK] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins axi_interconnect_1/S00_ACLK] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins axi_interconnect_1/M00_ACLK] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins axi_interconnect_1/M01_ACLK] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins axi_interconnect_1/ARESETN] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
+connect_bd_net [get_bd_pins axi_interconnect_1/S00_ARESETN] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
+connect_bd_net [get_bd_pins axi_interconnect_1/M00_ARESETN] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
+connect_bd_net [get_bd_pins axi_interconnect_1/M01_ARESETN] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
 
 delete_bd_objs [get_bd_intf_nets engine_0_M_AXI_DC]
-
-set_property -dict [list CONFIG.PSU__USE__S_AXI_GP4 {1} CONFIG.PSU__SAXIGP4__DATA_WIDTH {64} CONFIG.PSU__SAXIGP5__DATA_WIDTH {64}] [get_bd_cells zynq_ultra_ps_e_0]
 
 connect_bd_intf_net [get_bd_intf_pins axi_delay_2/m_axi] [get_bd_intf_pins zynq_ultra_ps_e_0/S_AXI_HP2_FPD]
 connect_bd_intf_net [get_bd_intf_pins axi_delay_3/m_axi] [get_bd_intf_pins zynq_ultra_ps_e_0/S_AXI_HP3_FPD]
 
-connect_bd_intf_net -boundary_type upper [get_bd_intf_pins engine_0/M_AXI_DC] [get_bd_intf_pins axi_shim_2/s_axi]
-
-
 apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config {Master "/zynq_ultra_ps_e_0/M_AXI_HPM1_FPD" intc_ip "Auto" Clk_xbar "Auto" Clk_master "Auto" Clk_slave "Auto" }  [get_bd_intf_pins axi_delay_2/s_axi_lite]
 apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config {Master "/zynq_ultra_ps_e_0/M_AXI_HPM1_FPD" intc_ip "Auto" Clk_xbar "Auto" Clk_master "Auto" Clk_slave "Auto" }  [get_bd_intf_pins axi_delay_3/s_axi_lite]
 
-apply_bd_automation -rule xilinx.com:bd_rule:clkrst -config {Clk "/zynq_ultra_ps_e_0/pl_clk0 (299 MHz)" }  [get_bd_pins axi_delay_2/s_axi_aclk]
-apply_bd_automation -rule xilinx.com:bd_rule:clkrst -config {Clk "/zynq_ultra_ps_e_0/pl_clk0 (299 MHz)" }  [get_bd_pins axi_delay_2/m_axi_aclk]
-apply_bd_automation -rule xilinx.com:bd_rule:clkrst -config {Clk "/zynq_ultra_ps_e_0/pl_clk0 (299 MHz)" }  [get_bd_pins axi_delay_3/s_axi_aclk]
-apply_bd_automation -rule xilinx.com:bd_rule:clkrst -config {Clk "/zynq_ultra_ps_e_0/pl_clk0 (299 MHz)" }  [get_bd_pins axi_delay_3/m_axi_aclk]
-apply_bd_automation -rule xilinx.com:bd_rule:clkrst -config {Clk "/zynq_ultra_ps_e_0/pl_clk0 (299 MHz)" }  [get_bd_pins axi_shim_2/s_axi_aclk]
-apply_bd_automation -rule xilinx.com:bd_rule:clkrst -config {Clk "/zynq_ultra_ps_e_0/pl_clk0 (299 MHz)" }  [get_bd_pins axi_shim_2/m_axi_aclk]
-apply_bd_automation -rule xilinx.com:bd_rule:clkrst -config {Clk "/zynq_ultra_ps_e_0/pl_clk0 (299 MHz)" }  [get_bd_pins axi_shim_3/m_axi_aclk]
+connect_bd_net [get_bd_pins axi_delay_2/s_axi_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins axi_delay_2/m_axi_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins axi_delay_3/s_axi_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins axi_delay_3/m_axi_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins axi_shim_2/s_axi_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins axi_shim_2/m_axi_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins axi_shim_3/s_axi_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins axi_shim_3/m_axi_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
 
-assign_bd_address
-set_property range 4G [get_bd_addr_segs {axi_shim_2/m_axi/SEG_axi_shim_3_mem0}]
-set_property range 1M [get_bd_addr_segs {axi_shim_3/m_axi/SEG_axi_delay_2_mem0}]
-set_property range 4G [get_bd_addr_segs {axi_shim_3/m_axi/SEG_axi_delay_3_mem0}]
-set_property offset 0x0800000000 [get_bd_addr_segs {axi_shim_3/m_axi/SEG_axi_delay_2_mem0}]
-set_property offset 0x1800000000 [get_bd_addr_segs {axi_shim_3/m_axi/SEG_axi_delay_3_mem0}]
+connect_bd_net [get_bd_pins axi_delay_2/s_axi_aresetn] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
+connect_bd_net [get_bd_pins axi_delay_2/m_axi_aresetn] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
+connect_bd_net [get_bd_pins axi_delay_3/s_axi_aresetn] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
+connect_bd_net [get_bd_pins axi_delay_3/m_axi_aresetn] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
+connect_bd_net [get_bd_pins axi_shim_2/s_axi_aresetn] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
+connect_bd_net [get_bd_pins axi_shim_2/m_axi_aresetn] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
+connect_bd_net [get_bd_pins axi_shim_3/s_axi_aresetn] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
+connect_bd_net [get_bd_pins axi_shim_3/m_axi_aresetn] [get_bd_pins rst_pl_clk1/interconnect_aresetn]
 
-exclude_bd_addr_seg [get_bd_addr_segs engine_0/microblaze_0/Data/SEG_zynq_ultra_ps_e_0_HP3_DDR_LOW]
-exclude_bd_addr_seg [get_bd_addr_segs engine_0/microblaze_0/Data/SEG_zynq_ultra_ps_e_0_HP3_QSPI]
-exclude_bd_addr_seg [get_bd_addr_segs engine_0/microblaze_0/Data/SEG_zynq_ultra_ps_e_0_HP3_LPS_OCM]
-set_property offset 0x00000000 [get_bd_addr_segs {engine_0/microblaze_0/Data/SEG_axi_shim_2_mem0}]
-set_property range 2G [get_bd_addr_segs {engine_0/microblaze_0/Data/SEG_axi_shim_2_mem0}]
-set_property offset 0x00000000 [get_bd_addr_segs {engine_0/axi_lsu_0/m_axi/SEG_axi_shim_2_mem0}]
-set_property range 2G [get_bd_addr_segs {engine_0/axi_lsu_0/m_axi/SEG_axi_shim_2_mem0}]
+# Connect engine to shim
+connect_bd_intf_net -boundary_type upper [get_bd_intf_pins engine_0/M_AXI_DC] [get_bd_intf_pins axi_shim_2/s_axi]
 
-delete_bd_objs [get_bd_addr_segs -excluded engine_0/microblaze_0/Data/SEG_zynq_ultra_ps_e_0_HP3_DDR_LOW]
-delete_bd_objs [get_bd_addr_segs -excluded engine_0/microblaze_0/Data/SEG_zynq_ultra_ps_e_0_HP3_QSPI]
-delete_bd_objs [get_bd_addr_segs -excluded engine_0/microblaze_0/Data/SEG_zynq_ultra_ps_e_0_HP3_LPS_OCM]
+# Connect APM slot 1 to engine memory path
+connect_bd_intf_net [get_bd_intf_pins axi_perf_mon_0/SLOT_1_AXI] [get_bd_intf_pins axi_shim_2/s_axi]
 
-delete_bd_objs [get_bd_intf_nets axi_shim_0_m_axi]
-connect_bd_intf_net [get_bd_intf_pins axi_shim_0/m_axi] [get_bd_intf_pins axi_shim_1/s_axi]
-set_property -dict [list CONFIG.C_AXI_ID_WIDTH {16}] [get_bd_cells axi_shim_2]
-set_property -dict [list CONFIG.C_AXI_ID_WIDTH {16}] [get_bd_cells axi_shim_3]
-connect_bd_intf_net [get_bd_intf_pins axi_perf_mon_0/SLOT_1_AXI] [get_bd_intf_pins axi_shim_3/s_axi]
-
-set_property offset 0x0000000000 [get_bd_addr_segs {axi_shim_0/m_axi/SEG_axi_shim_1_mem0}]
-set_property range 64G [get_bd_addr_segs {axi_shim_0/m_axi/SEG_axi_shim_1_mem0}]
-set_property range 64G [get_bd_addr_segs {axi_shim_2/m_axi/SEG_axi_shim_3_mem0}]
-
-set_property -dict [list CONFIG.C_DCACHE_BASEADDR {0x00000000}] [get_bd_cells engine_0/microblaze_0]
 set_property range 64K [get_bd_addr_segs {engine_0/microblaze_0/Data/SEG_dlmb_bram_if_cntlr_Mem}]
 set_property range 64K [get_bd_addr_segs {engine_0/microblaze_0/Instruction/SEG_ilmb_bram_if_cntlr_Mem}]
-
-
-# disconnect main axi interconnect slave port with GP0 master and connect it to GP1 master
-#delete_bd_objs [get_bd_intf_nets zynq_ultra_ps_e_0_M_AXI_HPM0_FPD]
-#connect_bd_intf_net [get_bd_intf_pins zynq_ultra_ps_e_0/M_AXI_HPM1_FPD] -boundary_type upper [get_bd_intf_pins ps8_0_axi_periph/S00_AXI]
-
-# connecting slave port of shim with GP0 master via AXI interconnect (pass through basically)
-#connect_bd_intf_net [get_bd_intf_pins axi_shim_0/s_axi] [get_bd_intf_pins zynq_ultra_ps_e_0/M_AXI_HPM0_FPD]
-
-save_bd_design
-validate_bd_design
-
-set_property -dict [list CONFIG.ARB_ON_MAX_XFERS {0} CONFIG.ARB_ON_TLAST {1} CONFIG.ARB_ON_NUM_CYCLES {1024}] [get_bd_cells engine_0/axis_ctl_0]
-save_bd_design
-
-#delete_bd_objs [get_bd_nets microblaze_0_Clk]
-#connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk0]
 
   # Create instance: mcu_0
   #create_hier_cell_mcu_0 $hier_obj mcu_0
@@ -625,4 +575,26 @@ save_bd_design
   #current_bd_instance $oldCurInst
 }
 
+set_property -dict [list CONFIG.PSU__USE__S_AXI_GP4 {1} CONFIG.PSU__SAXIGP4__DATA_WIDTH {64}] [get_bd_cells zynq_ultra_ps_e_0]
+set_property -dict [list CONFIG.PSU__USE__S_AXI_GP5 {1} CONFIG.PSU__SAXIGP5__DATA_WIDTH {64}] [get_bd_cells zynq_ultra_ps_e_0]
+connect_bd_net [get_bd_pins zynq_ultra_ps_e_0/saxihp2_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+connect_bd_net [get_bd_pins zynq_ultra_ps_e_0/saxihp3_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk1]
+
 create_hier_cell_engine_0 [current_bd_instance .] engine_0
+
+assign_bd_address -offset 0x0000000000 -range   2G [get_bd_addr_segs {axi_shim_2/s_axi/mem0}]
+assign_bd_address -offset 0x0000000000 -range 128G [get_bd_addr_segs {axi_shim_3/s_axi/mem0}]
+assign_bd_address -offset 0x0800000000 -range   1M [get_bd_addr_segs {axi_delay_2/s_axi/mem0}]
+assign_bd_address -offset 0x1800000000 -range  32G [get_bd_addr_segs {axi_delay_3/s_axi/mem0}]
+assign_bd_address [get_bd_addr_segs {zynq_ultra_ps_e_0/SAXIGP4/HP2_DDR_HIGH}]
+assign_bd_address [get_bd_addr_segs {zynq_ultra_ps_e_0/SAXIGP4/HP2_DDR_LOW}]
+assign_bd_address [get_bd_addr_segs {zynq_ultra_ps_e_0/SAXIGP5/HP3_DDR_HIGH}]
+assign_bd_address [get_bd_addr_segs {zynq_ultra_ps_e_0/SAXIGP5/HP3_DDR_LOW}]
+# assign_bd_address
+
+validate_bd_design
+save_bd_design
+
+# TODO: why can't this be merged with previous set_property. Seems to need a validate or it gives warning and error.
+# WARNING: [IP_Flow 19-3374] An attempt to modify the value of disabled parameter 'ARB_ON_TLAST'
+set_property -dict [list CONFIG.ARB_ON_TLAST {1} CONFIG.ARB_ON_MAX_XFERS {0} CONFIG.ARB_ON_NUM_CYCLES {1024}] [get_bd_cells engine_0/axis_ctl_0]

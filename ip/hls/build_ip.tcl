@@ -1,8 +1,6 @@
 # Rebuild HLS IP from source
-set current_dir [pwd]
-cd ../ip/hls/
 # get list of IP from folder names
-set ip {compress compress_acc eth_fifo_interface}
+set ip {compress eth_fifo_interface}
 # Check and build each IP
 foreach item $ip {
    if {[catch { glob -directory ${item}/solution1/impl/ip/ *.zip} zip_file]} {
@@ -60,5 +58,4 @@ foreach item $ip {
    }
    unset fd
 }
-cd $current_dir
 puts "HLS IP builds complete"
