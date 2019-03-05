@@ -83,18 +83,18 @@ typedef struct in_packet_t {
 	ap_uint<1> a1_last_rd;
 	ap_uint<8> a1_arlen;
 	ap_uint<8> a1_awlen;
-	ap_uint<4> a1_rid;
-	ap_uint<4> a1_arid;
-	ap_uint<4> a1_bid;
-	ap_uint<4> a1_awid;
+	ap_uint<3> a1_rid;
+	ap_uint<3> a1_arid;
+	ap_uint<3> a1_bid;
+	ap_uint<3> a1_awid;
 	ap_uint<40> a1_araddr;
 	ap_uint<40> a1_awaddr;
 
-	ap_uint<4> padding;
+	// ap_uint<4> padding;
 
 	in_packet_t() {}
 
-	in_packet_t(const ap_uint<328> &i) :
+	in_packet_t(const ap_uint<320> &i) :
 		logID(i(0,0)),
 		timestamp(i(30,1)),
 		loop(i(31,31)),
@@ -125,18 +125,18 @@ typedef struct in_packet_t {
 		a1_last_rd(i(211,211)),
 		a1_arlen(i(219,212)),
 		a1_awlen(i(227,220)),
-		a1_rid(i(231,228)),
-		a1_arid(i(235,232)),
-		a1_bid(i(239,236)),
-		a1_awid(i(243,240)),
-		a1_araddr(i(283,244)),
-		a1_awaddr(i(323,284)),
+		a1_rid(i(230,228)),
+		a1_arid(i(233,231)),
+		a1_bid(i(236,234)),
+		a1_awid(i(239,237)),
+		a1_araddr(i(279,240)),
+		a1_awaddr(i(319,280))
 
-		padding(i(327,324))
+		// padding(i(327,324))
 	{}
 
-	operator ap_uint<328>() {
-		return (padding, a1_awaddr, a1_araddr, a1_awid, a1_bid, a1_arid,
+	operator ap_uint<320>() {
+		return (/*padding,*/ a1_awaddr, a1_araddr, a1_awid, a1_bid, a1_arid,
 				a1_rid, a1_awlen, a1_arlen, a1_last_rd, a1_first_rd,
 				a1_rd_addr_latch, a1_response, a1_last_wr, a1_first_wr,
 				a1_wr_addr_latch, a1_ext_event, a0_awaddr, a0_araddr,
@@ -194,7 +194,7 @@ typedef struct out_packet_t {
 	}
 } out_packet_t;
 
-typedef ap_uint<328> in_t;
+typedef ap_uint<320> in_t;
 typedef ap_uint<128> out_t;
 typedef ap_uint<516> pack_t;
 

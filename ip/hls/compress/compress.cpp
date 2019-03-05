@@ -20,11 +20,9 @@ void convert_inputs(in_stream_t &in, pack_stream_t &out) {
 		in_t packed_input;
 		in_packet_t input;
 		pack_packet_t pack;
-		in.read(packed_input);		
+		in.read(packed_input);
 		input = packed_input;
 		static ap_uint<30> time_acc = 0;
-		
-
 
 		pack.data0 = 0;
 		pack.data1 = 0;
