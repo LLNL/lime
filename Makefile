@@ -1,3 +1,6 @@
+
+PACKAGE = lime-2.0.0
+
 # Cancel version control implicit rules
 %:: %,v
 %:: RCS/%
@@ -53,3 +56,7 @@ clean:
 	cd standalone && $(MAKE) clean
 	cd linux && $(MAKE) clean
 	cd test && $(MAKE) clean
+
+.PHONY: dist
+dist: clean
+	tar --transform 's,^,$(PACKAGE)/,' -czf ../$(PACKAGE).tgz --exclude-vcs *
