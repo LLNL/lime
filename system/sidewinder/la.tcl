@@ -1,5 +1,7 @@
-set axi_lsu_1 [ create_bd_cell -type ip -vlnv llnl.gov:user:axi_lsu:2.2 engine_0/axi_lsu_1 ]
-set axi_lsu_2 [ create_bd_cell -type ip -vlnv llnl.gov:user:axi_lsu:2.2 engine_0/axi_lsu_2 ]
+set axi_lsu_1 [ create_bd_cell -type ip -vlnv llnl.gov:user:axi_lsu:2.3 engine_0/axi_lsu_1 ]
+set_property -dict [list CONFIG.C_AXI_MAP_ADDR_WIDTH {40}] [get_bd_cells engine_0/axi_lsu_1]
+set axi_lsu_2 [ create_bd_cell -type ip -vlnv llnl.gov:user:axi_lsu:2.3 engine_0/axi_lsu_2 ]
+set_property -dict [list CONFIG.C_AXI_MAP_ADDR_WIDTH {40}] [get_bd_cells engine_0/axi_lsu_2]
 set axis_flow_0 [ create_bd_cell -type ip -vlnv llnl.gov:user:axis_flow:1.0 engine_0/axis_flow_0 ]
 set axis_hash_0 [ create_bd_cell -type ip -vlnv llnl.gov:user:axis_hash:1.0 engine_0/axis_hash_0 ]
 set axis_probe_0 [ create_bd_cell -type ip -vlnv llnl.gov:user:axis_probe:1.1 engine_0/axis_probe_0 ]
@@ -76,4 +78,8 @@ connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axi_interconnect
 connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axi_interconnect_0/S03_ACLK]
 connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/S02_ARESETN] [get_bd_pins engine_0/rst_microblaze_0_Clk_100M/interconnect_aresetn]
 connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/S03_ARESETN] [get_bd_pins engine_0/rst_microblaze_0_Clk_100M/interconnect_aresetn]
-assign_bd_address [get_bd_addr_segs {axi_shim_2/s_axi/memory }]
+
+# assign_bd_address [get_bd_addr_segs {axi_shim_2/s_axi/memory}]
+
+create_bd_addr_seg -offset 0x00000000 -range 16G [get_bd_addr_spaces engine_0/axi_lsu_1/m_axi] [get_bd_addr_segs axi_shim_2/s_axi/mem0] SEG_axi_shim_2_mem0
+create_bd_addr_seg -offset 0x00000000 -range 16G [get_bd_addr_spaces engine_0/axi_lsu_2/m_axi] [get_bd_addr_segs axi_shim_2/s_axi/mem0] SEG_axi_shim_2_mem0

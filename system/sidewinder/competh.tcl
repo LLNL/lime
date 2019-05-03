@@ -1,6 +1,4 @@
 delete_bd_objs [get_bd_intf_nets axi_perf_mon_0_M_AXIS]
-# TODO: There may be a misalignment of bits between the APM and the compressor
-# The APM outputs 40 bytes but the compressor input is configured for 41 bytes.
 create_bd_cell -type ip -vlnv llnl.gov:user:compress:1.0 compress_0
 connect_bd_intf_net [get_bd_intf_pins compress_0/in_V_V] [get_bd_intf_pins axi_perf_mon_0/M_AXIS]
 connect_bd_net [get_bd_pins zynq_ultra_ps_e_0/pl_clk1] [get_bd_pins compress_0/ap_clk]

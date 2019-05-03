@@ -1,10 +1,11 @@
+# Not used, left over
 # Hierarchical cell: microblaze_0_local_memory
 proc create_hier_cell_microblaze_0_local_memory { parentCell nameHier } {
 
   variable script_folder
 
   if { $parentCell eq "" || $nameHier eq "" } {
-     catch {common::send_msg_id "BD_TCL-102" "ERROR" create_hier_cell_microblaze_0_local_memory() - Empty argument(s)!"}
+     catch {common::send_msg_id "BD_TCL-102" "ERROR" "create_hier_cell_microblaze_0_local_memory() - Empty argument(s)!"}
      return
   }
 
@@ -81,13 +82,14 @@ CONFIG.use_bram_block {BRAM_Controller} \
   current_bd_instance $oldCurInst
 }
 
+# Not used, left over
 # Hierarchical cell: mcu_0
 proc create_hier_cell_mcu_0 { parentCell nameHier } {
 
   variable script_folder
 
   if { $parentCell eq "" || $nameHier eq "" } {
-     catch {common::send_msg_id "BD_TCL-102" "ERROR" create_hier_cell_mcu_0() - Empty argument(s)!"}
+     catch {common::send_msg_id "BD_TCL-102" "ERROR" "create_hier_cell_mcu_0() - Empty argument(s)!"}
      return
   }
 
@@ -191,7 +193,7 @@ proc create_hier_cell_host_0 { parentCell nameHier } {
   variable script_folder
 
   if { $parentCell eq "" || $nameHier eq "" } {
-     catch {common::send_msg_id "BD_TCL-102" "ERROR" create_hier_cell_host_0() - Empty argument(s)!"}
+     catch {common::send_msg_id "BD_TCL-102" "ERROR" "create_hier_cell_host_0() - Empty argument(s)!"}
      return
   }
 
@@ -270,7 +272,7 @@ proc create_hier_cell_engine_0 { parentCell nameHier } {
   variable script_folder
 
   if { $parentCell eq "" || $nameHier eq "" } {
-     catch {common::send_msg_id "BD_TCL-102" "ERROR" create_hier_cell_engine_0() - Empty argument(s)!"}
+     catch {common::send_msg_id "BD_TCL-102" "ERROR" "create_hier_cell_engine_0() - Empty argument(s)!"}
      return
   }
 
@@ -462,7 +464,8 @@ connect_bd_net [get_bd_pins engine_0/rst_microblaze_0_Clk_100M/ext_reset_in] [ge
 connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axis_hdr_0/h2s_aclk]
 connect_bd_net [get_bd_pins engine_0/Clk] [get_bd_pins engine_0/axis_hdr_0/s2h_aclk]
 
-create_bd_cell -type ip -vlnv llnl.gov:user:axi_lsu:2.2 engine_0/axi_lsu_0
+create_bd_cell -type ip -vlnv llnl.gov:user:axi_lsu:2.3 engine_0/axi_lsu_0
+set_property -dict [list CONFIG.C_AXI_MAP_ADDR_WIDTH {40}] [get_bd_cells engine_0/axi_lsu_0]
 connect_bd_intf_net [get_bd_intf_pins engine_0/axi_lsu_0/s_axis_ctl] [get_bd_intf_pins engine_0/axis_ctl_0/M02_AXIS]
 connect_bd_intf_net [get_bd_intf_pins engine_0/axi_lsu_0/m_axis_ctl] [get_bd_intf_pins engine_0/axis_ctl_0/S02_AXIS]
 connect_bd_intf_net [get_bd_intf_pins engine_0/axi_lsu_0/s_axis_dat] [get_bd_intf_pins engine_0/axi_lsu_0/m_axis_dat]
@@ -505,7 +508,7 @@ set axi_shim_2 [ create_bd_cell -type ip -vlnv llnl.gov:user:axi_shim:1.4 axi_sh
 set_property -dict [list CONFIG.C_AXI_PROTOCOL {0} CONFIG.C_MAP_WIDTH {20} CONFIG.C_MAP_IN {00000000000000000000} CONFIG.C_MAP_OUT {00001000000000000000} CONFIG.C_AXI_ID_WIDTH {4} CONFIG.C_AXI_ADDR_WIDTH {40} CONFIG.C_AXI_DATA_WIDTH {64}] [get_bd_cells axi_shim_2]
 set_property -dict [list CONFIG.C_AXI_ID_WIDTH {4}] [get_bd_cells axi_shim_2]
 set axi_shim_3 [ create_bd_cell -type ip -vlnv llnl.gov:user:axi_shim:1.4 axi_shim_3 ]
-set_property -dict [list CONFIG.C_AXI_PROTOCOL {0} CONFIG.C_MAP_WIDTH {8} CONFIG.C_MAP_IN {00000000} CONFIG.C_MAP_OUT {00011000} CONFIG.C_AXI_ID_WIDTH {4} CONFIG.C_AXI_ADDR_WIDTH {40} CONFIG.C_AXI_DATA_WIDTH {64}] [get_bd_cells axi_shim_3]
+set_property -dict [list CONFIG.C_AXI_PROTOCOL {0} CONFIG.C_MAP_WIDTH {5} CONFIG.C_MAP_IN {00000} CONFIG.C_MAP_OUT {00011} CONFIG.C_AXI_ID_WIDTH {4} CONFIG.C_AXI_ADDR_WIDTH {40} CONFIG.C_AXI_DATA_WIDTH {64}] [get_bd_cells axi_shim_3]
 set_property -dict [list CONFIG.C_AXI_ID_WIDTH {4}] [get_bd_cells axi_shim_3]
 
 # connecting shims back to back
@@ -582,7 +585,8 @@ connect_bd_net [get_bd_pins zynq_ultra_ps_e_0/saxihp3_fpd_aclk] [get_bd_pins zyn
 
 create_hier_cell_engine_0 [current_bd_instance .] engine_0
 
-assign_bd_address -offset 0x0000000000 -range   2G [get_bd_addr_segs {axi_shim_2/s_axi/mem0}]
+# assign_bd_address
+# assign_bd_address -offset 0x0000000000 -range   2G [get_bd_addr_segs {axi_shim_2/s_axi/mem0}]
 assign_bd_address -offset 0x0000000000 -range 128G [get_bd_addr_segs {axi_shim_3/s_axi/mem0}]
 assign_bd_address -offset 0x0800000000 -range   1M [get_bd_addr_segs {axi_delay_2/s_axi/mem0}]
 assign_bd_address -offset 0x1800000000 -range  32G [get_bd_addr_segs {axi_delay_3/s_axi/mem0}]
@@ -590,7 +594,11 @@ assign_bd_address [get_bd_addr_segs {zynq_ultra_ps_e_0/SAXIGP4/HP2_DDR_HIGH}]
 assign_bd_address [get_bd_addr_segs {zynq_ultra_ps_e_0/SAXIGP4/HP2_DDR_LOW}]
 assign_bd_address [get_bd_addr_segs {zynq_ultra_ps_e_0/SAXIGP5/HP3_DDR_HIGH}]
 assign_bd_address [get_bd_addr_segs {zynq_ultra_ps_e_0/SAXIGP5/HP3_DDR_LOW}]
-# assign_bd_address
+
+create_bd_addr_seg -offset 0x00000000 -range  2G [get_bd_addr_spaces engine_0/microblaze_0/Data] [get_bd_addr_segs axi_shim_2/s_axi/mem0] SEG_axi_shim_2_mem0
+create_bd_addr_seg -offset 0x00000000 -range 16G [get_bd_addr_spaces engine_0/axi_lsu_0/m_axi] [get_bd_addr_segs axi_shim_2/s_axi/mem0] SEG_axi_shim_2_mem0
+# set_property range  2G [get_bd_addr_segs {microblaze_0/Data/SEG_axi_shim_2_mem0}]
+# set_property range 16G [get_bd_addr_segs {engine_0/axi_lsu_0/m_axi/SEG_axi_shim_2_mem0}]
 
 validate_bd_design
 save_bd_design

@@ -25,14 +25,20 @@ use ieee.std_logic_arith.all;
 
 entity axi_lsu_cmd is
 generic (
+	-- Command Control
 	C_AXIS_CTL_TID_WIDTH   : integer range 2 to 8 := 4;
 	C_AXIS_CTL_TDEST_WIDTH : integer range 2 to 8 := 4;
 	C_AXIS_CTL_TUSER_WIDTH : integer range 4 to 16 := 8;
 
+	-- Command Registers
 	C_DATA_WIDTH : integer := 32;
 	C_ADDR_WIDTH : integer := 3;
 	C_NREG : integer := 8;
 
+	-- Memory Mapped
+	C_AXI_MAP_ADDR_WIDTH : integer range 32 to 64 := 32;
+
+	-- Stream Command and Status
 	C_AXIS_CMD_TDATA_WIDTH : integer := 72; 
 	C_AXIS_STS_TDATA_WIDTH : integer := 8
 	);
@@ -103,17 +109,19 @@ architecture behavioral of axi_lsu_cmd is
 
 --      load-store unit
 --      register map
--- reg   31  bits   0
---     |--------------|
---   0 | status:32    | zero:24 okay:1 slverr:1 decerr:1 interr:1 treqstat:1 tdest:3
---   1 | command:8    | reqstat:1 ignore:4 command:3
---   2 | address:32   |
---   3 | size:30      |
---   4 | inc/index:30 |
---   5 | rep/trans:30 |
---   6 | ignore:32    |
---   7 | ignore:32    |
---     |--------------|
+-- reg   31   bits   0
+--     |---------------|
+--   0 | status:32     | zero:24 okay:1 slverr:1 decerr:1 interr:1 treqstat:1 tdest:3
+--   1 | addrhi/cmd:32 | addrhi:16 ignore:8 reqstat:1 ignore:4 command:3
+--   2 | addrlo:32     |
+--   3 | size:30       |
+--   4 | inc/index:30  |
+--   5 | rep/trans:30  |
+--   6 | ignore:32     |
+--   7 | ignore:32     |
+--     |---------------|
+
+constant C_SADDR_WIDTH : natural := (C_AXI_MAP_ADDR_WIDTH+7)/8*8;
 
 signal tid : std_logic_vector(C_AXIS_CTL_TID_WIDTH-1 downto 0);
 
@@ -128,7 +136,8 @@ constant CMD_flush  : std_logic_vector(2 downto 0) := "111";
 
 alias command : std_logic_vector(3-1 downto 0) is vcmd(C_DATA_WIDTH*1+3-1 downto C_DATA_WIDTH*1);
 alias reqstat : std_logic is vcmd(C_DATA_WIDTH*1+7);
-alias address : std_logic_vector(C_DATA_WIDTH-1 downto 0) is vcmd(C_DATA_WIDTH*2+C_DATA_WIDTH-1 downto C_DATA_WIDTH*2);
+alias addrhi  : std_logic_vector(16-1 downto 0) is vcmd(C_DATA_WIDTH*1+C_DATA_WIDTH-1 downto C_DATA_WIDTH*1+16);
+alias addrlo  : std_logic_vector(C_DATA_WIDTH-1 downto 0) is vcmd(C_DATA_WIDTH*2+C_DATA_WIDTH-1 downto C_DATA_WIDTH*2);
 alias size    : std_logic_vector(30-1 downto 0) is vcmd(C_DATA_WIDTH*3+30-1 downto C_DATA_WIDTH*3);
 alias inc     : std_logic_vector(30-1 downto 0) is vcmd(C_DATA_WIDTH*4+30-1 downto C_DATA_WIDTH*4);
 alias rep     : std_logic_vector(30-1 downto 0) is vcmd(C_DATA_WIDTH*5+30-1 downto C_DATA_WIDTH*5);
@@ -146,8 +155,6 @@ begin
 			severity FAILURE;
 	-- synthesis translate_on
 
-	vrsp(C_DATA_WIDTH*1+C_DATA_WIDTH-1 downto C_DATA_WIDTH*1) <= (others => '0');
-	vwe(1) <= '0';
 	vrsp(C_DATA_WIDTH*3+C_DATA_WIDTH-1 downto C_DATA_WIDTH*3) <= (others => '0');
 	vwe(3) <= '0';
 	vrsp(C_DATA_WIDTH*4+C_DATA_WIDTH-1 downto C_DATA_WIDTH*4) <= (others => '0');
@@ -171,10 +178,11 @@ begin
 		end if;
 	end process;
 
-	cmd: process(command_tid, command_valid, m_axis_cmd_tready, command, reqstat, address, size, inc, rep, index)
+	cmd: process(command_tid, command_valid, m_axis_cmd_tready, command, reqstat, addrhi, addrlo, size, inc, rep, index, trans, vcmd)
 		variable rsvd : std_logic_vector(3 downto 0);
 		variable tag : std_logic_vector(3 downto 0);
-		variable saddr : std_logic_vector(31 downto 0);
+		variable saddr : std_logic_vector(C_SADDR_WIDTH-1 downto 0);
+		variable iaddr : std_logic_vector((addrhi'length+addrlo'length)-1 downto 0);
 		variable drr : std_logic;
 		variable eof : std_logic;
 		variable dsa : std_logic_vector(5 downto 0);
@@ -193,6 +201,8 @@ begin
 		m_axis_cmd_tvalid <= '0';
 		command_ready <= '1';
 
+		vrsp(C_DATA_WIDTH*1+C_DATA_WIDTH-1 downto C_DATA_WIDTH*1) <= vcmd(C_DATA_WIDTH*1+C_DATA_WIDTH-1 downto C_DATA_WIDTH*1);
+		vwe(1) <= '0';
 		vrsp(C_DATA_WIDTH*2+C_DATA_WIDTH-1 downto C_DATA_WIDTH*2) <= (others => '0');
 		vwe(2) <= '0';
 		vrsp(C_DATA_WIDTH*5+C_DATA_WIDTH-1 downto C_DATA_WIDTH*5) <= (others => '0');
@@ -201,12 +211,12 @@ begin
 		if (command_valid = '1') then
 			case command is
 				when CMD_move =>
-					saddr := ext(address,saddr'length);
+					saddr := ext(addrhi&addrlo,saddr'length);
 					btt := ext(size,btt'length);
 					m_axis_cmd_tvalid <= '1';
 					command_ready <= m_axis_cmd_tready;
 				when CMD_smove =>
-					saddr := ext(address,saddr'length);
+					saddr := ext(addrhi&addrlo,saddr'length);
 					btt := ext(size,btt'length);
 					if (unsigned(rep) = 1) then -- last
 						command_ready <= m_axis_cmd_tready;
@@ -216,15 +226,19 @@ begin
 						--eof := '0';
 					end if;
 					if (m_axis_cmd_tready = '1') then
-						vrsp(C_DATA_WIDTH*2+address'length-1 downto C_DATA_WIDTH*2) <= unsigned(address) + unsigned(inc);
+						iaddr := unsigned(addrhi&addrlo) + unsigned(inc);
+						vrsp(C_DATA_WIDTH*1+C_DATA_WIDTH-1 downto C_DATA_WIDTH*1+C_DATA_WIDTH-16) <= iaddr(C_DATA_WIDTH+16-1 downto C_DATA_WIDTH);
+						vwe(1) <= '1';
+						vrsp(C_DATA_WIDTH*2+C_DATA_WIDTH-1 downto C_DATA_WIDTH*2) <= iaddr(C_DATA_WIDTH-1 downto 0);
 						vwe(2) <= '1';
 						vrsp(C_DATA_WIDTH*5+rep'length-1 downto C_DATA_WIDTH*5) <= unsigned(rep) - 1;
 						vwe(5) <= '1';
 					end if;
 					m_axis_cmd_tvalid <= '1';
 				when CMD_index | CMD_index2 =>
-					-- saddr := conv_unsigned(unsigned(index)*unsigned(size),address'length)+unsigned(address);
-					saddr := conv_unsigned(unsigned(index)*conv_unsigned(unsigned(size),18),address'length)+unsigned(address); -- for DSP48
+					-- saddr := conv_unsigned(unsigned(index)*unsigned(size),saddr'length)+unsigned(addrhi&addrlo);
+					saddr := conv_unsigned(unsigned(index)*conv_unsigned(unsigned(size),18),saddr'length) +
+						conv_unsigned(unsigned(addrhi&addrlo),saddr'length); -- for DSP48
 					if (command = CMD_index) then
 						btt := ext(size,btt'length);
 					else

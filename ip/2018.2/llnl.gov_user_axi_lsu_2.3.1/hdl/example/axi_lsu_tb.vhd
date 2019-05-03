@@ -100,7 +100,7 @@ constant C_AXIS_DAT_TDEST_WIDTH : integer range 2 to 8 := 4;
 
 	-- Memory Mapped
 constant C_AXI_MAP_ID_WIDTH   : integer range  1 to 8 := 1;
-constant C_AXI_MAP_ADDR_WIDTH : integer range 32 to 64 := 32;
+constant C_AXI_MAP_ADDR_WIDTH : integer range 32 to 64 := 40;
 constant C_AXI_MAP_DATA_WIDTH : integer range 32 to 1024 := 64;
 
 	-- associated with control streams
@@ -893,6 +893,7 @@ begin
 
 	mm2s_bram_fill: entity work.axi_write
 	generic map(
+	MEM_ADDR_WIDTH => C_AXI_MAP_ADDR_WIDTH, 
 	MEM_DATA_WIDTH => C_AXI_MAP_DATA_WIDTH, 
 	BURST_LENGTH   => C_BURST_LENGTH,
 	C_NUM_BURST    => C_MEMORY_DEPTH/C_BURST_LENGTH

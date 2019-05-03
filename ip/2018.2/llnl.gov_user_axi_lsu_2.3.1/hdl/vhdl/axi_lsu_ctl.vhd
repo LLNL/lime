@@ -38,6 +38,9 @@ generic (
 	C_AXIS_DAT_TID_WIDTH   : integer range 2 to 8 := 4;
 	C_AXIS_DAT_TDEST_WIDTH : integer range 2 to 8 := 4;
 
+	-- Memory Mapped
+	C_AXI_MAP_ADDR_WIDTH : integer range 32 to 64 := 32;
+
 	-- Stream Command and Status
 	C_AXIS_CMD_TDATA_WIDTH : integer := 72; 
 	C_AXIS_STS_TDATA_WIDTH : integer := 8
@@ -210,6 +213,8 @@ begin
 		C_DATA_WIDTH => C_DATA_WIDTH,
 		C_ADDR_WIDTH => C_ADDR_WIDTH,
 		C_NREG       => C_NREG,
+
+		C_AXI_MAP_ADDR_WIDTH => C_AXI_MAP_ADDR_WIDTH,
 
 		C_AXIS_CMD_TDATA_WIDTH => C_AXIS_CMD_TDATA_WIDTH,
 		C_AXIS_STS_TDATA_WIDTH => C_AXIS_STS_TDATA_WIDTH

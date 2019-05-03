@@ -162,7 +162,7 @@ end axi_lsu;
 
 architecture structural of axi_lsu is
 
-constant C_AXIS_CMD_TDATA_WIDTH : integer := 72;
+constant C_AXIS_CMD_TDATA_WIDTH : integer := (C_AXI_MAP_ADDR_WIDTH+7)/8*8+40;
 constant C_AXIS_STS_TDATA_WIDTH : integer := 8;
 
 -- Memory Map to Stream
@@ -268,6 +268,8 @@ begin
 	C_AXIS_DAT_TID_WIDTH   => C_AXIS_DAT_TID_WIDTH,
 	C_AXIS_DAT_TDEST_WIDTH => C_AXIS_DAT_TDEST_WIDTH,
 
+	C_AXI_MAP_ADDR_WIDTH => C_AXI_MAP_ADDR_WIDTH,
+
 	C_AXIS_CMD_TDATA_WIDTH => C_AXIS_CMD_TDATA_WIDTH,
 	C_AXIS_STS_TDATA_WIDTH => C_AXIS_STS_TDATA_WIDTH
 
@@ -321,6 +323,8 @@ begin
 
 	C_AXIS_DAT_TID_WIDTH   => C_AXIS_DAT_TID_WIDTH,
 	C_AXIS_DAT_TDEST_WIDTH => C_AXIS_DAT_TDEST_WIDTH,
+
+	C_AXI_MAP_ADDR_WIDTH => C_AXI_MAP_ADDR_WIDTH,
 
 	C_AXIS_CMD_TDATA_WIDTH => C_AXIS_CMD_TDATA_WIDTH,
 	C_AXIS_STS_TDATA_WIDTH => C_AXIS_STS_TDATA_WIDTH
@@ -522,6 +526,10 @@ begin
 	-- 1 = Include S2MM Store and Forward
 	C_S2MM_INCLUDE_SF => C_W_INCLUDE_SF,
 
+	---------------------------
+	-- Additional Parameters --
+	---------------------------
+
 	C_ENABLE_CACHE_USER => 0,
 
 	-- if C_ENABLE_SKID_BUF(2) = '1', not used
@@ -543,6 +551,8 @@ begin
 	-- If 1, passes through the EOF bit in command
 	-- otherwise EOF is always 1
 	C_MICRO_DMA => 0,
+
+	C_CMD_WIDTH => C_AXIS_CMD_TDATA_WIDTH,
 
 	-- Specifies the target FPGA family type
 	C_FAMILY => C_FAMILY

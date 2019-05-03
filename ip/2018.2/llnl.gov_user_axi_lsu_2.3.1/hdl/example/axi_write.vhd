@@ -57,9 +57,10 @@ use ieee.std_logic_misc.all;
 
 entity axi_write is
     generic(
-        MEM_DATA_WIDTH         : integer range 32 to 1024    	:= 64;
-        BURST_LENGTH           : integer range 1  to 256    	:= 16;		-- No. of Transfers
-        C_NUM_BURST            : integer range 1  to 1024    	:= 2		-- Total transfers = C_NUM_BURST*BURST_LENGTH
+        MEM_ADDR_WIDTH         : integer range 32 to 64    := 32;
+        MEM_DATA_WIDTH         : integer range 32 to 1024  := 64;
+        BURST_LENGTH           : integer range 1  to 256   := 16; -- No. of Transfers
+        C_NUM_BURST            : integer range 1  to 1024  := 2   -- Total transfers = C_NUM_BURST*BURST_LENGTH
 
   );
     port (
@@ -71,7 +72,7 @@ entity axi_write is
         -----------------------------------------------------------------------                 --
         -- Write Address Channel                                           --
         awaddr           : out std_logic_vector                                      --
-                             (31 downto 0);                   --
+                             (MEM_ADDR_WIDTH-1 downto 0);                   --
         awlen            : out std_logic_vector(7 downto 0)      ;                   --
         awsize           : out std_logic_vector(2 downto 0)      ;                   --
 
@@ -135,7 +136,7 @@ signal done_all_addr_write     : std_logic := '0';
 signal wvalid_i     : std_logic := '0';
 signal awvalid_i     : std_logic := '0';
 signal awaddr_i           : std_logic_vector                                      --
-                             (31 downto 0):= (others => '0');                   --
+                             (MEM_ADDR_WIDTH-1 downto 0):= (others => '0');                   --
 -------------------------------------------------------------------------------
 -- Begin architecture logic
 -------------------------------------------------------------------------------
@@ -211,7 +212,7 @@ start_data_phase_re_pulse <= start_data_phase and not start_data_phase_d1;
 
            --elsif (awvalid_i = '0' and running_burst_down_count /= C_NUM_BURST and running_burst_down_count /= 0 and data_phase_completed_re_pulse = '1') then     
            elsif (awvalid_i = '0' and running_burst_down_count /= C_NUM_BURST and running_burst_down_count /= 0 and bvalid = '1') then     
-               awaddr_i <= std_logic_vector(unsigned(awaddr_i) + TO_UNSIGNED(per_burst_byte_transfers, 32));		
+               awaddr_i <= std_logic_vector(unsigned(awaddr_i) + TO_UNSIGNED(per_burst_byte_transfers, MEM_ADDR_WIDTH));		
                awvalid_i <= '1';
                start_data_phase <= '0';
                done_all_addr_write <= '0';
