@@ -83,3 +83,6 @@ connect_bd_net [get_bd_pins engine_0/axi_interconnect_0/S03_ARESETN] [get_bd_pin
 
 create_bd_addr_seg -offset 0x00000000 -range 16G [get_bd_addr_spaces engine_0/axi_lsu_1/m_axi] [get_bd_addr_segs axi_shim_2/s_axi/mem0] SEG_axi_shim_2_mem0
 create_bd_addr_seg -offset 0x00000000 -range 16G [get_bd_addr_spaces engine_0/axi_lsu_2/m_axi] [get_bd_addr_segs axi_shim_2/s_axi/mem0] SEG_axi_shim_2_mem0
+
+save_bd_design
+validate_bd_design
