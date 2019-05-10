@@ -42,6 +42,8 @@ sdk/pmufw/Release/pmufw.elf: $(HDF)
 # Build DTS
 # Dependent on sdk/hw_platform_0 but using pmufw.elf instead
 dts/system-top.dts: sdk/pmufw/Release/pmufw.elf device-tree-xlnx
+	cd device-tree-xlnx &&\
+	git checkout xilinx-v2018.2
 	$(RM) -r dts
 	xsct dts.tcl
 ifeq "$(BOARD)" "sidewinder"
