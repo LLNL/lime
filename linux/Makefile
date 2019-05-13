@@ -47,10 +47,10 @@ dts/system-top.dts: sdk/pmufw/Release/pmufw.elf device-tree-xlnx
 	$(RM) -r dts
 	xsct dts.tcl
 ifeq "$(BOARD)" "sidewinder"
-	sed -i.bak '/memory {/,/};/c\memory {\n\tdevice_type = "memory";\n\tlinux,usable-memory = <0x0 0x0 0x0 0x8000000>, <0x10 0x00000000 0x4 0x00000000>;\n};' dts/system-top.dts
+	sed -i.bak '/memory {/,/};/c\memory {\n\tdevice_type = "memory";\n\tlinux,usable-memory = <0x10 0x00000000 0x4 0x00000000>;\n};' dts/system-top.dts
 	sed -i.bak '/&sdhci1 {/ a\\tno-1-8-v;\n\tdisable-wp;' dts/pcw.dtsi
 else
-	sed -i.bak '/memory {/,/};/c\memory {\n\tdevice_type = "memory";\n\tlinux,usable-memory = <0x0 0x0 0x0 0x8000000>, <0x10 0x00000000 0x1 0x00000000>;\n};' dts/system-top.dts
+	sed -i.bak '/memory {/,/};/c\memory {\n\tdevice_type = "memory";\n\tlinux,usable-memory = <0x10 0x00000000 0x1 0x00000000>;\n};' dts/system-top.dts
 endif
 
 # Build Device Tree Compiler (dtc)
