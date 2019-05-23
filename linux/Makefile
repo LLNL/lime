@@ -46,13 +46,13 @@ dts/system-top.dts: sdk/pmufw/Release/pmufw.elf device-tree-xlnx
 	git checkout xilinx-v2018.2
 	$(RM) -r dts
 	xsct dts.tcl
+	sed -i.bak '/fclk0: fclk0 {/,/status = "disabled";/c\\tfclk0: fclk0 {\n\t\tstatus = "okay";' dts/zynqmp-clk-ccf.dtsi
+	sed -i.bak '/fclk1: fclk1 {/,/status = "disabled";/c\\tfclk1: fclk1 {\n\t\tstatus = "okay";' dts/zynqmp-clk-ccf.dtsi
 ifeq "$(BOARD)" "sidewinder"
 	sed -i.bak '/memory {/,/};/c\memory {\n\tdevice_type = "memory";\n\tlinux,usable-memory = <0x10 0x00000000 0x4 0x00000000>;\n};' dts/system-top.dts
 	sed -i.bak '/&sdhci1 {/ a\\tno-1-8-v;\n\tdisable-wp;' dts/pcw.dtsi
 else
 	sed -i.bak '/memory {/,/};/c\memory {\n\tdevice_type = "memory";\n\tlinux,usable-memory = <0x10 0x00000000 0x1 0x00000000>;\n};' dts/system-top.dts
-	sed -i.bak '/fclk0: fclk0 {/,/status = "disabled";/c\\tfclk0: fclk0 {\n\t\tstatus = "okay";' dts/zynqmp-clk-ccf.dtsi
-	sed -i.bak '/fclk1: fclk1 {/,/status = "disabled";/c\\tfclk1: fclk1 {\n\t\tstatus = "okay";' dts/zynqmp-clk-ccf.dtsi
 	sed -i.bak '/&xlnx_dpdma {/,/};/c\&xlnx_dpdma {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
 	sed -i.bak '/&zynqmp_dp_snd_pcm0 {/,/};/c\&zynqmp_dp_snd_pcm0 {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
 	sed -i.bak '/&zynqmp_dp_snd_pcm1 {/,/};/c\&zynqmp_dp_snd_pcm1 {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
