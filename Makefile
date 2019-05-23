@@ -1,5 +1,5 @@
 
-PACKAGE = lime-2.0.0
+PACKAGE = lime-2.1.0
 
 # Cancel version control implicit rules
 %:: %,v
