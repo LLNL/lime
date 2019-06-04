@@ -59,8 +59,7 @@ else
 	sed -i.bak '/&zynqmp_dp_snd_card0 {/,/};/c\&zynqmp_dp_snd_card0 {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
 	sed -i.bak '/&zynqmp_dp_snd_codec0 {/,/};/c\&zynqmp_dp_snd_codec0 {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
 	sed -i.bak '/&zynqmp_dpsub {/,/};/c\&zynqmp_dpsub {\n\tphy-names = "dp-phy0","dp-phy1";\n\tphys = <&lane1 5 0 3 27000000>,\n\t\t<&lane0 5 1 3 27000000>;\n\tstatus = "disabled";\n\txlnx,max-lanes = <2>;\n};' dts/pcw.dtsi
-	sed -i.bak '/&gpu {/,/};/c\&gpu {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
-	sed -i.bak '/&can1 {/,/};/c\&can1 {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
+	sed -i.bak '/&usb0 {/,/};/c\&usb0 {\n\tstatus = "disabled";\n\txlnx,usb-reset = <0x2faf080>;\n};' dts/pcw.dtsi
 endif
 
 # Build Device Tree Compiler (dtc)
@@ -92,8 +91,16 @@ u-boot-xlnx/u-boot.elf: u-boot-xlnx/Makefile
 # Build Linux Kernel
 linux-xlnx/arch/arm64/boot/Image: linux-xlnx/Makefile
 	cd linux-xlnx &&\
-	git checkout xlnx_rebase_v4.14_2018.2 &&\
-	sed -i.bak '/CONFIG_DRM_XLNX=y/c\# CONFIG_DRM_XLNX=y' arch/arm64/configs/xilinx_zynqmp_defconfig &&\
+	git checkout xlnx_rebase_v4.14_2018.2
+ifeq "$(BOARD)" "zcu102"
+	sed -i.bak '/CONFIG_DRM_XLNX=y/c\# CONFIG_DRM_XLNX=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
+	sed -i.bak '/CONFIG_DRM=y/c\# CONFIG_DRM=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
+	sed -i.bak '/CONFIG_DRM_XILINX=y/c\# CONFIG_DRM_XILINX=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
+	sed -i.bak '/CONFIG_SND_SOC_XILINX_DP=y/c\# CONFIG_SND_SOC_XILINX_DP=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
+	sed -i.bak '/CONFIG_VIDEO_XILINX=y/c\# CONFIG_VIDEO_XILINX=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
+	sed -i.bak '/CONFIG_USB_XHCI_HCD=y/c\# CONFIG_USB_XHCI_HCD=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
+endif
+	cd linux-xlnx &&\
 	export CROSS_COMPILE=aarch64-linux-gnu- &&\
 	export ARCH=arm64 &&\
 	$(MAKE) xilinx_zynqmp_defconfig &&\
