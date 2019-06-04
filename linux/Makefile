@@ -53,12 +53,14 @@ ifeq "$(BOARD)" "sidewinder"
 	sed -i.bak '/&sdhci1 {/ a\\tno-1-8-v;\n\tdisable-wp;' dts/pcw.dtsi
 else
 	sed -i.bak '/memory {/,/};/c\memory {\n\tdevice_type = "memory";\n\tlinux,usable-memory = <0x10 0x00000000 0x1 0x00000000>;\n};' dts/system-top.dts
+	# turn off displayport stuff causing kernel panic during boot
 	sed -i.bak '/&xlnx_dpdma {/,/};/c\&xlnx_dpdma {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
 	sed -i.bak '/&zynqmp_dp_snd_pcm0 {/,/};/c\&zynqmp_dp_snd_pcm0 {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
 	sed -i.bak '/&zynqmp_dp_snd_pcm1 {/,/};/c\&zynqmp_dp_snd_pcm1 {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
 	sed -i.bak '/&zynqmp_dp_snd_card0 {/,/};/c\&zynqmp_dp_snd_card0 {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
 	sed -i.bak '/&zynqmp_dp_snd_codec0 {/,/};/c\&zynqmp_dp_snd_codec0 {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
 	sed -i.bak '/&zynqmp_dpsub {/,/};/c\&zynqmp_dpsub {\n\tphy-names = "dp-phy0","dp-phy1";\n\tphys = <&lane1 5 0 3 27000000>,\n\t\t<&lane0 5 1 3 27000000>;\n\tstatus = "disabled";\n\txlnx,max-lanes = <2>;\n};' dts/pcw.dtsi
+	# turn off usb, driver causing panic during shutdown
 	sed -i.bak '/&usb0 {/,/};/c\&usb0 {\n\tstatus = "disabled";\n\txlnx,usb-reset = <0x2faf080>;\n};' dts/pcw.dtsi
 endif
 
@@ -93,11 +95,15 @@ linux-xlnx/arch/arm64/boot/Image: linux-xlnx/Makefile
 	cd linux-xlnx &&\
 	git checkout xlnx_rebase_v4.14_2018.2
 ifeq "$(BOARD)" "zcu102"
+	# Fix for slowness caused by disabled caches caused by DRM KMS driver
 	sed -i.bak '/CONFIG_DRM_XLNX=y/c\# CONFIG_DRM_XLNX=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
+	# Remove all the other DRM stuff just in case
 	sed -i.bak '/CONFIG_DRM=y/c\# CONFIG_DRM=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
 	sed -i.bak '/CONFIG_DRM_XILINX=y/c\# CONFIG_DRM_XILINX=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
+	# Remove the displayport stuff that is causing panic on boot
 	sed -i.bak '/CONFIG_SND_SOC_XILINX_DP=y/c\# CONFIG_SND_SOC_XILINX_DP=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
 	sed -i.bak '/CONFIG_VIDEO_XILINX=y/c\# CONFIG_VIDEO_XILINX=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
+	# Remove usb driver causing panic on shutdown
 	sed -i.bak '/CONFIG_USB_XHCI_HCD=y/c\# CONFIG_USB_XHCI_HCD=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
 endif
 	cd linux-xlnx &&\
