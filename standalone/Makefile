@@ -10,22 +10,25 @@
 # Delete default suffixes
 .SUFFIXES:
 
-HDF = ../system/system_wrapper.hdf
-BOARD = $(firstword $(subst /, ,$(shell readlink -n $(HDF))))
+SYS = ../system
+HDF = $(SYS)/system_wrapper.hdf
+BDF = $(SYS)/board
+BIT = sdk/hw_platform_0/system_wrapper.bit
+BOARD := $(word 2,$(subst :, ,$(shell cat $(BDF))))
+XSCT := xsct$(if $(findstring Linux,$(shell uname -s)),,.bat)
 
 .PHONY: all
-all: sdk/standalone_bsp_a53/psu_cortexa53_0/lib/libxil.a
+all: $(BIT)
 	@echo "BOARD: $(BOARD)"
 
 # Build SDK Projects (hw_platform_0, BSPs)
-# These are all built together because the SDK leaves a history in .metadata
-# Also built: sdk/standalone_bsp_mb/engine_0_microblaze_0/lib/libxil.a
-sdk/standalone_bsp_a53/psu_cortexa53_0/lib/libxil.a: $(HDF)
+# Projects are built together sequentially by a single script because
+# the SDK leaves history in .metadata that obstructs separate 'makes'.
+$(BIT): $(HDF) $(BDF)
 	mkdir -p sdk
 	-$(RM) -r sdk/* sdk/.metadata
-	xsct sdk.tcl $(HDF)
+	$(XSCT) sdk.tcl $(HDF)
 
 .PHONY: clean
 clean:
-	$(RM) -r .Xil
-	$(RM) -r sdk
+	$(RM) -r .Xil sdk

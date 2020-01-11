@@ -1,5 +1,5 @@
-# Input: HLS source
-# Output: generated HDL libraries
+# Input: library source
+# Output: generated libraries
 
 # Cancel version control implicit rules
 %:: %,v
@@ -10,15 +10,13 @@
 # Delete default suffixes
 .SUFFIXES:
 
-# hls/compress/solution1/impl/ip/component.xml
-# hls/eth_fifo_interface/solution1/impl/ip/component.xml
+VERSION = $(if $(XILINX_VIVADO),$(notdir $(XILINX_VIVADO)),$(error Vivado environment not set))
+SUB := $(patsubst %/,%,$(shell ls -d 2*/)) hls
 
 .PHONY: all
-all: hls/eth_fifo_interface/solution1/impl/ip/component.xml
-
-hls/eth_fifo_interface/solution1/impl/ip/component.xml:
-	cd hls && $(MAKE)
+all:
+	for i in $(SUB); do $(MAKE) -C $$i; done
 
 .PHONY: clean
 clean:
-	cd hls && $(MAKE) clean
+	for i in $(SUB); do $(MAKE) -C $$i clean; done

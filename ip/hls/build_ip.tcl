@@ -1,9 +1,9 @@
 # Rebuild HLS IP from source
 # get list of IP from folder names
-set ip {compress eth_fifo_interface}
+set ip [glob -type d *]
 # Check and build each IP
 foreach item $ip {
-   if {[catch { glob -directory ${item}/solution1/impl/ip/ *.zip} zip_file]} {
+   if {[catch {glob -directory ${item}/solution1/impl/ip/ *.zip} zip_file]} {
 # Build IP only if a packaged IP does not exist
       puts "Building $item IP"
       exec vivado_hls -f $item/script.tcl

@@ -33,29 +33,6 @@
 #ifndef __MEMORY_CONFIG_H_
 #define __MEMORY_CONFIG_H_
 
-#include "xparameters.h"
-
-#define toUL(n) ((unsigned long)n)
-
-#if defined(XPAR_PSU_DDR_0_S_AXI_BASEADDR)
-#define DDR0_SZ (toUL(XPAR_PSU_DDR_0_S_AXI_HIGHADDR)-toUL(XPAR_PSU_DDR_0_S_AXI_BASEADDR)+1)
-#else
-#define DDR0_SZ 0x40000000UL
-#endif
-
-#if defined(XPAR_PSU_DDR_1_S_AXI_BASEADDR)
-#define DDR1_SZ (toUL(XPAR_PSU_DDR_1_S_AXI_HIGHADDR)-toUL(XPAR_PSU_DDR_1_S_AXI_BASEADDR)+1)
-#else
-#define DDR1_SZ 0x0UL
-#endif
-
-#if defined(XPAR_AXI_SHIM_0_BASEADDR)
-#define SHIM_SZ (toUL(XPAR_AXI_SHIM_0_HIGHADDR)-toUL(XPAR_AXI_SHIM_0_BASEADDR)+1)
-#else
-#define SHIM_SZ 0x0UL
-#endif
-
-
 struct memory_range_s {
 	char *name;
 	char *ip;

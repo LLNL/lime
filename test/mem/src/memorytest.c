@@ -55,8 +55,12 @@
  * XIL_TESTMEM_FIXEDPATTERN
  */
 #define SUB_TEST XIL_TESTMEM_INVERSEADDR
+// #define SUB_TEST XIL_TESTMEM_ALLMEMTESTS
 
-#define MAX_SIZE (DDR0_SZ+DDR1_SZ)
+#define MAX_SIZE (16 * (1UL << 30))
+// #define MAX_SIZE (1 * (1UL << 20))
+
+#define USE_CACHE 1
 
 #define DDRC_SARBASE0_OFFSET 0xFD070F04
 #define DDRC_SARSIZE0_OFFSET 0xFD070F08
@@ -69,16 +73,18 @@
 #define CEIL(n,s) ((((n)+((s)-1)) / (s)) * (s))
 #define FLOOR(n,s) (((n) / (s)) * (s))
 
-
 /*
  * memory_test.c: Test memory ranges present in the Hardware Design.
  *
- * This application runs with D-Caches disabled. As a result cacheline requests
- * will not be generated.
+ * This application may run some tests with the D-Caches disabled;
+ * however, the I-Caches are still enabled.
+ * As a result, data cache line requests will not be generated.
  *
- * For MicroBlaze/PowerPC, the BSP doesn't enable caches and this application
- * enables only I-Caches. For ARM, the BSP enables caches by default, so this
- * application disables D-Caches before running memory tests.
+ * For MicroBlaze/PowerPC, the BSP doesn't enable caches.
+ * For ARM, the BSP enables caches by default.
+ *
+ * When the D-Cache is used, cache management is needed to prevent
+ * errors because the DRAM memory regions are aliased.
  */
 
 #if 0
@@ -115,15 +121,22 @@ void putnum(unsigned long num)
 	}
 }
 
+/* 
+ * The test_memset and test_memcpy functions do use printf,
+ * so the linker script has been adjusted to allocate some heap space.
+ */
+
 void test_memset(void *ptr, size_t sz)
 {
 	tick_t start, finish;
 
+#if defined(USE_CACHE)
 	Xil_DCacheFlush();
 	Xil_DCacheInvalidateRange((INTPTR)ptr, sz);
+#endif
 	ptr = (void *)CEIL((size_t)ptr, ALIGN_SZ);
 	sz = FLOOR(sz, ALIGN_SZ);
-	printf("memset dst: %p, sz: %lx\n", ptr, (unsigned long)sz);
+	printf("memset dst: %p, sz: 0x%lx\n", ptr, (unsigned long)sz);
 	tget(start);
 	memset(ptr, 0xFF, sz);
 	tget(finish);
@@ -138,12 +151,14 @@ void test_memcpy(void *ptr, size_t sz)
 	tick_t start, finish;
 	void *dst, *src;
 
+#if defined(USE_CACHE)
 	Xil_DCacheFlush();
 	Xil_DCacheInvalidateRange((INTPTR)ptr, sz);
+#endif
 	sz = FLOOR(sz/2, ALIGN_SZ);
 	src = (void *)CEIL((size_t)ptr, ALIGN_SZ);
 	dst = src + sz;
-	printf("memcpy dst: %p, src: %p, sz: %lx\n", dst, src, (unsigned long)sz);
+	printf("memcpy dst: %p, src: %p, sz: 0x%lx\n", dst, src, (unsigned long)sz);
 	tget(start);
 	memcpy(dst, src, sz);
 	tget(finish);
@@ -158,7 +173,7 @@ void test_memory_range(struct memory_range_s *range) {
 	unsigned long test_size = range->size;
 
 	/* This application uses print statements instead of xil_printf/printf
-	 * to reduce the text size.
+	 * to reduce the text size. (Except for test_memset() and test_memcpy above.)
 	 *
 	 * The default linker script generated for this application does not have
 	 * heap memory allocated. This implies that this program cannot use any
@@ -167,14 +182,17 @@ void test_memory_range(struct memory_range_s *range) {
 	 * that does allocate sufficient heap memory.
 	 */
 
+	print("######################"); puteol;
 	print("Testing memory region: "); print(range->name); puteol;
 	print("    Memory Controller: "); print(range->ip); puteol;
 	print("         Base Address: 0x"); putnum(range->base); puteol;
 	print("                 Size: 0x"); putnum(range->size); print(" bytes"); puteol;
 	if (test_size > MAX_SIZE) test_size = MAX_SIZE;
 
+#if defined(USE_CACHE)
 	Xil_DCacheFlush();
 	Xil_DCacheInvalidateRange((INTPTR)range->base, test_size);
+#endif
 
 	status = Xil_TestMem32l((u32*)range->base, test_size/sizeof(u32), 0xAAAA5555, SUB_TEST);
 	print("          32-bit test: "); print(status == XST_SUCCESS? "PASSED!":"FAILED!"); puteol;
@@ -191,12 +209,21 @@ void test_memory_range(struct memory_range_s *range) {
 
 void test_alias(void)
 {
-	unsigned int *pa = (unsigned int *)0x0000000000;
-	unsigned int *pb = (unsigned int *)0x0800000000;
-	unsigned int *pc = (unsigned int *)0x1000000000;
+	unsigned int *pa, *pb, *pc;
 	int i, errb = 0, errc = 0, errbh = 0;
 
+	if (n_memory_ranges < 3) {
+		print("Skipping memory alias test."); puteol;
+		return;
+	}
+	pa = (unsigned int *)memory_ranges[0].base;
+	pb = (unsigned int *)memory_ranges[1].base;
+	pc = (unsigned int *)memory_ranges[2].base;
+	print("Testing memory alias:"); puteol;
+#if defined(USE_CACHE)
+	Xil_DCacheFlush();
 	Xil_DCacheDisable();
+#endif
 	for (i = 0; i < 64; i++) {
 		pb[i] = 0; DATA_SYNC;
 		pc[i] = 0; DATA_SYNC;
@@ -224,7 +251,9 @@ void test_alias(void)
 	}
 	if (errbh) {print("Error at 0x"); putnum((unsigned long)(pb+0x20000000)); puteol;}
 	if (!(errb || errc || errbh)) {print("Alias OK"); puteol;}
+#if defined(USE_CACHE)
 	Xil_DCacheEnable();
+#endif
 }
 
 int main()
@@ -232,7 +261,10 @@ int main()
 	int i;
 
 	//init_pagetable(); /* done in translation_table.S */
-	//Xil_DCacheDisable();
+#if !defined(USE_CACHE)
+	Xil_DCacheDisable();
+	print("NOTE: This application is running with D-Cache disabled."); puteol;
+#endif
 
 	print("--Starting Memory Test Application--"); puteol;
 
@@ -241,12 +273,16 @@ int main()
 	print("SARBASE1: 0x"); putnum(Xil_In32(DDRC_SARBASE1_OFFSET)); puteol;
 	print("SARSIZE1: 0x"); putnum(Xil_In32(DDRC_SARSIZE1_OFFSET)); puteol;
 
-	test_alias();
 	for (i = 0; i < n_memory_ranges; i++) {
 		test_memory_range(&memory_ranges[i]);
 	}
+	test_alias();
 
 	print("--Memory Test Application Complete--"); puteol;
+
+#if !defined(USE_CACHE)
+	Xil_DCacheEnable();
+#endif
 
 	return 0;
 }

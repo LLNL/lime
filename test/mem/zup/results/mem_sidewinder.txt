@@ -1,0 +1,47 @@
+$ make
+aarch64-none-elf-gcc  -O3 -Wall -MMD -DZYNQ=_ZU_ -DXILTIME -DUSE_MARGS -DMARGS='""' -I../src -I../../shared -I../../../standalone/sdk/standalone_bsp_a53/psu_cortexa53_0/include  -c -o memorytest.o ../src/memorytest.c
+
+--Starting Memory Test Application--
+SARBASE0: 0x0000000010
+SARSIZE0: 0x0000000003
+SARBASE1: 0x0000000014
+SARSIZE1: 0x0000000003
+######################
+Testing memory region: psu_ddr_0_MEM_0
+    Memory Controller: psu_ddr_0
+         Base Address: 0x0000000000
+                 Size: 0x0080000000 bytes
+++
+==
+          32-bit test: PASSED!
+memset dst: 0x0, sz: 0x80000000
+memset ticks: 29841002, time: 298413.004 us, bandwidth(wo): 7196.347 MB/s
+memcpy dst: 0x40000000, src: 0x0, sz: 0x40000000
+memcpy ticks: 64531795, time: 645324.403 us, bandwidth(rw): 3327.758 MB/s
+######################
+Testing memory region: psu_ddr_1_MEM_0
+    Memory Controller: psu_ddr_1
+         Base Address: 0x0800000000
+                 Size: 0x0400000000 bytes
+++++++++++++++++
+================
+          32-bit test: PASSED!
+memset dst: 0x800000000, sz: 0x400000000
+memset ticks: 238730794, time: 2387331.813 us, bandwidth(wo): 7196.264 MB/s
+memcpy dst: 0xa00000000, src: 0x800000000, sz: 0x200000000
+memcpy ticks: 456021060, time: 4560256.203 us, bandwidth(rw): 3767.304 MB/s
+######################
+Testing memory region: axi_shim_0_mem0
+    Memory Controller: axi_shim_0
+         Base Address: 0x1000000000
+                 Size: 0x0400000000 bytes
+++++++++++++++++
+================
+          32-bit test: PASSED!
+memset dst: 0x1000000000, sz: 0x400000000
+memset ticks: 802758069, time: 8027660.967 us, bandwidth(wo): 2140.084 MB/s
+memcpy dst: 0x1200000000, src: 0x1000000000, sz: 0x200000000
+memcpy ticks: 999759374, time: 9997693.717 us, bandwidth(rw): 1718.383 MB/s
+Testing memory alias:
+Alias OK
+--Memory Test Application Complete--

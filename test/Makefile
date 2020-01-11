@@ -10,8 +10,7 @@
 build = zup
 WORKSPACE_LOC ?= ../standalone/sdk
 HWP = $(WORKSPACE_LOC)/hw_platform_0
-#XSDB = xmd$(if $(findstring Linux,$(shell uname -s)),,.bat) -tcl
-XSDB = xsdb$(if $(findstring Linux,$(shell uname -s)),,.bat)
+XSDB := xsdb$(if $(findstring Linux,$(shell uname -s)),,.bat)
 
 # External Dependencies:
 # $(WORKSPACE_LOC)/hw_platform_0/system_wrapper.bit
@@ -19,8 +18,8 @@ XSDB = xsdb$(if $(findstring Linux,$(shell uname -s)),,.bat)
 
 .PHONY: all run
 .DEFAULT all run:
-	cd mem/$(build) && $(MAKE) $@
-	cd strm/$(build) && $(MAKE) $@
+	$(MAKE) -C mem/$(build) $@
+	$(MAKE) -C strm/$(build) $@
 
 .PHONY: fpga
 fpga:
@@ -34,8 +33,8 @@ run: fpga
 
 .PHONY: clean
 clean:
-	cd mem/zup && $(MAKE) clean
-	cd strm/arm_64 && $(MAKE) clean
-	cd strm/x86_64 && $(MAKE) clean
-	cd strm/zup && $(MAKE) clean
-	cd strm/zynq && $(MAKE) clean
+	$(MAKE) -C mem/zup clean
+	$(MAKE) -C strm/arm_64 clean
+	$(MAKE) -C strm/x86_64 clean
+	$(MAKE) -C strm/zup clean
+	$(MAKE) -C strm/zynq clean

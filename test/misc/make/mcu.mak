@@ -1,7 +1,7 @@
 LABEL = V$(subst .,_,$(VERSION))
 EXE = .elf
 
-WORKSPACE_LOC ?= ../../../standalone/sdk
+WORKSPACE_LOC ?= ../../..
 BSP = $(WORKSPACE_LOC)/standalone_bsp_mb
 
 #DEFS += -DVERSION=$(VERSION)

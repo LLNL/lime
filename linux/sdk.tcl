@@ -10,8 +10,8 @@ exec sed -i.bak -f $PDIR/sar.sed sdk/hw_platform_0/psu_init.tcl
 createapp -name fsbl -app {Zynq MP FSBL} -proc psu_cortexa53_0 -hwproject hw_platform_0 -os standalone -lang C -arch 64
 configapp -app fsbl build-config release
 # patch translation table
-exec cp -p $PDIR/translation_table.S sdk/fsbl_bsp/psu_cortexa53_0/libsrc/standalone_v6_7/src
-exec cp -p $PDIR/translation_table.S sdk/fsbl/src/xfsbl_translation_table.S
+exec cp -p $PDIR/translation_table_a53.S sdk/fsbl_bsp/psu_cortexa53_0/libsrc/standalone_v6_7/src/translation_table.S
+exec cp -p $PDIR/translation_table_a53.S sdk/fsbl/src/xfsbl_translation_table.S
 # PMUFW
 createapp -name pmufw -app {ZynqMP PMU Firmware} -proc psu_pmu_0 -hwproject hw_platform_0 -os standalone -lang C
 configapp -app pmufw build-config release

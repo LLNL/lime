@@ -4,11 +4,13 @@ EXE = .elf
 WORKSPACE_LOC ?= ../../../standalone/sdk
 BSP = $(WORKSPACE_LOC)/standalone_bsp_a53
 HWP = $(WORKSPACE_LOC)/hw_platform_0
-#XSDB = xmd$(if $(findstring Linux,$(shell uname -s)),,.bat) -tcl
-XSDB = xsdb$(if $(findstring Linux,$(shell uname -s)),,.bat)
+XSDB := xsdb$(if $(findstring Linux,$(shell uname -s)),,.bat)
 
 #DEFS += -DVERSION=$(VERSION)
 DEFS += -DZYNQ=_ZU_ -DXILTIME -DUSE_MARGS -DMARGS='"$(RUN_ARGS)"'
+
+# Overwrite 32-bit Standalone sbrk with 64-bit version
+# MODULES += sbrk_sa
 
 ifneq ($(findstring M5,$(DEFS)),)
   SRC += ../../m5
