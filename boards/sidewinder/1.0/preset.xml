@@ -723,7 +723,7 @@
         <user_parameter name="CONFIG.PSU__DDRC__SELF_REF_ABORT" value="0"/>
 
         <user_parameter name="CONFIG.PSU__OVERRIDE__BASIC_CLOCK " value="0"/>
-        <user_parameter name="CONFIG.PSU__PSS_REF_CLK__FREQMHZ" value="33.333"/>
+        <user_parameter name="CONFIG.PSU__PSS_REF_CLK__FREQMHZ" value="33.333333"/>
 
         <user_parameter name="CONFIG.PSU__CRF_APB__APLL_CTRL__SRCSEL" value="PSS_REF_CLK"/>
         <user_parameter name="CONFIG.PSU__CRF_APB__DPLL_CTRL__SRCSEL" value="PSS_REF_CLK"/>
@@ -769,9 +769,9 @@
         <user_parameter name="CONFIG.PSU__CRL_APB__DBG_LPD_CTRL__SRCSEL" value="IOPLL"/>
         <user_parameter name="CONFIG.PSU__CRL_APB__DBG_LPD_CTRL__FREQMHZ" value="250"/>
         <user_parameter name="CONFIG.PSU__CRF_APB__ACPU_CTRL__SRCSEL" value="APLL"/>
-        <user_parameter name="CONFIG.PSU__CRF_APB__ACPU_CTRL__FREQMHZ" value="1100"/>
-        <user_parameter name="CONFIG.PSU__CRF_APB__GPU_REF_CTRL__SRCSEL" value="VPLL"/>
-        <user_parameter name="CONFIG.PSU__CRF_APB__GPU_REF_CTRL__FREQMHZ" value="550"/>
+        <user_parameter name="CONFIG.PSU__CRF_APB__ACPU_CTRL__FREQMHZ" value="1200"/>
+        <user_parameter name="CONFIG.PSU__CRF_APB__GPU_REF_CTRL__SRCSEL" value="IOPLL"/>
+        <user_parameter name="CONFIG.PSU__CRF_APB__GPU_REF_CTRL__FREQMHZ" value="500"/>
         <user_parameter name="CONFIG.PSU__CRF_APB__DDR_CTRL__SRCSEL" value="DPLL"/>
         <user_parameter name="CONFIG.PSU__CRF_APB__DDR_CTRL__FREQMHZ" value="933"/>
 
@@ -789,17 +789,17 @@
         <user_parameter name="CONFIG.PSU__CRL_APB__LPD_LSBUS_CTRL__FREQMHZ" value="100"/>
         <user_parameter name="CONFIG.PSU__CRL_APB__TIMESTAMP_REF_CTRL__SRCSEL" value="IOPLL"/>
         <user_parameter name="CONFIG.PSU__CRL_APB__TIMESTAMP_REF_CTRL__FREQMHZ" value="100"/>
-        <user_parameter name="CONFIG.PSU__CRL_APB__PCAP_CTRL__SRCSEL" value="RPLL"/>
+        <user_parameter name="CONFIG.PSU__CRL_APB__PCAP_CTRL__SRCSEL" value="IOPLL"/>
         <user_parameter name="CONFIG.PSU__CRF_APB__DP_STC_REF_CTRL__SRCSEL" value="RPLL"/>
         <user_parameter name="CONFIG.PSU__CRF_APB__DP_AUDIO_REF_CTRL__SRCSEL" value="RPLL"/>
         <user_parameter name="CONFIG.PSU__CRL_APB__PCAP_CTRL__FREQMHZ" value="200"/>
         <user_parameter name="CONFIG.PSU__CRL_APB__ADMA_REF_CTRL__SRCSEL" value="IOPLL"/>
         <user_parameter name="CONFIG.PSU__CRL_APB__ADMA_REF_CTRL__FREQMHZ" value="500"/>
         <user_parameter name="CONFIG.PSU__CRF_APB__GDMA_REF_CTRL__SRCSEL" value="APLL"/>
-        <user_parameter name="CONFIG.PSU__CRF_APB__GDMA_REF_CTRL__FREQMHZ" value="550"/>
+        <user_parameter name="CONFIG.PSU__CRF_APB__GDMA_REF_CTRL__FREQMHZ" value="600"/>
         <user_parameter name="CONFIG.PSU__CRF_APB__DPDMA_REF_CTRL__SRCSEL" value="APLL"/>
-        <user_parameter name="CONFIG.PSU__CRF_APB__DPDMA_REF_CTRL__FREQMHZ" value="550"/>
-        <user_parameter name="CONFIG.PSU__CRF_APB__TOPSW_MAIN_CTRL__SRCSEL" value="VPLL"/>
+        <user_parameter name="CONFIG.PSU__CRF_APB__DPDMA_REF_CTRL__FREQMHZ" value="600"/>
+        <user_parameter name="CONFIG.PSU__CRF_APB__TOPSW_MAIN_CTRL__SRCSEL" value="DPLL"/>
         <user_parameter name="CONFIG.PSU__CRF_APB__TOPSW_MAIN_CTRL__FREQMHZ" value="533.33"/>
         <user_parameter name="CONFIG.PSU__CRF_APB__TOPSW_LSBUS_CTRL__SRCSEL" value="IOPLL"/>
         <user_parameter name="CONFIG.PSU__CRF_APB__TOPSW_LSBUS_CTRL__FREQMHZ" value="100"/>

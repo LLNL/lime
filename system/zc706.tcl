@@ -423,6 +423,9 @@ proc cr_bd_main {parentCell} {
 		CONFIG.PCW_TTC0_PERIPHERAL_ENABLE {0} \
 		CONFIG.PCW_USB0_PERIPHERAL_ENABLE {0} \
 	] $zynq_ps_0
+	# Presets
+	# PS Reference Clock {33.33333} # Couldn't find where default is set
+	# CONFIG.PCW_APU_PERIPHERAL_FREQMHZ {667.000000} # in zc706.tcl
 
 	create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_pl_clk0
 
@@ -438,9 +441,6 @@ proc cr_bd_main {parentCell} {
 		$map0_in $map0_out $map0_width \
 		$map1_in $map1_out $map1_width \
 		$mem_addr_width
-	# FIXME: MAX_BURST_LENGTH should be propagating, read only on s_axi
-	# set_property CONFIG.MAX_BURST_LENGTH {16} [get_bd_intf_pins delay_0/axi_shim_0/m_axi]
-	# set_property CONFIG.MAX_BURST_LENGTH {16} [get_bd_intf_pins delay_0/axi_shim_1/m_axi]
 
 	# Connect Zynq clocks/resets to processor system reset
 	connect_bd_net [get_bd_pins zynq_ps_0/FCLK_CLK0] [get_bd_pins rst_pl_clk0/slowest_sync_clk]
@@ -502,9 +502,6 @@ proc cr_bd_main {parentCell} {
 		$map0_in $map0_out $map0_width \
 		$map1_in $map1_out $map1_width \
 		$mem_addr_width
-	# FIXME: MAX_BURST_LENGTH should be propagating, read only on s_axi
-	# set_property CONFIG.MAX_BURST_LENGTH {16} [get_bd_intf_pins delay_1/axi_shim_0/m_axi]
-	# set_property CONFIG.MAX_BURST_LENGTH {16} [get_bd_intf_pins delay_1/axi_shim_1/m_axi]
 
 	# Connect delay_1
 	connect_bd_net [get_bd_pins zynq_ps_0/FCLK_CLK1] [get_bd_pins delay_1/ACLK]
@@ -582,7 +579,7 @@ proc cr_bd_main {parentCell} {
 	# BOARD: sysclk
 	# TODO: set property from board file?
 	set sysclk [create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 sysclk]
-	set_property CONFIG.FREQ_HZ {100000000} $sysclk
+	set_property CONFIG.FREQ_HZ {200000000} $sysclk
 	set reset [create_bd_port -dir I -type rst reset]
 	set_property CONFIG.POLARITY {ACTIVE_HIGH} $reset
 	set trace_sdram [create_bd_intf_port -mode Master -vlnv xilinx.com:interface:ddrx_rtl:1.0 trace_sdram]

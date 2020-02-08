@@ -54,9 +54,9 @@ dts/system-top.dts: sdk/pmufw/Release/pmufw.elf device-tree-xlnx
 	$(XSCT) dts.tcl
 	sed -i.bak '/fclk0: fclk0 {/,/status = "disabled";/c\\tfclk0: fclk0 {\n\t\tstatus = "okay";' dts/zynqmp-clk-ccf.dtsi
 	sed -i.bak '/fclk1: fclk1 {/,/status = "disabled";/c\\tfclk1: fclk1 {\n\t\tstatus = "okay";' dts/zynqmp-clk-ccf.dtsi
-	# Enable setting CPU frequency to 137MHz via /sys/devices/system/cpu/cpufreq/policy0
+	# Enable setting CPU frequency to 137.5 MHz via /sys/devices/system/cpu/cpufreq/policy0
 	# For more information see https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841831/CPU+frequency+scaling
-	sed -i.bak -e 's/opp-hz = \/bits\/ 64 <299999997>/opp-hz = \/bits\/ 64 <137999996>/g' dts/zynqmp.dtsi
+	sed -i.bak -e 's/opp-hz = \/bits\/ 64 <299999997>/opp-hz = \/bits\/ 64 <137500000>/g' dts/zynqmp.dtsi
 ifneq ($(findstring sidewinder,$(BOARD)),)
 	sed -i.bak '/memory {/,/};/c\memory {\n\tdevice_type = "memory";\n\tlinux,usable-memory = <0x10 0x00000000 0x4 0x00000000>;\n};' dts/system-top.dts
 	sed -i.bak '/&sdhci1 {/ a\\tno-1-8-v;\n\tdisable-wp;' dts/pcw.dtsi

@@ -680,7 +680,7 @@
         
 		<interface mode="slave" name="PL_DDR_CLK" type="xilinx.com:interface:diff_clock_rtl:1.0" of_component="PL_DDR_CLK" >
           <parameters>
-            <parameter name="frequency" value="333330000"/>
+            <parameter name="frequency" value="333333333"/>
           </parameters>
           <preferred_ips>
             <preferred_ip vendor="xilinx.com" library="ip" name="clk_wiz" order="0"/>

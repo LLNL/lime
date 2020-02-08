@@ -108,8 +108,9 @@ update_ip_catalog -rebuild
 # Set the directory path for the new project
 set proj_dir [get_property directory $cproj]
 
-# Suppress DP_AUDIO message from ZCU102 preset
-set_msg_config -id {[PSU-1]} -suppress
+# Suppress DP_AUDIO & DP_VIDEO messages from ZCU102 preset
+# set_msg_config -id {[PSU-1]} -suppress
+# set_msg_config -id {[PSU-2]} -suppress
 
 # Proc to create main BD
 proc cr_bd_main {parentCell} {
@@ -189,6 +190,9 @@ proc cr_bd_main {parentCell} {
 		-config {apply_board_preset "1"} \
 		$zynq_ps_0
 	# Needs to be applied after setting board presets
+	# Use target ACPU frequency of 1100 MHz for emulation consistency
+	# NOTE: unused peripherals are disabled, displayport and usb drivers
+	# have been known to cause kernel panic in Linux.
 	set_property -dict [list \
 		CONFIG.PSU__USE__M_AXI_GP0 {1} \
 		CONFIG.PSU__USE__M_AXI_GP1 {1} \
@@ -201,7 +205,18 @@ proc cr_bd_main {parentCell} {
 		CONFIG.PSU__CRL_APB__PL1_REF_CTRL__FREQMHZ {300} \
 		CONFIG.PSU__NUM_FABRIC_RESETS {2} \
 		CONFIG.PSU__HIGH_ADDRESS__ENABLE {1} \
+		CONFIG.PSU__CRF_APB__ACPU_CTRL__FREQMHZ {1100} \
+		CONFIG.PSU__DISPLAYPORT__PERIPHERAL__ENABLE {0} \
+		CONFIG.PSU__DPAUX__PERIPHERAL__ENABLE {0} \
+		CONFIG.PSU__USB0__PERIPHERAL__ENABLE {0} \
+		CONFIG.PSU__USB3_0__PERIPHERAL__ENABLE {0} \
+		CONFIG.PSU__CAN1__PERIPHERAL__ENABLE {0} \
+		CONFIG.PSU__PCIE__PERIPHERAL__ENABLE {0} \
+		CONFIG.PSU__SATA__PERIPHERAL__ENABLE {0} \
+		CONFIG.PSU__PMU__PERIPHERAL__ENABLE {0} \
 	] $zynq_ps_0
+	# Presets
+	# CONFIG.PSU__PSS_REF_CLK__FREQMHZ {33.330}
 
 	create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_pl_clk0
 
