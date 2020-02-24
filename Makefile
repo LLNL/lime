@@ -12,19 +12,28 @@ PACKAGE = lime-2.1.0
 
 DESIGNS := $(patsubst system/%.tcl,%,$(wildcard system/*.tcl))
 
-.PHONY: all
-all:
-	@echo "Specify a design target:"
+.PHONY: all help
+all help:
+	@echo "Design targets:"
 	@for i in $(DESIGNS); do echo "  $$i"; done
-	@echo "and optionally an OS target (standalone or linux)."
-	@echo "Use target 'sdcard' to format and copy linux to an SD card."
-	@echo "Use the make variable 'DEV' to specify the SD device"
-	@echo "(e.g. make sdcard DEV=/dev/mmcblk0)."
-	@echo "Use target 'trace' to build the trace parser."
-	@echo "Use target 'test' to run hardware tests (standalone)."
-	@echo "Preconditions:"
-	@echo "1) Xilinx tools in path (e.g. source /opt/Xilinx/Vivado/<version>/settings64.sh)"
-	@echo "2) Path to Internet through firewall (e.g. lynx www.google.com)"
+	@echo -e "\nOS targets: can be specified with design targets"
+	@echo "  linux"
+	@echo "  standalone"
+	@echo -e "\nOther targets:"
+	@echo "  clean   - Remove build files"
+	@echo "  dist    - Package the release for distribution (tar)"
+	@echo "  ip      - Build IP libraries"
+	@echo "  project - Include with design target to only create a project"
+	@echo "  sdcard  - Format and copy Linux to an SD card"
+	@echo "            Use the make variable 'DEV' to specify the SD device."
+	@echo "            e.g., make sdcard DEV=/dev/mmcblk0"
+	@echo "  test    - Run hardware tests (standalone)"
+	@echo "  trace   - Build the trace parser"
+	@echo -e "\nPreconditions:"
+	@echo "  1) Xilinx tools in path"
+	@echo "     e.g., source /opt/Xilinx/Vivado/<version>/settings64.sh"
+	@echo "  2) Path to Internet through firewall"
+	@echo "     e.g., lynx www.google.com"
 
 .PHONY: ip
 ip:
