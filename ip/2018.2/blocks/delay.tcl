@@ -2,13 +2,14 @@
 if {[info exists _delay_tcl]} {return}
 set _delay_tcl 1
 
-
 # Hierarchical cell: delay
 proc create_hier_cell_delay {parentCell nameHier \
 	addr_width data_width id_width protocol \
 	map0_in map0_out map0_width \
 	map1_in map1_out map1_width \
 	mem_addr_width} {
+
+        set axi_delay_ip axi_delayv
 
 	puts "########## create $nameHier begin ##########"
 
@@ -88,29 +89,61 @@ proc create_hier_cell_delay {parentCell nameHier \
 		CONFIG.NUM_SI {1} \
 	] $axi_interconnect_0
 
-	# Create instance: axi_delay_0, and set properties
-	set axi_delay_0 [create_bd_cell -type ip -vlnv llnl.gov:user:axi_delay:1.2 axi_delay_0]
-	set_property -dict [list \
-		CONFIG.C_AXI_ADDR_WIDTH $addr_width \
-		CONFIG.C_AXI_DATA_WIDTH $data_width \
-		CONFIG.C_AXI_ID_WIDTH {6} \
-		CONFIG.C_AXI_PROTOCOL $protocol \
-		CONFIG.C_FIFO_DEPTH_B {32} \
-		CONFIG.C_FIFO_DEPTH_R {512} \
-		CONFIG.C_MEM_ADDR_WIDTH $mem_addr_width \
-	] $axi_delay_0
+        if {$axi_delay_ip == "axi_delay"} {
+		# Create instance: axi_delay_0, and set properties
+		set axi_delay_0 [create_bd_cell -type ip -vlnv llnl.gov:user:axi_delay:1.2 axi_delay_0]
+		set_property -dict [list \
+			CONFIG.C_AXI_ADDR_WIDTH $addr_width \
+			CONFIG.C_AXI_DATA_WIDTH $data_width \
+			CONFIG.C_AXI_ID_WIDTH {6} \
+			CONFIG.C_AXI_PROTOCOL $protocol \
+			CONFIG.C_FIFO_DEPTH_B {32} \
+			CONFIG.C_FIFO_DEPTH_R {512} \
+			CONFIG.C_MEM_ADDR_WIDTH $mem_addr_width \
+		] $axi_delay_0
 
-	# Create instance: axi_delay_1, and set properties
-	set axi_delay_1 [create_bd_cell -type ip -vlnv llnl.gov:user:axi_delay:1.2 axi_delay_1]
-	set_property -dict [list \
-		CONFIG.C_AXI_ADDR_WIDTH $addr_width \
-		CONFIG.C_AXI_DATA_WIDTH $data_width \
-		CONFIG.C_AXI_ID_WIDTH {6} \
-		CONFIG.C_AXI_PROTOCOL $protocol \
-		CONFIG.C_FIFO_DEPTH_B {32} \
-		CONFIG.C_FIFO_DEPTH_R {512} \
-		CONFIG.C_MEM_ADDR_WIDTH $mem_addr_width \
-	] $axi_delay_1
+		# Create instance: axi_delay_1, and set properties
+		set axi_delay_1 [create_bd_cell -type ip -vlnv llnl.gov:user:axi_delay:1.2 axi_delay_1]
+		set_property -dict [list \
+			CONFIG.C_AXI_ADDR_WIDTH $addr_width \
+			CONFIG.C_AXI_DATA_WIDTH $data_width \
+			CONFIG.C_AXI_ID_WIDTH {6} \
+			CONFIG.C_AXI_PROTOCOL $protocol \
+			CONFIG.C_FIFO_DEPTH_B {32} \
+			CONFIG.C_FIFO_DEPTH_R {512} \
+			CONFIG.C_MEM_ADDR_WIDTH $mem_addr_width \
+		] $axi_delay_1
+        }
+
+        if {$axi_delay_ip == "axi_delayv"} {
+		# Create instance: axi_delay_0, and set properties
+		set axi_delay_0 [create_bd_cell -type ip -vlnv llnl.gov:user:axi_delayv:1.0 axi_delay_0]
+		set_property -dict [list \
+			CONFIG.C_AXI_ADDR_WIDTH $addr_width \
+			CONFIG.C_AXI_DATA_WIDTH $data_width \
+			CONFIG.C_AXI_ID_WIDTH {6} \
+			CONFIG.C_AXI_PROTOCOL $protocol \
+//			CONFIG.C_FIFO_DEPTH_B {32} \
+//			CONFIG.C_FIFO_DEPTH_R {512} \
+			CONFIG.C_MEM_ADDR_WIDTH $mem_addr_width \
+                        CONFIG.C_PRIORITY_QUEUE_WIDTH {16} \
+                        CONFIG.DELAY_WIDTH {24} \
+                        CONFIG.CAM_DEPTH {8} \
+                        CONFIG.NUM_MINI_BUFS {64} \
+		] $axi_delay_0
+
+		# Create instance: axi_delay_1, and set properties
+		set axi_delay_1 [create_bd_cell -type ip -vlnv llnl.gov:user:axi_delayv:1.0 axi_delay_1]
+		set_property -dict [list \
+			CONFIG.C_AXI_ADDR_WIDTH $addr_width \
+			CONFIG.C_AXI_DATA_WIDTH $data_width \
+			CONFIG.C_AXI_ID_WIDTH {6} \
+			CONFIG.C_AXI_PROTOCOL $protocol \
+//			CONFIG.C_FIFO_DEPTH_B {32} \
+//			CONFIG.C_FIFO_DEPTH_R {512} \
+			CONFIG.C_MEM_ADDR_WIDTH $mem_addr_width \
+		] $axi_delay_1
+        }
 
 	# Create interface connections
 	connect_bd_intf_net [get_bd_intf_pins S0_AXI_LITE] \

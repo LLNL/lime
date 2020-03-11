@@ -18,7 +18,7 @@ use axi_delay_lib.axi_delay_pkg.all;
 library xpm;
 use xpm.vcomponents.all;
 
-entity axi_delay is
+entity axi_delayv is
 
 generic (
 	C_FAMILY         : string := "rtl";
@@ -201,9 +201,9 @@ port (
 	m_axi_rready   : out std_logic
 );
 
-end axi_delay;
+end axi_delayv;
 
-architecture behavioral of axi_delay is
+architecture behavioral of axi_delayv is
 
 --******************************************************************************
 -- Constants
