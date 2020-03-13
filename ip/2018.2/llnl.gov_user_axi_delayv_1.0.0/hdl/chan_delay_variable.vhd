@@ -85,6 +85,8 @@ port (
     m_axi_resp    : out std_logic_vector(1 downto 0);
 
     ----- Guassian delay table initialization port	
+    dclk_i        : in  std_logic;
+    dresetn_i     : in  std_logic;
     gdt_wren_i    : in  std_logic_vector(0 downto 0);
     gdt_addr_i    : in  std_logic_vector(15 downto 0); 
     gdt_wdata_i   : in  std_logic_vector(23 downto 0);
@@ -112,7 +114,8 @@ constant CTR_PTR_WIDTH     : integer := MINIBUF_IDX_WIDTH + 2; -- indexes into (
 constant AXI_INFO_WIDTH    : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_ADDR_WIDTH + C_AXI_DATA_WIDTH/8 + 
                                     8 + 3 + 2 + 2 + 4 + 3 + 4 + 4 + 1 + 1 + 2;
 
-constant C_ZERO : std_logic_vector(1023 downto 0) := (others => '0'); -- create std_logic_vector for FIFO i/p leading zeros
+constant C_ZERO    : std_logic_vector(1023 downto 0) := (others => '0');
+constant C_ZERO_16 : std_logic_vector(15 downto 0) := (others => '0');
 
 --******************************************************************************
 --Signal Definitions
@@ -136,10 +139,12 @@ signal mc_ctr_ptr     : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
 signal mc_ctr_ptr_wr  : std_logic;
 
 signal aidb_id            : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
+signal aidb_id_zero       : std_logic_vector(15 downto 0);
 signal aidb_cntr_ptr_base : std_logic_vector(MINIBUF_IDX_WIDTH-1 downto 0);
 signal aidb_wr            : std_logic_vector(0 downto 0);
 
 signal aidb_baddr         : std_logic_vector(MINIBUF_IDX_WIDTH-1 downto 0);
+signal aidb_bdata_zero    : std_logic_vector(15 downto 0);
 signal aidb_bdata         : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
 
 signal pb_info_data       : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
@@ -353,19 +358,25 @@ pktbuf_dinb <= C_ZERO(1023 downto AXI_INFO_WIDTH) & pktbuf_dinb_cat;
 ---------------------------------------
 -- AXI ID Buffer
 ---------------------------------------
+
+aidb_id_zero <= aidb_id when (C_AXI_ID_WIDTH = 16) else
+                (C_ZERO_16(15 downto C_AXI_ID_WIDTH) & aidb_id);
+
 axi_id_buffer : DPRAM_64x16
 PORT MAP (
     clka  => s_axi_aclk,
     ena   => '1',
     wea   => aidb_wr,
     addra => aidb_cntr_ptr_base,
-    dina  => aidb_id,
+    dina  => aidb_id_zero,
       
     clkb  => m_axi_aclk,
     enb   => '1',
     addrb => aidb_baddr,
-    doutb => aidb_bdata
+    doutb => aidb_bdata_zero
 );	
+
+aidb_bdata <= aidb_bdata_zero(C_AXI_ID_WIDTH-1 downto 0);
 
 ---------------------------------------
 -- ScoreBoard
@@ -404,6 +415,8 @@ port map (
 	clk_i            => m_axi_aclk,
 	rst_i            => m_axi_areset,
 
+	dclk_i           => dclk_i,
+	dresetn_i        => dresetn_i,
     gdt_wren_i       => gdt_wren_i,
     gdt_addr_i       => gdt_addr_i,
     gdt_wdata_i      => gdt_wdata_i,

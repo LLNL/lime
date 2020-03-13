@@ -22,6 +22,8 @@ port (
     clk_i            : in  std_logic;
     rst_i            : in  std_logic;
 
+	dclk_i        : in  std_logic;
+	dresetn_i     : in  std_logic;
     gdt_wren_i       : in  std_logic_vector(0 downto 0);
     gdt_addr_i       : in  std_logic_vector(15 downto 0); 
     gdt_wdata_i      : in  std_logic_vector(23 downto 0);
@@ -75,11 +77,12 @@ begin
 
 gauss_delay_table : dpram_64Kx24
     PORT MAP (
-        clka  => clk_i,
+        clka  => dclk_i,
         wea   => gdt_wren_i,
         addra => gdt_addr_i,
         dina  => gdt_wdata_i,
         douta => gdt_rdata_o,
+        
         clkb  => clk_i,
         web   => (others => '0'),
         addrb => lfsr_tmp,

@@ -6,8 +6,9 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use IEEE.std_logic_unsigned.all;
 use ieee.numeric_std.all;
-use ieee.std_logic_arith.ext;
+use ieee.std_logic_misc.all;
 
 library axi_delay_lib;
 use axi_delay_lib.axi_delay_pkg.all;
@@ -73,7 +74,7 @@ signal m_shift_valid : bit_signal;
 signal m_shift_ready : bit_signal;
 signal m_data_en     : bit_signal;
 signal s_data_en     : bit_signal;
-signal count_time    : unsigned(31 downto 0);
+signal count_time    : std_logic_vector(31 downto 0);
 
 signal dout_ready    : std_logic;
 
@@ -94,7 +95,7 @@ begin
     end if;
 end process;
 
-count_time_o  <= std_logic_vector(count_time);
+count_time_o  <= count_time;
 dout_ready    <= '1' when (dout_ready_i = '1' and din_en_i = '0' and (delay_reg(0) = x"000000")) else
                  '0';
 
@@ -112,7 +113,7 @@ for i in 0 to PRIORITY_QUEUE_WIDTH-1 generate
     port map(
         clk_i             => clk_i,
         nreset_i          => nreset_i,
-        count_time_i      => std_logic_vector(count_time),
+        count_time_i      => count_time,
         delay_reg_o       => delay_reg(i),
         id_reg_o          => id_reg(i),
         valid_reg_o       => valid_reg(i),

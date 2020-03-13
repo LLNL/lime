@@ -123,12 +123,11 @@ proc create_hier_cell_delay {parentCell nameHier \
 			CONFIG.C_AXI_DATA_WIDTH $data_width \
 			CONFIG.C_AXI_ID_WIDTH {6} \
 			CONFIG.C_AXI_PROTOCOL $protocol \
-//			CONFIG.C_FIFO_DEPTH_B {32} \
-//			CONFIG.C_FIFO_DEPTH_R {512} \
 			CONFIG.C_MEM_ADDR_WIDTH $mem_addr_width \
                         CONFIG.C_PRIORITY_QUEUE_WIDTH {16} \
                         CONFIG.DELAY_WIDTH {24} \
                         CONFIG.CAM_DEPTH {8} \
+                        CONFIG.CAM_WIDTH {16} \
                         CONFIG.NUM_MINI_BUFS {64} \
 		] $axi_delay_0
 
@@ -139,9 +138,12 @@ proc create_hier_cell_delay {parentCell nameHier \
 			CONFIG.C_AXI_DATA_WIDTH $data_width \
 			CONFIG.C_AXI_ID_WIDTH {6} \
 			CONFIG.C_AXI_PROTOCOL $protocol \
-//			CONFIG.C_FIFO_DEPTH_B {32} \
-//			CONFIG.C_FIFO_DEPTH_R {512} \
 			CONFIG.C_MEM_ADDR_WIDTH $mem_addr_width \
+                        CONFIG.C_PRIORITY_QUEUE_WIDTH {16} \
+                        CONFIG.DELAY_WIDTH {24} \
+                        CONFIG.CAM_DEPTH {8} \
+                        CONFIG.CAM_WIDTH {16} \
+                        CONFIG.NUM_MINI_BUFS {64} \
 		] $axi_delay_1
         }
 

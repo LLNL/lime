@@ -10,6 +10,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use IEEE.std_logic_unsigned.all;
 use ieee.numeric_std.all;
+use ieee.std_logic_misc.all;
 
 library axi_delay_lib;
 use axi_delay_lib.all;
@@ -115,7 +116,7 @@ compare_proc : process (cam_memory, data_i, minicam_hit_slv) begin
         end if;
     end loop;
     
-    minicam_hit <= or (minicam_hit_slv);
+    minicam_hit <= or_reduce (minicam_hit_slv);
 
 end process;
 
@@ -282,7 +283,7 @@ available_gen : for kk in 0 to 7 generate
     available(kk) <= '1' when ((valid(kk) = '1') and (active(kk) = '0')) else '0';
 end generate; 
 
-available_ctrptr   <= or (available); -- there is at least one availble (i.e. valid but not active) ctr_ptr
+available_ctrptr   <= or_reduce (available); -- there is at least one availble (i.e. valid but not active) ctr_ptr
 available_ctrptr_o <= available_ctrptr; -- there is at least one availble (i.e. valid but not active) ctr_ptr
 
 ----------------------------------------------------------------------------------------------

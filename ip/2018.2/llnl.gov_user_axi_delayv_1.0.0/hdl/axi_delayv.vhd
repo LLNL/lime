@@ -49,7 +49,7 @@ generic (
     PRIORITY_QUEUE_WIDTH : integer := 16;
     DELAY_WIDTH          : integer := 24;
     CAM_DEPTH            : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
-    CAM_WIDTH            : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
+--    CAM_WIDTH            : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
     NUM_MINI_BUFS        : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported    
 );
 
@@ -208,9 +208,10 @@ architecture behavioral of axi_delayv is
 --******************************************************************************
 -- Constants
 --******************************************************************************
-constant NREG : integer := 3;
+constant NREG           : integer := 3;
 constant REG_ADDR_WIDTH : integer := log2rp(NREG);
-constant WORD_LSB : integer := log2rp(C_AXI_LITE_DATA_WIDTH/8);
+constant WORD_LSB       : integer := log2rp(C_AXI_LITE_DATA_WIDTH/8);
+constant CAM_WIDTH      : integer := C_AXI_ID_WIDTH; -- maximum width of axi_id input. Requirement: CAMWIDTH <= 
 
 --******************************************************************************
 --Signal Definitions
@@ -503,10 +504,10 @@ end process;
 				end case;
 			elsif (r_chipsel(1) = '1') then
 				gdt_b_raddr        <= s_axi_lite_araddr_r(15 downto 0);
-				s_axi_lite_rdata_i <= gdt_b_rdata;
+				s_axi_lite_rdata_i <= x"00" & gdt_b_rdata;
 			elsif (r_chipsel(2) = '1') then
 				gdt_r_raddr        <= s_axi_lite_araddr_r(15 downto 0);
-				s_axi_lite_rdata_i <= gdt_r_rdata;			
+				s_axi_lite_rdata_i <= x"00" & gdt_r_rdata;			
             else
                 s_axi_lite_rdata_i <= (others=>'0');
 			end if;
@@ -751,10 +752,12 @@ port map (
     m_axi_resp    => s_axi_bresp,   
 
     ----- Guassian delay table initialization port	
-	gdt_wren_i       => gdt_b_wren,
+    dclk_i           => s_axi_lite_aclk,
+    dresetn_i        => s_axi_lite_aresetn,
+    gdt_wren_i       => gdt_b_wren,
     gdt_addr_i       => gdt_b_addr,
-	gdt_wdata_i      => gdt_b_wdata,
-	gdt_rdata_o      => gdt_b_rdata,
+    gdt_wdata_i      => gdt_b_wdata,
+    gdt_rdata_o      => gdt_b_rdata,
     
     ----- AW (address write) ID output to W (write) ID input	
     aw_id_o       => OPEN,
@@ -937,10 +940,12 @@ port map (
     m_axi_resp    => s_axi_rresp,   
 
     ----- Guassian delay table initialization port	
-	gdt_wren_i       => gdt_r_wren,
+    dclk_i           => s_axi_lite_aclk,
+    dresetn_i        => s_axi_lite_aresetn,
+    gdt_wren_i       => gdt_r_wren,
     gdt_addr_i       => gdt_r_addr,
-	gdt_wdata_i      => gdt_r_wdata,
-	gdt_rdata_o      => gdt_r_rdata,
+    gdt_wdata_i      => gdt_r_wdata,
+    gdt_rdata_o      => gdt_r_rdata,
 	
 	----- AW (address write) ID output to W (write) ID input	
     aw_id_o       => OPEN,
