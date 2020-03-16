@@ -54,20 +54,20 @@ signal gdt_wren     : std_logic_vector(0 downto 0);
 --Component Definitions
 --******************************************************************************
 
-COMPONENT dpram_64Kx24
-PORT (
-    clka  : IN STD_LOGIC;
-    wea   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    addra : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-    dina  : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
-    douta : OUT STD_LOGIC_VECTOR(23 DOWNTO 0);
-    clkb  : IN STD_LOGIC;
-    web   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    addrb : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-    dinb  : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
-    doutb : OUT STD_LOGIC_VECTOR(23 DOWNTO 0)
-);
-END COMPONENT;
+-- COMPONENT dpram_64Kx24
+-- PORT (
+--     clka  : IN STD_LOGIC;
+--     wea   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+--     addra : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+--     dina  : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
+--     douta : OUT STD_LOGIC_VECTOR(23 DOWNTO 0);
+--     clkb  : IN STD_LOGIC;
+--     web   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+--     addrb : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+--     dinb  : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
+--     doutb : OUT STD_LOGIC_VECTOR(23 DOWNTO 0)
+-- );
+-- END COMPONENT;
 
 --******************************************************************************
 -- Connectivity and Logic
@@ -75,7 +75,7 @@ END COMPONENT;
 
 begin
 
-gauss_delay_table : dpram_64Kx24
+gauss_delay_table : entity dpram_64Kx24
     PORT MAP (
         clka  => dclk_i,
         wea   => gdt_wren_i,

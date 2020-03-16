@@ -50,22 +50,22 @@ constant C_ZERO : std_logic_vector(15 downto 0) := (others => '0'); -- create st
 --******************************************************************************
 -- Components
 --******************************************************************************
-COMPONENT fifo_512x16_1clk
-  PORT (
-    clk         : IN STD_LOGIC;
-    srst        : IN STD_LOGIC;
-    din         : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-    wr_en       : IN STD_LOGIC;
-    rd_en       : IN STD_LOGIC;
-    dout        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-    full        : OUT STD_LOGIC;
-    empty       : OUT STD_LOGIC;
-    prog_full   : OUT STD_LOGIC;
-    prog_empty  : OUT STD_LOGIC;
-    wr_rst_busy : OUT STD_LOGIC;
-    rd_rst_busy : OUT STD_LOGIC
-  );
-END COMPONENT;
+-- COMPONENT fifo_512x16_1clk
+--   PORT (
+--     clk         : IN STD_LOGIC;
+--     srst        : IN STD_LOGIC;
+--     din         : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+--     wr_en       : IN STD_LOGIC;
+--     rd_en       : IN STD_LOGIC;
+--     dout        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+--     full        : OUT STD_LOGIC;
+--     empty       : OUT STD_LOGIC;
+--     prog_full   : OUT STD_LOGIC;
+--     prog_empty  : OUT STD_LOGIC;
+--     wr_rst_busy : OUT STD_LOGIC;
+--     rd_rst_busy : OUT STD_LOGIC
+--   );
+-- END COMPONENT;
 
 --******************************************************************************
 --Signal Definitions
@@ -161,7 +161,7 @@ minibuf_wdata <= std_logic_vector(to_unsigned(ctr_ptr_init, minibuf_wdata'length
 minibuf_wdata_ext <= C_ZERO(15 downto CTR_PTR_WIDTH) & std_logic_vector(shift_left(unsigned(minibuf_wdata),2));
 minibuf_rd        <= minibuf_rd_init or minibuf_rd_i;
 
-minibuf_fifo : fifo_512x16_1clk
+minibuf_fifo : entity fifo_512x16_1clk
     PORT MAP (
       clk         => clk_i,
       srst        => rst_i,

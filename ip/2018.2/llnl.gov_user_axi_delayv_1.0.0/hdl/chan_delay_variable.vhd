@@ -186,36 +186,36 @@ attribute keep of random_dly_req  : signal is "true";
 --******************************************************************************
 --Component Definitions
 --******************************************************************************
-COMPONENT DPRAM_256x1024
-PORT (
-    clka : IN STD_LOGIC;
-    ena   : IN STD_LOGIC;
-    wea   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    addra : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-    dina  : IN STD_LOGIC_VECTOR(1023 DOWNTO 0);
-    douta : OUT STD_LOGIC_VECTOR(1023 DOWNTO 0);
-    clkb  : IN STD_LOGIC;
-    enb   : IN STD_LOGIC;
-    web   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    addrb : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-    dinb  : IN STD_LOGIC_VECTOR(1023 DOWNTO 0);
-    doutb : OUT STD_LOGIC_VECTOR(1023 DOWNTO 0)
-);
-END COMPONENT;
+-- COMPONENT DPRAM_256x1024
+-- PORT (
+--     clka : IN STD_LOGIC;
+--     ena   : IN STD_LOGIC;
+--     wea   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+--     addra : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+--     dina  : IN STD_LOGIC_VECTOR(1023 DOWNTO 0);
+--     douta : OUT STD_LOGIC_VECTOR(1023 DOWNTO 0);
+--     clkb  : IN STD_LOGIC;
+--     enb   : IN STD_LOGIC;
+--     web   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+--     addrb : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+--     dinb  : IN STD_LOGIC_VECTOR(1023 DOWNTO 0);
+--     doutb : OUT STD_LOGIC_VECTOR(1023 DOWNTO 0)
+-- );
+-- END COMPONENT;
 
-COMPONENT DPRAM_64x16
-PORT (
-    clka  : IN STD_LOGIC;
-    ena   : IN STD_LOGIC;
-    wea   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    addra : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
-    dina  : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-    clkb  : IN STD_LOGIC;
-    enb   : IN STD_LOGIC;
-    addrb : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
-    doutb : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
-);
-END COMPONENT;
+-- COMPONENT DPRAM_64x16
+-- PORT (
+--     clka  : IN STD_LOGIC;
+--     ena   : IN STD_LOGIC;
+--     wea   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+--     addra : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
+--     dina  : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+--     clkb  : IN STD_LOGIC;
+--     enb   : IN STD_LOGIC;
+--     addrb : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
+--     doutb : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
+-- );
+-- END COMPONENT;
 
 --******************************************************************************
 -- Connectivity and Logic
@@ -336,7 +336,7 @@ pb_dina <= C_ZERO(1023 downto AXI_INFO_WIDTH) & pb_info_data;
 ---------------------------------------
 -- Packet Buffer
 ---------------------------------------
-packet_buffer : DPRAM_256x1024
+packet_buffer : entity DPRAM_256x1024
 PORT MAP (
     clka  => s_axi_aclk,
     ena   => '1',
@@ -362,7 +362,7 @@ pktbuf_dinb <= C_ZERO(1023 downto AXI_INFO_WIDTH) & pktbuf_dinb_cat;
 aidb_id_zero <= aidb_id when (C_AXI_ID_WIDTH = 16) else
                 (C_ZERO_16(15 downto C_AXI_ID_WIDTH) & aidb_id);
 
-axi_id_buffer : DPRAM_64x16
+axi_id_buffer : entity DPRAM_64x16
 PORT MAP (
     clka  => s_axi_aclk,
     ena   => '1',

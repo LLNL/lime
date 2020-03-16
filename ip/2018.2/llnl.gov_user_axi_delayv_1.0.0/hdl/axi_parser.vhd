@@ -101,41 +101,41 @@ constant C_ZERO : std_logic_vector(255 downto 0) := (others => '0'); -- create s
 -- Components
 --******************************************************************************
 
-COMPONENT FIFO_16x256
-  PORT (
-    clk         : IN STD_LOGIC;
-    srst        : IN STD_LOGIC;
-    din         : IN STD_LOGIC_VECTOR(255 DOWNTO 0);
-    wr_en       : IN STD_LOGIC;
-    rd_en       : IN STD_LOGIC;
-    dout        : OUT STD_LOGIC_VECTOR(255 DOWNTO 0);
-    full        : OUT STD_LOGIC;
-    empty       : OUT STD_LOGIC;
-    valid       : OUT STD_LOGIC;
-    prog_full   : OUT STD_LOGIC;
-    prog_empty  : OUT STD_LOGIC;
-    wr_rst_busy : OUT STD_LOGIC;
-    rd_rst_busy : OUT STD_LOGIC
-  );
-END COMPONENT;
+-- COMPONENT FIFO_16x256
+--   PORT (
+--     clk         : IN STD_LOGIC;
+--     srst        : IN STD_LOGIC;
+--     din         : IN STD_LOGIC_VECTOR(255 DOWNTO 0);
+--     wr_en       : IN STD_LOGIC;
+--     rd_en       : IN STD_LOGIC;
+--     dout        : OUT STD_LOGIC_VECTOR(255 DOWNTO 0);
+--     full        : OUT STD_LOGIC;
+--     empty       : OUT STD_LOGIC;
+--     valid       : OUT STD_LOGIC;
+--     prog_full   : OUT STD_LOGIC;
+--     prog_empty  : OUT STD_LOGIC;
+--     wr_rst_busy : OUT STD_LOGIC;
+--     rd_rst_busy : OUT STD_LOGIC
+--   );
+-- END COMPONENT;
 
-COMPONENT fifo_32x16
-  PORT (
-    clk         : IN STD_LOGIC;
-    srst        : IN STD_LOGIC;
-    din         : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-    wr_en       : IN STD_LOGIC;
-    rd_en       : IN STD_LOGIC;
-    dout        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-    full        : OUT STD_LOGIC;
-    empty       : OUT STD_LOGIC;
-    valid       : OUT STD_LOGIC;
-    prog_full   : OUT STD_LOGIC;
-    prog_empty  : OUT STD_LOGIC;
-    wr_rst_busy : OUT STD_LOGIC;
-    rd_rst_busy : OUT STD_LOGIC
-  );
-END COMPONENT;
+-- COMPONENT fifo_32x16
+--   PORT (
+--     clk         : IN STD_LOGIC;
+--     srst        : IN STD_LOGIC;
+--     din         : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+--     wr_en       : IN STD_LOGIC;
+--     rd_en       : IN STD_LOGIC;
+--     dout        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+--     full        : OUT STD_LOGIC;
+--     empty       : OUT STD_LOGIC;
+--     valid       : OUT STD_LOGIC;
+--     prog_full   : OUT STD_LOGIC;
+--     prog_empty  : OUT STD_LOGIC;
+--     wr_rst_busy : OUT STD_LOGIC;
+--     rd_rst_busy : OUT STD_LOGIC
+--   );
+-- END COMPONENT;
 
 --******************************************************************************
 --Signal Definitions
@@ -221,7 +221,7 @@ end generate;
 --------------------------------------------------------------------------------
 -- generate FIFO for AW instance only. This will buffer/save AWIDs (in the AW instance) for corelation with WIDs (in the W instance)
 awid_fifo_gen : if (CHANNEL_TYPE = "AW") generate
-    awid_fifo : fifo_32x16
+    awid_fifo : entity  fifo_32x16
         PORT MAP (
             clk         => clk_i,
             srst        => rst_i,
@@ -255,7 +255,7 @@ axi_info_wdata <= C_ZERO(255 downto AXI_INFO_WIDTH) & s_axi_resp_i & s_axi_id & 
                    s_axi_lock_i  & s_axi_cache_i & s_axi_prot_i & s_axi_qos_i & s_axi_region_i & s_axi_valid_i & s_axi_last_i;
 
 -- shallow FIFO for buffering AXI events                    
-axi_info_fifo : FIFO_16x256
+axi_info_fifo : entity  FIFO_16x256
     PORT MAP (
         clk         => clk_i,
         srst        => rst_i,
