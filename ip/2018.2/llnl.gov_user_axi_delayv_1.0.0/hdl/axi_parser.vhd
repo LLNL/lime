@@ -101,42 +101,6 @@ constant C_ZERO : std_logic_vector(255 downto 0) := (others => '0'); -- create s
 -- Components
 --******************************************************************************
 
--- COMPONENT FIFO_16x256
---   PORT (
---     clk         : IN STD_LOGIC;
---     srst        : IN STD_LOGIC;
---     din         : IN STD_LOGIC_VECTOR(255 DOWNTO 0);
---     wr_en       : IN STD_LOGIC;
---     rd_en       : IN STD_LOGIC;
---     dout        : OUT STD_LOGIC_VECTOR(255 DOWNTO 0);
---     full        : OUT STD_LOGIC;
---     empty       : OUT STD_LOGIC;
---     valid       : OUT STD_LOGIC;
---     prog_full   : OUT STD_LOGIC;
---     prog_empty  : OUT STD_LOGIC;
---     wr_rst_busy : OUT STD_LOGIC;
---     rd_rst_busy : OUT STD_LOGIC
---   );
--- END COMPONENT;
-
--- COMPONENT fifo_32x16
---   PORT (
---     clk         : IN STD_LOGIC;
---     srst        : IN STD_LOGIC;
---     din         : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
---     wr_en       : IN STD_LOGIC;
---     rd_en       : IN STD_LOGIC;
---     dout        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
---     full        : OUT STD_LOGIC;
---     empty       : OUT STD_LOGIC;
---     valid       : OUT STD_LOGIC;
---     prog_full   : OUT STD_LOGIC;
---     prog_empty  : OUT STD_LOGIC;
---     wr_rst_busy : OUT STD_LOGIC;
---     rd_rst_busy : OUT STD_LOGIC
---   );
--- END COMPONENT;
-
 --******************************************************************************
 --Signal Definitions
 --******************************************************************************
@@ -219,24 +183,30 @@ end generate;
 -- A FIFO is required because the "W" cycle for a corresponsing "AW" cycle may not appear on the bus until after several more
 -- "AW"'s have appeared on the bus.
 --------------------------------------------------------------------------------
+
 -- generate FIFO for AW instance only. This will buffer/save AWIDs (in the AW instance) for corelation with WIDs (in the W instance)
 awid_fifo_gen : if (CHANNEL_TYPE = "AW") generate
-    awid_fifo : entity  fifo_32x16
+    awid_fifo : entity fifo_sync
+        GENERIC MAP (
+            C_DEPTH      => 32,
+            C_DIN_WIDTH  => C_AXI_ID_WIDTH,
+            C_DOUT_WIDTH => C_AXI_ID_WIDTH,
+            C_THRESH     => 4
+        )    
         PORT MAP (
-            clk         => clk_i,
-            srst        => rst_i,
+            wr_clk      => clk_i,
+            rst         => rst_i,
+
             din         => s_axi_id_i,
             prog_full   => OPEN,
             full        => OPEN,
             wr_en       => rwaddr_resp_flag,
 
-            rd_en       => w_last_i,
             dout        => aw_id_o,
+            prog_empty  => OPEN,
             empty       => OPEN,
             valid       => OPEN,
-            prog_empty  => OPEN,
-            wr_rst_busy => OPEN,
-            rd_rst_busy => OPEN
+            rd_en       => w_last_i
         );        
 end generate;
 
@@ -255,10 +225,16 @@ axi_info_wdata <= C_ZERO(255 downto AXI_INFO_WIDTH) & s_axi_resp_i & s_axi_id & 
                    s_axi_lock_i  & s_axi_cache_i & s_axi_prot_i & s_axi_qos_i & s_axi_region_i & s_axi_valid_i & s_axi_last_i;
 
 -- shallow FIFO for buffering AXI events                    
-axi_info_fifo : entity  FIFO_16x256
-    PORT MAP (
-        clk         => clk_i,
-        srst        => rst_i,
+axi_info_fifo : entity fifo_sync
+    GENERIC MAP (
+        C_DEPTH      => 16,
+        C_DIN_WIDTH  => 256,
+        C_DOUT_WIDTH => 256,
+        C_THRESH     => 4
+    ) 
+PORT MAP (
+        wr_clk      => clk_i,
+        rst         => rst_i,
 
         din         => axi_info_wdata,
         prog_full   => axi_info_af,
@@ -269,9 +245,7 @@ axi_info_fifo : entity  FIFO_16x256
         prog_empty  => OPEN,
         empty       => OPEN,
         valid       => axi_info_valid,
-        rd_en       => axi_info_rd,
-        wr_rst_busy => OPEN,
-        rd_rst_busy => OPEN
+        rd_en       => axi_info_rd
   );
 
 s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i) and (pq_ready_i);

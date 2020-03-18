@@ -22,8 +22,8 @@ port (
     clk_i            : in  std_logic;
     rst_i            : in  std_logic;
 
-	dclk_i        : in  std_logic;
-	dresetn_i     : in  std_logic;
+	dclk_i           : in  std_logic;
+	dresetn_i        : in  std_logic;
     gdt_wren_i       : in  std_logic_vector(0 downto 0);
     gdt_addr_i       : in  std_logic_vector(15 downto 0); 
     gdt_wdata_i      : in  std_logic_vector(23 downto 0);
@@ -44,6 +44,7 @@ constant polynome		:std_logic_vector (LFSR_BITS-1 downto 0):= "1011010000000000"
 --******************************************************************************
 --Signal Definitions
 --******************************************************************************
+signal dreset       : std_logic;
 signal lfsr_tmp     :std_logic_vector (LFSR_BITS-1 downto 0):= (0=>'1',others=>'0');
 signal rst_1q       : std_logic;
 signal rst_2q       : std_logic;
@@ -54,41 +55,53 @@ signal gdt_wren     : std_logic_vector(0 downto 0);
 --Component Definitions
 --******************************************************************************
 
--- COMPONENT dpram_64Kx24
--- PORT (
---     clka  : IN STD_LOGIC;
---     wea   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
---     addra : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
---     dina  : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
---     douta : OUT STD_LOGIC_VECTOR(23 DOWNTO 0);
---     clkb  : IN STD_LOGIC;
---     web   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
---     addrb : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
---     dinb  : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
---     doutb : OUT STD_LOGIC_VECTOR(23 DOWNTO 0)
--- );
--- END COMPONENT;
-
 --******************************************************************************
 -- Connectivity and Logic
 --******************************************************************************
 
 begin
 
-gauss_delay_table : entity dpram_64Kx24
-    PORT MAP (
-        clka  => dclk_i,
-        wea   => gdt_wren_i,
-        addra => gdt_addr_i,
-        dina  => gdt_wdata_i,
-        douta => gdt_rdata_o,
+dreset <= not dresetn_i;
+    
+    gauss_delay_table : entity dpram_true
+GENERIC MAP (
+    ADDR_WIDTH       => 16,
+    DATA_WIDTH       => 24,
+    CLOCKING_MODE    => "independent_clock",
+    MEMORY_INIT_FILE => "bram_del_table.mem"
+)
+PORT MAP (
+    clka  => dclk_i,
+    rsta  => rst_i,
+    ena   => '1',
+    wea   => gdt_wren_i,
+    addra => gdt_addr_i,
+    dina  => gdt_wdata_i, 
+    douta => gdt_rdata_o,
+    
+    clkb  => clk_i,
+    rstb  => dreset,
+    enb   => '1',
+    web   => (others => '0'),
+    addrb => lfsr_tmp,
+    dinb  => (others => '0'),
+    doutb => random_dly_o
+);
+
+-- gauss_delay_table : entity dpram_64Kx24
+--     PORT MAP (
+--         clka  => dclk_i,
+--         wea   => gdt_wren_i,
+--         addra => gdt_addr_i,
+--         dina  => gdt_wdata_i,
+--         douta => gdt_rdata_o,
         
-        clkb  => clk_i,
-        web   => (others => '0'),
-        addrb => lfsr_tmp,
-        dinb  => (others => '0'),
-        doutb => random_dly_o
-    );    
+--         clkb  => clk_i,
+--         web   => (others => '0'),
+--         addrb => lfsr_tmp,
+--         dinb  => (others => '0'),
+--         doutb => random_dly_o
+--     );    
 
 process (clk_i, rst_i) 
     variable lsb       :std_logic;	 

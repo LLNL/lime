@@ -32,6 +32,7 @@ generic (
     -- minicam generics
     CAM_DEPTH           : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
     CAM_WIDTH           : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
+    NUM_EVENTS_PER_MBUF : integer := 8;  -- maximum number of events each minibuffer can hold
     NUM_MINI_BUFS       : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported
 );
 port (
@@ -186,36 +187,6 @@ attribute keep of random_dly_req  : signal is "true";
 --******************************************************************************
 --Component Definitions
 --******************************************************************************
--- COMPONENT DPRAM_256x1024
--- PORT (
---     clka : IN STD_LOGIC;
---     ena   : IN STD_LOGIC;
---     wea   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
---     addra : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
---     dina  : IN STD_LOGIC_VECTOR(1023 DOWNTO 0);
---     douta : OUT STD_LOGIC_VECTOR(1023 DOWNTO 0);
---     clkb  : IN STD_LOGIC;
---     enb   : IN STD_LOGIC;
---     web   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
---     addrb : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
---     dinb  : IN STD_LOGIC_VECTOR(1023 DOWNTO 0);
---     doutb : OUT STD_LOGIC_VECTOR(1023 DOWNTO 0)
--- );
--- END COMPONENT;
-
--- COMPONENT DPRAM_64x16
--- PORT (
---     clka  : IN STD_LOGIC;
---     ena   : IN STD_LOGIC;
---     wea   : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
---     addra : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
---     dina  : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
---     clkb  : IN STD_LOGIC;
---     enb   : IN STD_LOGIC;
---     addrb : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
---     doutb : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
--- );
--- END COMPONENT;
 
 --******************************************************************************
 -- Connectivity and Logic
@@ -306,10 +277,11 @@ port map (
 ---------------------------------------
 minicam_inst : entity axi_delay_lib.minicam
 generic map (
-    CAM_DEPTH           => CAM_DEPTH,     -- depth of cam (i.e. number of entried), must be modulo 2
-    CAM_WIDTH           => CAM_WIDTH,     -- maximum width of axi_id input. Requirement: CAMWIDTH => NUM_MINI_BUFS
-    CTR_PTR_WIDTH       => CTR_PTR_WIDTH, -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
-    NUM_MINI_BUFS       => NUM_MINI_BUFS  -- number of minibufs; each must be sized to hold the largest packet size supported
+    CAM_DEPTH           => CAM_DEPTH,           -- depth of cam (i.e. number of entried), must be modulo 2
+    CAM_WIDTH           => CAM_WIDTH,           -- maximum width of axi_id input. Requirement: CAMWIDTH => NUM_MINI_BUFS
+    CTR_PTR_WIDTH       => CTR_PTR_WIDTH,       -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
+    NUM_EVENTS_PER_MBUF => NUM_EVENTS_PER_MBUF, -- maximum number of events each minibuffer can hold
+    NUM_MINI_BUFS       => NUM_MINI_BUFS        -- number of minibufs; each must be sized to hold the largest packet size supported
 )
 port map (
     clk_i               => s_axi_aclk,
@@ -336,9 +308,16 @@ pb_dina <= C_ZERO(1023 downto AXI_INFO_WIDTH) & pb_info_data;
 ---------------------------------------
 -- Packet Buffer
 ---------------------------------------
-packet_buffer : entity DPRAM_256x1024
+packet_buffer : entity dpram_true
+GENERIC MAP (
+    ADDR_WIDTH       => CTR_PTR_WIDTH,
+    DATA_WIDTH       => 1024,
+    CLOCKING_MODE    => "independent_clock",
+    MEMORY_INIT_FILE => "none"
+)
 PORT MAP (
     clka  => s_axi_aclk,
+    rsta  => s_axi_areset,
     ena   => '1',
     wea   => pb_wr,
     addra => pb_cntr_ptr,
@@ -346,6 +325,7 @@ PORT MAP (
     douta => OPEN,
     
     clkb  => m_axi_aclk,
+    rstb  => m_axi_areset,
     enb   => pktbuf_enb,
     web   => (others => '0'),
     addrb => pktbuf_addrb,
@@ -359,24 +339,51 @@ pktbuf_dinb <= C_ZERO(1023 downto AXI_INFO_WIDTH) & pktbuf_dinb_cat;
 -- AXI ID Buffer
 ---------------------------------------
 
-aidb_id_zero <= aidb_id when (C_AXI_ID_WIDTH = 16) else
-                (C_ZERO_16(15 downto C_AXI_ID_WIDTH) & aidb_id);
+--aidb_id_zero <= aidb_id when (C_AXI_ID_WIDTH = 16) else
+--                (C_ZERO_16(15 downto C_AXI_ID_WIDTH) & aidb_id);
 
-axi_id_buffer : entity DPRAM_64x16
+
+axi_id_buffer : entity dpram_true
+GENERIC MAP (
+    ADDR_WIDTH       => MINIBUF_IDX_WIDTH,
+    DATA_WIDTH       => C_AXI_ID_WIDTH,
+    CLOCKING_MODE    => "independent_clock",
+    MEMORY_INIT_FILE => "none"
+)
 PORT MAP (
     clka  => s_axi_aclk,
+    rsta  => s_axi_areset,
     ena   => '1',
     wea   => aidb_wr,
     addra => aidb_cntr_ptr_base,
-    dina  => aidb_id_zero,
-      
+    dina  => aidb_id, 
+    douta => OPEN,
+    
     clkb  => m_axi_aclk,
+    rstb  => m_axi_areset,
     enb   => '1',
+    web   => (others => '0'),
     addrb => aidb_baddr,
-    doutb => aidb_bdata_zero
-);	
+    dinb  => (others => '0'),
+    doutb => aidb_bdata
+);
 
-aidb_bdata <= aidb_bdata_zero(C_AXI_ID_WIDTH-1 downto 0);
+
+-- axi_id_buffer : entity DPRAM_64x16
+-- PORT MAP (
+--     clka  => s_axi_aclk,
+--     ena   => '1',
+--     wea   => aidb_wr,
+--     addra => aidb_cntr_ptr_base,
+--     dina  => aidb_id_zero,
+      
+--     clkb  => m_axi_aclk,
+--     enb   => '1',
+--     addrb => aidb_baddr,
+--     doutb => aidb_bdata_zero
+-- );	
+
+--aidb_bdata <= aidb_bdata_zero(C_AXI_ID_WIDTH-1 downto 0);
 
 ---------------------------------------
 -- ScoreBoard

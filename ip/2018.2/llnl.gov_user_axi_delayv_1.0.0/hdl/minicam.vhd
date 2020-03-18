@@ -17,10 +17,11 @@ use axi_delay_lib.all;
 
 entity minicam is
 generic (
-    CAM_DEPTH       : integer := 8;   -- depth of cam (i.e. number of entries), must be modulo 2
-    CAM_WIDTH       : integer := 16;  -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
-    CTR_PTR_WIDTH   : integer := 5;   -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
-    NUM_MINI_BUFS   : integer := 32   -- number of minibufs; each must be sized to hold the largest packet size supported
+    CAM_DEPTH           : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2
+    CAM_WIDTH           : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
+    CTR_PTR_WIDTH       : integer := 5;  -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
+    NUM_EVENTS_PER_MBUF : integer := 8;  -- maximum number of events each minibuffer can hold
+    NUM_MINI_BUFS       : integer := 32  -- number of minibufs; each must be sized to hold the largest packet size supported
 );
 port (
     clk_i               : in  std_logic;
@@ -91,9 +92,10 @@ begin
 
 minibuf_mgmt_inst : entity axi_delay_lib.minibuf_mgmt
     generic map (
-        CAM_DEPTH           => CAM_DEPTH,      -- depth of cam (i.e. number of entried), must be modulo 2
-        CTR_PTR_WIDTH       => CTR_PTR_WIDTH,  -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
-        NUM_MINI_BUFS       => NUM_MINI_BUFS   -- number of minibufs; each must be sized to hold the largest packet size supported
+        CAM_DEPTH           => CAM_DEPTH,           -- depth of cam (i.e. number of entried), must be modulo 2
+        CTR_PTR_WIDTH       => CTR_PTR_WIDTH,       -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
+        NUM_EVENTS_PER_MBUF => NUM_EVENTS_PER_MBUF, -- maximum number of events each minibuffer can hold
+        NUM_MINI_BUFS       => NUM_MINI_BUFS        -- number of minibufs; each must be sized to hold the largest packet size supported
     )
     port map (
         clk_i               => clk_i,

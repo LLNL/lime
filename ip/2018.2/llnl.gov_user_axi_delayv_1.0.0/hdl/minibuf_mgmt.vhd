@@ -22,9 +22,10 @@ use axi_delay_lib.all;
 entity minibuf_mgmt is
 
 generic (
-    CAM_DEPTH       : integer := 8;   -- depth of cam (i.e. number of entried), must be modulo 2
-    CTR_PTR_WIDTH   : integer := 5;   -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
-    NUM_MINI_BUFS   : integer := 32   -- number of minibufs; each must be sized to hold the largest packet size supported
+    CAM_DEPTH           : integer := 8; -- depth of cam (i.e. number of entried), must be modulo 2
+    CTR_PTR_WIDTH       : integer := 5; -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
+    NUM_EVENTS_PER_MBUF : integer := 8; -- maximum number of events each minibuffer can hold
+    NUM_MINI_BUFS       : integer := 32 -- number of minibufs; each must be sized to hold the largest packet size supported
 );
 port (
     clk_i               : in  std_logic;
@@ -50,31 +51,13 @@ constant C_ZERO : std_logic_vector(15 downto 0) := (others => '0'); -- create st
 --******************************************************************************
 -- Components
 --******************************************************************************
--- COMPONENT fifo_512x16_1clk
---   PORT (
---     clk         : IN STD_LOGIC;
---     srst        : IN STD_LOGIC;
---     din         : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
---     wr_en       : IN STD_LOGIC;
---     rd_en       : IN STD_LOGIC;
---     dout        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
---     full        : OUT STD_LOGIC;
---     empty       : OUT STD_LOGIC;
---     prog_full   : OUT STD_LOGIC;
---     prog_empty  : OUT STD_LOGIC;
---     wr_rst_busy : OUT STD_LOGIC;
---     rd_rst_busy : OUT STD_LOGIC
---   );
--- END COMPONENT;
 
 --******************************************************************************
 --Signal Definitions
 --******************************************************************************
 
---signal valid             : std_logic_vector((CAM_DEPTH-1) downto 0);
---signal present           : std_logic;  -- indicates that the incoming data_i is present in the CAM
---signal minibuf_rden      : std_logic;
 signal minibuf_rdata     : std_logic_vector(15 downto 0);
+
 signal minibuf_ff        : std_logic;
 signal minibuf_init_wren : std_logic;
 signal minibuf_wr        : std_logic;
@@ -148,9 +131,7 @@ end process;
 minibuf_wr    <= minibuf_init_wren or minibuf_wr_i;
 minibuf_wdata <= std_logic_vector(to_unsigned(ctr_ptr_init, minibuf_wdata'length)) when (minibuf_init_wren = '1') else minibuf_wdata_i;
 
--- minibuf_fifo stores valid ctr_ptr values. It is a first-word fall-through FIFO, i.e. data is available prior to rd_en asserted, and assertion
--- of rd_en will result in the NEXT data location presented after the clock edge.
-
+-- minibuf_fifo stores valid ctr_ptr values.
 -- Initializing the minibuf_fifo: This is done via the initfifo_state state machine. After initialization, the initfifo_state
 -- process becomes inactive.
 -- Storing freed ctr_ptr into the minibuf_fifo:  When a packet is read from the packet buffer in its entirety and leaves
@@ -161,22 +142,26 @@ minibuf_wdata <= std_logic_vector(to_unsigned(ctr_ptr_init, minibuf_wdata'length
 minibuf_wdata_ext <= C_ZERO(15 downto CTR_PTR_WIDTH) & std_logic_vector(shift_left(unsigned(minibuf_wdata),2));
 minibuf_rd        <= minibuf_rd_init or minibuf_rd_i;
 
-minibuf_fifo : entity fifo_512x16_1clk
+minibuf_fifo : entity fifo_sync
+    GENERIC MAP (
+        C_DEPTH      => NUM_EVENTS_PER_MBUF * NUM_MINI_BUFS,
+        C_DIN_WIDTH  => 16, --CTR_PTR_WIDTH,
+        C_DOUT_WIDTH => 16, --CTR_PTR_WIDTH,
+        C_THRESH     => 4
+    )
     PORT MAP (
-      clk         => clk_i,
-      srst        => rst_i,
-      din         => minibuf_wdata_ext,
-      prog_full   => minibuf_af_o,
-      full        => minibuf_ff,
-      wr_en       => minibuf_wr,
+        wr_clk      => clk_i,
+        rst         => rst_i,
+        din         => minibuf_wdata_ext, --minibuf_wdata,
+        prog_full   => minibuf_af_o,
+        full        => minibuf_ff,
+        wr_en       => minibuf_wr,
 
-      dout        => minibuf_rdata,
-      prog_empty  => OPEN,
-      empty       => minibuf_fe_o,
-      rd_en       => minibuf_rd,
-
-      wr_rst_busy => OPEN,
-      rd_rst_busy => OPEN
+        dout        => minibuf_rdata, --minibuf_rdata_o,
+        prog_empty  => OPEN,
+        empty       => minibuf_fe_o,
+        valid       => OPEN,
+        rd_en       => minibuf_rd
     );
 
 minibuf_rdata_o <= minibuf_rdata(CTR_PTR_WIDTH-1 downto 0);

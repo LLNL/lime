@@ -3287,27 +3287,17 @@
         <spirit:logicalName>axi_delay_lib</spirit:logicalName>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/dpram_256x1024.vhd</spirit:name>
+        <spirit:name>hdl/bram_del_table.mem</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>axi_delay_lib</spirit:logicalName>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/dpram_64Kx24.vhd</spirit:name>
+        <spirit:name>hdl/dpram_true.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>axi_delay_lib</spirit:logicalName>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/dpram_64x16.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>axi_delay_lib</spirit:logicalName>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/fifo_16x256.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>axi_delay_lib</spirit:logicalName>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/fifo_512x16_1clk.vhd</spirit:name>
+        <spirit:name>hdl/fifo_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>axi_delay_lib</spirit:logicalName>
       </spirit:file>
@@ -3376,27 +3366,17 @@
         <spirit:logicalName>axi_delay_lib</spirit:logicalName>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/dpram_256x1024.vhd</spirit:name>
+        <spirit:name>hdl/bram_del_table.mem</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>axi_delay_lib</spirit:logicalName>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/dpram_64Kx24.vhd</spirit:name>
+        <spirit:name>hdl/dpram_true.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>axi_delay_lib</spirit:logicalName>
       </spirit:file>
       <spirit:file>
-        <spirit:name>hdl/dpram_64x16.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>axi_delay_lib</spirit:logicalName>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/fifo_16x256.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>axi_delay_lib</spirit:logicalName>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/fifo_512x16_1clk.vhd</spirit:name>
+        <spirit:name>hdl/fifo_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>axi_delay_lib</spirit:logicalName>
       </spirit:file>
