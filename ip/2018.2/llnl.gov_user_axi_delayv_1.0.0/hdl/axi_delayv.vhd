@@ -32,7 +32,7 @@ generic (
 	C_FIFO_DEPTH_R   : integer := 0;
 
 	-- AXI-Lite Bus Interface
-	C_AXI_LITE_ADDR_WIDTH : integer := 16;
+	C_AXI_LITE_ADDR_WIDTH : integer := 18;
 	C_AXI_LITE_DATA_WIDTH : integer := 32;
 
 	-- AXI-Full Bus Interface
@@ -323,10 +323,10 @@ begin
 -- AXI-Lite slave address memory map
 ---------------------------------------
 -- AXI Lite Memory Mapping:
---  r/w_chipsel(0) : 0x0000 - 0x3FFF -- control/status registers
---  r/w_chipsel(1) : 0x4000 - 0x7FFF -- gaussian delay table (B Channel)
---  r/w_chipsel(2) : 0x8000 - 0xBFFF -- gaussian delay table (R Channel)
---  r/w_chipsel(3) : 0xC000 - 0xFFFF -- spare
+--  r/w_chipsel(0) : 0x0000 - 0x0FFFF -- control/status registers
+--  r/w_chipsel(1) : 0x4000 - 0x1FFFF -- gaussian delay table (B Channel)
+--  r/w_chipsel(2) : 0x8000 - 0x2FFFF -- gaussian delay table (R Channel)
+--  r/w_chipsel(3) : 0xC000 - 0x3FFFF -- spare
 
 ---------------------------------------
 ----- Chip select decoding - logic for decoding the chip selects for read and write processes
@@ -472,28 +472,28 @@ end process;
 	s_axi_lite_arready_i <= not s_axi_lite_arvalid_r;
 	s_axi_lite_rvalid_i  <= s_axi_lite_arvalid_r;
 
-	s_axil_r: process(s_axi_lite_aclk)
+    s_axil_r: process(s_axi_lite_aclk)
 	begin
-		if (rising_edge(s_axi_lite_aclk)) then
-			if (s_axi_lite_aresetn = '0') then -- synchronous reset
-				s_axi_lite_araddr_r  <= (others => '0');
-				s_axi_lite_arvalid_r <= '0';
-			else
-				if (s_axi_lite_arvalid = '1' and s_axi_lite_arready_i = '1') then
-					s_axi_lite_araddr_r <= s_axi_lite_araddr;
-					s_axi_lite_arvalid_r <= '1';
-				end if;
-				if (s_axi_lite_rvalid_i = '1' and s_axi_lite_rready = '1') then
-					s_axi_lite_arvalid_r <= '0';
-				end if;
-			end if;
-		end if;
-	end process;
+        if (rising_edge(s_axi_lite_aclk)) then
+            if (s_axi_lite_aresetn = '0') then -- synchronous reset
+                s_axi_lite_araddr_r  <= (others => '0');
+                s_axi_lite_arvalid_r <= '0';
+            else
+                if (s_axi_lite_arvalid = '1' and s_axi_lite_arready_i = '1') then
+                    s_axi_lite_araddr_r <= s_axi_lite_araddr;
+                    s_axi_lite_arvalid_r <= '1';
+                end if;
+                if (s_axi_lite_rvalid_i = '1' and s_axi_lite_rready = '1') then
+                    s_axi_lite_arvalid_r <= '0';
+                end if;
+            end if;
+        end if;
+    end process;
 
-	c_axil_rr: process(s_axi_lite_rvalid_i, s_axi_lite_araddr_r, slv_reg)
-		variable rsel : reg_rng;  begin
-		s_axi_lite_rdata_i <= (others => '0');
-		if (s_axi_lite_rvalid_i = '1') then
+    c_axil_rr: process(s_axi_lite_rvalid_i, s_axi_lite_araddr_r, slv_reg)
+        variable rsel : reg_rng;  begin
+        s_axi_lite_rdata_i <= (others => '0');
+        if (s_axi_lite_rvalid_i = '1') then
 
             if(r_chipsel(0) = '1') then
                 rsel := to_integer(unsigned(s_axi_lite_araddr_r(reg_addr_rng)));
@@ -502,18 +502,18 @@ end process;
                     s_axi_lite_rdata_i <= slv_reg(rsel);
                 when others => null;
 				end case;
-			elsif (r_chipsel(1) = '1') then
-				gdt_b_raddr        <= s_axi_lite_araddr_r(15 downto 0);
-				s_axi_lite_rdata_i <= x"00" & gdt_b_rdata;
-			elsif (r_chipsel(2) = '1') then
-				gdt_r_raddr        <= s_axi_lite_araddr_r(15 downto 0);
-				s_axi_lite_rdata_i <= x"00" & gdt_r_rdata;			
+            elsif (r_chipsel(1) = '1') then
+                gdt_b_raddr        <= s_axi_lite_araddr_r(15 downto 0);
+                s_axi_lite_rdata_i <= x"00" & gdt_b_rdata;
+            elsif (r_chipsel(2) = '1') then
+                gdt_r_raddr        <= s_axi_lite_araddr_r(15 downto 0);
+                s_axi_lite_rdata_i <= x"00" & gdt_r_rdata;			
             else
                 s_axi_lite_rdata_i <= (others=>'0');
-			end if;
+            end if;
 
-		end if;
-	end process;
+        end if;
+    end process;
 
 	-- wrap-around counter
 
