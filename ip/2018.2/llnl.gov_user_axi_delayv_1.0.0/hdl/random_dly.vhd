@@ -49,6 +49,7 @@ signal lfsr_tmp     :std_logic_vector (LFSR_BITS-1 downto 0):= (0=>'1',others=>'
 signal rst_1q       : std_logic;
 signal rst_2q       : std_logic;
 signal rst_3q       : std_logic;
+signal random_dly   : std_logic_vector(23 downto 0);
 
 signal gdt_wren     : std_logic_vector(0 downto 0);
 --******************************************************************************
@@ -85,23 +86,8 @@ PORT MAP (
     web   => (others => '0'),
     addrb => lfsr_tmp,
     dinb  => (others => '0'),
-    doutb => random_dly_o
+    doutb => random_dly
 );
-
--- gauss_delay_table : entity dpram_64Kx24
---     PORT MAP (
---         clka  => dclk_i,
---         wea   => gdt_wren_i,
---         addra => gdt_addr_i,
---         dina  => gdt_wdata_i,
---         douta => gdt_rdata_o,
-        
---         clkb  => clk_i,
---         web   => (others => '0'),
---         addrb => lfsr_tmp,
---         dinb  => (others => '0'),
---         doutb => random_dly_o
---     );    
 
 process (clk_i, rst_i) 
     variable lsb       :std_logic;	 
@@ -133,7 +119,7 @@ end process;
 ----------------------------------------------------------------------------------------------
 -- Output assignments
 ----------------------------------------------------------------------------------------------
---random_dly_o <= lfsr_tmp & lfsr_tmp(11 downto 4);
+random_dly_o <= (others => '0'); --random_dly;
 
 ----------------------------------------------------------------------------------------------
 end behavioral;

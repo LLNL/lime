@@ -27,6 +27,7 @@ outputfilename = "bram_del_table.csv"  ## check file
 mif_filename   = "bram_del_table.mif"  ## mif file format, not used
 bin_filename   = "bram_del_table.init" ## see UG901, p143 - this is the Vivado mem format, not the updatemem format
 coe_filename   = "bram_del_table.coe"  ## coe file format
+mem_filename   = "../bram_del_table.mem"  ## mem file format
 
 ## Width of address bus input to BRAM table
 awidth = 16
@@ -35,7 +36,7 @@ awidth = 16
 dwidth = 24
 
 ## Maximum time delay, in clock cycles
-delay_clocks = 15 ##255 ##(2**dwidth)-1
+delay_clocks = 1024 #15 ##255 ##(2**dwidth)-1
 
 ## Create check plot (use 1 or 0)
 CHECK_PLOT = 1
@@ -47,6 +48,7 @@ f = open(outputfilename, "w")
 file_mif = open(mif_filename, "w")
 file_bin = open(bin_filename, "w")
 file_coe = open(coe_filename, "w")
+file_mem = open(mem_filename, "w")
 
 #------------------------------------------------------------------
 # calculate gaussian
@@ -137,9 +139,15 @@ for x in range (0, n):
        file_coe.write(",")
    else:
        file_coe.write(";")
+       
+   ## ----- write to mem file
+   file_mem.write(str('%x' % (int(gauss))).zfill(int(dwidth/4)))
+   file_mem.write("\n")
+   
       
 f.close()
 file_bin.close()
+file_mem.close()
 
 #----- Generate the footer for .mif file
 file_mif.write("--")

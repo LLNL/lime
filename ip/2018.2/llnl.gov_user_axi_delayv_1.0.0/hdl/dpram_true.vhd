@@ -29,7 +29,7 @@ entity dpram_true is
   generic (
     ADDR_WIDTH       : integer := 8;
     DATA_WIDTH       : integer := 256;
-    CLOCKING_MODE    : string  := "common_clock";
+    CLOCKING_MODE    : string  := "independent_clock";
     MEMORY_INIT_FILE : string  := "bram_del_table.coe"
   );
   port (
@@ -89,7 +89,7 @@ xpm_memory_tdpram_inst : xpm_memory_tdpram
        READ_DATA_WIDTH_A => DATA_WIDTH,     -- DECIMAL
        READ_DATA_WIDTH_B => DATA_WIDTH,     -- DECIMAL
        READ_LATENCY_A => 1,                 -- DECIMAL
-       READ_LATENCY_B => 1 ,                -- DECIMAL
+       READ_LATENCY_B => 1,                 -- DECIMAL
        READ_RESET_VALUE_A => "0",           -- String
        READ_RESET_VALUE_B => "0",           -- String
        USE_EMBEDDED_CONSTRAINT => 0,        -- DECIMAL

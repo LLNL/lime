@@ -23,7 +23,7 @@ generic (
     CHANNEL_TYPE         : string  := "AW" ; -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH : integer := 16;
     DELAY_WIDTH          : integer := 24;
-
+    BYPASS_MINICAM       : integer := 0;
     -- AXI-Full Bus Interface
     C_AXI_ID_WIDTH       : integer := 16;
     C_AXI_ADDR_WIDTH     : integer := 40;
@@ -275,33 +275,64 @@ port map (
 ---------------------------------------
 -- minicam
 ---------------------------------------
-minicam_inst : entity axi_delay_lib.minicam
-generic map (
-    CAM_DEPTH           => CAM_DEPTH,           -- depth of cam (i.e. number of entried), must be modulo 2
-    CAM_WIDTH           => CAM_WIDTH,           -- maximum width of axi_id input. Requirement: CAMWIDTH => NUM_MINI_BUFS
-    CTR_PTR_WIDTH       => CTR_PTR_WIDTH,       -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
-    NUM_EVENTS_PER_MBUF => NUM_EVENTS_PER_MBUF, -- maximum number of events each minibuffer can hold
-    NUM_MINI_BUFS       => NUM_MINI_BUFS        -- number of minibufs; each must be sized to hold the largest packet size supported
-)
-port map (
-    clk_i               => s_axi_aclk,
-    rst_i               => s_axi_areset,
-    
-    -- CAM I/O
-    data_valid_i        => mc_valid,
-    data_i              => mc_axi_id,
-    
-    tlast_i             => mc_last,       -- from the AXI downstream device, indicates that packet is completely stored in Mini buffer
-    ctr_ptr_o           => mc_ctr_ptr,    -- counter/pointer to Packet Buffer
-    ctr_ptr_wr_o        => mc_ctr_ptr_wr, -- write enable for counter/pointer to Pcaket Buffer
-    minicam_full_o      => minicam_full,
-    available_ctrptr_o  => available_ctrptr,
-    minicam_err_o       => minicam_err,   -- this should never occur
-    
-    minibuf_fe_o        => minibuf_fe,
-    minibuf_wr_i        => free_ctrptr_wr, -- write to minibuf_fifo after packet has been read out of packet_buffer
-    minibuf_wdata_i     => free_ctrptr     -- write to minibuf_fifo after packet has been read out of packet_buffer
-);
+
+use_minicam : if (BYPASS_MINICAM = 0) generate
+    minicam_inst : entity axi_delay_lib.minicam
+    generic map (
+        CAM_DEPTH           => CAM_DEPTH,           -- depth of cam (i.e. number of entried), must be modulo 2
+        CAM_WIDTH           => CAM_WIDTH,           -- maximum width of axi_id input. Requirement: CAMWIDTH => NUM_MINI_BUFS
+        CTR_PTR_WIDTH       => CTR_PTR_WIDTH,       -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
+        NUM_EVENTS_PER_MBUF => NUM_EVENTS_PER_MBUF, -- maximum number of events each minibuffer can hold
+        NUM_MINI_BUFS       => NUM_MINI_BUFS        -- number of minibufs; each must be sized to hold the largest packet size supported
+    )
+    port map (
+        clk_i               => s_axi_aclk,
+        rst_i               => s_axi_areset,
+        
+        -- CAM I/O
+        data_valid_i        => mc_valid,
+        data_i              => mc_axi_id,
+        
+        tlast_i             => mc_last,       -- from the AXI downstream device, indicates that packet is completely stored in Mini buffer
+        ctr_ptr_o           => mc_ctr_ptr,    -- counter/pointer to Packet Buffer
+        ctr_ptr_wr_o        => mc_ctr_ptr_wr, -- write enable for counter/pointer to Pcaket Buffer
+        minicam_full_o      => minicam_full,
+        available_ctrptr_o  => available_ctrptr,
+        minicam_err_o       => minicam_err,   -- this should never occur
+        
+        minibuf_fe_o        => minibuf_fe,
+        minibuf_wr_i        => free_ctrptr_wr, -- write to minibuf_fifo after packet has been read out of packet_buffer
+        minibuf_wdata_i     => free_ctrptr     -- write to minibuf_fifo after packet has been read out of packet_buffer
+    );
+end generate use_minicam;
+
+skip_minicam : if (BYPASS_MINICAM = 1) generate
+    minicam_bp_inst : entity axi_delay_lib.minicam_bypass
+    generic map (
+        CAM_WIDTH           => CAM_WIDTH,           -- maximum width of axi_id input. Requirement: CAMWIDTH => NUM_MINI_BUFS
+        CTR_PTR_WIDTH       => CTR_PTR_WIDTH,       -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
+        NUM_MINI_BUFS       => NUM_MINI_BUFS        -- number of minibufs; each must be sized to hold the largest packet size supported
+    )
+    port map (
+        clk_i               => s_axi_aclk,
+        rst_i               => s_axi_areset,
+        
+        -- CAM I/O
+        data_valid_i        => mc_valid,
+        data_i              => mc_axi_id,
+        
+        tlast_i             => mc_last,       -- from the AXI downstream device, indicates that packet is completely stored in Mini buffer
+        ctr_ptr_o           => mc_ctr_ptr,    -- counter/pointer to Packet Buffer
+        ctr_ptr_wr_o        => mc_ctr_ptr_wr, -- write enable for counter/pointer to Pcaket Buffer
+        minicam_full_o      => minicam_full,
+        available_ctrptr_o  => available_ctrptr,
+        minicam_err_o       => minicam_err,   -- this should never occur
+        
+        minibuf_fe_o        => minibuf_fe,
+        minibuf_wr_i        => free_ctrptr_wr, -- write to minibuf_fifo after packet has been read out of packet_buffer
+        minibuf_wdata_i     => free_ctrptr     -- write to minibuf_fifo after packet has been read out of packet_buffer
+    );
+end generate skip_minicam;
 
 pb_dina <= C_ZERO(1023 downto AXI_INFO_WIDTH) & pb_info_data;
 
@@ -418,19 +449,18 @@ generic map (
     LFSR_BITS        => 16
 )
 port map (
-    
-	clk_i            => m_axi_aclk,
-	rst_i            => m_axi_areset,
+    clk_i            => m_axi_aclk,
+    rst_i            => m_axi_areset,
 
-	dclk_i           => dclk_i,
-	dresetn_i        => dresetn_i,
+    dclk_i           => dclk_i,
+    dresetn_i        => dresetn_i,
     gdt_wren_i       => gdt_wren_i,
     gdt_addr_i       => gdt_addr_i,
     gdt_wdata_i      => gdt_wdata_i,
     gdt_rdata_o      => gdt_rdata_o,
     
     random_dly_req_i => pq_en,
-	random_dly_o     => random_dly
+    random_dly_o     => random_dly
 );
 
 ---------------------------------------
