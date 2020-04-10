@@ -58,10 +58,12 @@ dts/system-top.dts: sdk/pmufw/Release/pmufw.elf device-tree-xlnx
 	# For more information see https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841831/CPU+frequency+scaling
 	sed -i.bak -e 's/opp-hz = \/bits\/ 64 <299999997>/opp-hz = \/bits\/ 64 <137500000>/g' dts/zynqmp.dtsi
 ifneq ($(findstring sidewinder,$(BOARD)),)
-	sed -i.bak '/memory {/,/};/c\memory {\n\tdevice_type = "memory";\n\tlinux,usable-memory = <0x10 0x00000000 0x4 0x00000000>;\n};' dts/system-top.dts
+	sed -i.bak '/memory {/,/};/c\\tmemory {\n\t\tdevice_type = "memory";\n\t\tlinux,usable-memory = <0x10 0x00000000 0x4 0x00000000>;\n\t};' dts/system-top.dts
 	sed -i.bak '/&sdhci1 {/ a\\tno-1-8-v;\n\tdisable-wp;' dts/pcw.dtsi
 else ifneq ($(findstring zcu102,$(BOARD)),)
-	sed -i.bak '/memory {/,/};/c\memory {\n\tdevice_type = "memory";\n\tlinux,usable-memory = <0x10 0x00000000 0x1 0x00000000>;\n};' dts/system-top.dts
+	cp device-tree-xlnx/device_tree/data/kernel_dtsi/2018.2/BOARD/zcu102-rev1.0.dtsi dts
+	sed -i.bak '\_/ {_i\/include/ "zcu102-rev1.0.dtsi"' dts/system-top.dts
+	sed -i.bak '/memory {/,/};/c\\tmemory {\n\t\tdevice_type = "memory";\n\t\tlinux,usable-memory = <0x10 0x00000000 0x1 0x00000000>;\n\t};' dts/system-top.dts
 	# Disable drivers causing kernel panic during boot
 	sed -i.bak '/&xlnx_dpdma {/,/};/c\&xlnx_dpdma {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
 	sed -i.bak '/&zynqmp_dp_snd_pcm0 {/,/};/c\&zynqmp_dp_snd_pcm0 {\n\tstatus = "disabled";\n};' dts/pcw.dtsi
