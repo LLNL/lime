@@ -22,8 +22,8 @@ port (
     clk_i            : in  std_logic;
     rst_i            : in  std_logic;
 
-	dclk_i           : in  std_logic;
-	dresetn_i        : in  std_logic;
+    dclk_i           : in  std_logic;
+    dresetn_i        : in  std_logic;
     gdt_wren_i       : in  std_logic_vector(0 downto 0);
     gdt_addr_i       : in  std_logic_vector(15 downto 0); 
     gdt_wdata_i      : in  std_logic_vector(23 downto 0);
@@ -64,30 +64,32 @@ begin
 
 dreset <= not dresetn_i;
     
-    gauss_delay_table : entity dpram_true
-GENERIC MAP (
-    ADDR_WIDTH       => 16,
-    DATA_WIDTH       => 24,
-    CLOCKING_MODE    => "independent_clock",
-    MEMORY_INIT_FILE => "bram_del_table.mem"
-)
-PORT MAP (
-    clka  => dclk_i,
-    rsta  => rst_i,
-    ena   => '1',
-    wea   => gdt_wren_i,
-    addra => gdt_addr_i,
-    dina  => gdt_wdata_i, 
-    douta => gdt_rdata_o,
-    
-    clkb  => clk_i,
-    rstb  => dreset,
-    enb   => '1',
-    web   => (others => '0'),
-    addrb => lfsr_tmp,
-    dinb  => (others => '0'),
-    doutb => random_dly
-);
+--gauss_delay_table : entity dpram_true
+--GENERIC MAP (
+--    ADDR_WIDTH       => 16,
+--    DATA_WIDTH       => 24,
+--    CLOCKING_MODE    => "independent_clock",
+--    MEMORY_INIT_FILE => "bram_del_table.mem"
+--)
+--PORT MAP (
+--    clka  => dclk_i,
+--    rsta  => rst_i,
+--    ena   => '1',
+--    wea   => gdt_wren_i,
+--    addra => gdt_addr_i,
+--    dina  => gdt_wdata_i, 
+--    douta => gdt_rdata_o,
+--    
+--    clkb  => clk_i,
+--    rstb  => dreset,
+--    enb   => '1',
+--    web   => (others => '0'),
+--    addrb => lfsr_tmp,
+--    dinb  => (others => '0'),
+--    doutb => random_dly
+--);
+
+gdt_rdata_o <= (others => '0');
 
 process (clk_i, rst_i) 
     variable lsb       :std_logic;	 

@@ -3312,6 +3312,11 @@
         <spirit:logicalName>axi_delay_lib</spirit:logicalName>
       </spirit:file>
       <spirit:file>
+        <spirit:name>hdl/minicam_bypass.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>axi_delay_lib</spirit:logicalName>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>hdl/priority_controller.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>axi_delay_lib</spirit:logicalName>
@@ -3387,6 +3392,11 @@
       </spirit:file>
       <spirit:file>
         <spirit:name>hdl/minicam.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>axi_delay_lib</spirit:logicalName>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/minicam_bypass.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>axi_delay_lib</spirit:logicalName>
       </spirit:file>
