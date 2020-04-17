@@ -30,7 +30,7 @@ coe_filename   = "bram_del_table.coe"  ## coe file format
 mem_filename   = "../bram_del_table.mem"  ## mem file format
 
 ## Width of address bus input to BRAM table
-awidth = 16
+awidth = 10
 
 ## Width of output, in bits
 dwidth = 24
