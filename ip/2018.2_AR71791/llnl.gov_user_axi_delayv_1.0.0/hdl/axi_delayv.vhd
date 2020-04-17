@@ -912,7 +912,7 @@ port map (
     s_axi_prot    => (others => '0'),   				 
     s_axi_qos     => (others => '0'),    				 
     s_axi_region  => (others => '0'), 				 
-    s_axi_valid   => m_axi_aclk, --m_axi_rvalid and r_m_axis_tap_tvalid,  
+    s_axi_valid   => m_axi_rvalid, --m_axi_rvalid and r_m_axis_tap_tvalid,  
     s_axi_ready   => m_axi_rready, --m_axi_rready_i,  
     
     s_axi_last    => m_axi_rlast_i(0),
