@@ -16,6 +16,8 @@ use axi_delay_lib.all;
 entity random_dly is
 
 generic(
+    GDT_ADDR_BITS    : integer := 10;
+    GDT_DATA_BITS    : integer := 24;
     LFSR_BITS        : integer := 16
 );
 port (
@@ -64,32 +66,30 @@ begin
 
 dreset <= not dresetn_i;
     
---gauss_delay_table : entity dpram_true
---GENERIC MAP (
---    ADDR_WIDTH       => 16,
---    DATA_WIDTH       => 24,
---    CLOCKING_MODE    => "independent_clock",
---    MEMORY_INIT_FILE => "bram_del_table.mem"
---)
---PORT MAP (
---    clka  => dclk_i,
---    rsta  => rst_i,
---    ena   => '1',
---    wea   => gdt_wren_i,
---    addra => gdt_addr_i,
---    dina  => gdt_wdata_i, 
---    douta => gdt_rdata_o,
---    
---    clkb  => clk_i,
---    rstb  => dreset,
---    enb   => '1',
---    web   => (others => '0'),
---    addrb => lfsr_tmp,
---    dinb  => (others => '0'),
---    doutb => random_dly
---);
-
-gdt_rdata_o <= (others => '0');
+gauss_delay_table : entity dpram_true
+GENERIC MAP (
+    ADDR_WIDTH       => GDT_ADDR_BITS,
+    DATA_WIDTH       => GDT_DATA_BITS,
+    CLOCKING_MODE    => "independent_clock",
+    MEMORY_INIT_FILE => "bram_del_table.mem"
+)
+PORT MAP (
+    clka  => dclk_i,
+    rsta  => rst_i,
+    ena   => '1',
+    wea   => gdt_wren_i,
+    addra => gdt_addr_i(GDT_ADDR_BITS-1 downto 0),
+    dina  => gdt_wdata_i, 
+    douta => gdt_rdata_o,
+    
+    clkb  => clk_i,
+    rstb  => dreset,
+    enb   => '1',
+    web   => (others => '0'),
+    addrb => lfsr_tmp(GDT_ADDR_BITS-1 downto 0),
+    dinb  => (others => '0'),
+    doutb => random_dly
+);
 
 process (clk_i, rst_i) 
     variable lsb       :std_logic;	 
@@ -121,7 +121,7 @@ end process;
 ----------------------------------------------------------------------------------------------
 -- Output assignments
 ----------------------------------------------------------------------------------------------
-random_dly_o <= (others => '0'); --random_dly;
+random_dly_o <= random_dly;
 
 ----------------------------------------------------------------------------------------------
 end behavioral;

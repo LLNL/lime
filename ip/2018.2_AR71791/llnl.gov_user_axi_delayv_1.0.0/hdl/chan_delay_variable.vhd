@@ -29,11 +29,13 @@ generic (
     C_AXI_ADDR_WIDTH     : integer := 40;
     C_AXI_DATA_WIDTH     : integer := 128;
     
+    GDT_ADDR_BITS        : integer := 10;
+    GDT_DATA_BITS        : integer := 24;
     -- minicam generics
-    CAM_DEPTH           : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
-    CAM_WIDTH           : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
-    NUM_EVENTS_PER_MBUF : integer := 8;  -- maximum number of events each minibuffer can hold
-    NUM_MINI_BUFS       : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported
+    CAM_DEPTH            : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
+    CAM_WIDTH            : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
+    NUM_EVENTS_PER_MBUF  : integer := 8;  -- maximum number of events each minibuffer can hold
+    NUM_MINI_BUFS        : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported
 );
 port (
     --------------------------------------------
@@ -446,6 +448,8 @@ PORT MAP (
 ---------------------------------------
 random_dly_inst : entity axi_delay_lib.random_dly
 generic map (
+    GDT_ADDR_BITS    => GDT_ADDR_BITS,
+    GDT_DATA_BITS    => GDT_DATA_BITS,
     LFSR_BITS        => 16
 )
 port map (
