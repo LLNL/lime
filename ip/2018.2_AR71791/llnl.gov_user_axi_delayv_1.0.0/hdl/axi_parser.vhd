@@ -113,9 +113,10 @@ signal acc_going_on     : std_logic; -- access in progress flag
 
 -- FIFO interface signals
 signal axi_info_wdata   : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
+signal axi_info_wdata_q : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
 signal axi_info_wr      : std_logic;
 signal axi_info_af      : std_logic;
-signal axi_info_full    : std_logic;
+--signal axi_info_full    : std_logic;
 signal axi_info_valid   : std_logic;
 signal axi_info_rdata   : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
 signal axi_info_rd      : std_logic;
@@ -222,34 +223,47 @@ s_axi_id <= w_id_i when (CHANNEL_TYPE = "W") else s_axi_id_i;
 
 -- concatenate all axi input signals (outputs are not concatenated)
 axi_info_wdata <= s_axi_resp_i & s_axi_id & s_axi_addr_i & s_axi_data_i & s_axi_strb_i & s_axi_len_i & s_axi_size_i & s_axi_burst_i & 
-                  s_axi_lock_i  & s_axi_cache_i & s_axi_prot_i & s_axi_qos_i & s_axi_region_i & s_axi_valid_i & s_axi_last_i;
+                   s_axi_lock_i  & s_axi_cache_i & s_axi_prot_i & s_axi_qos_i & s_axi_region_i & s_axi_valid_i & s_axi_last_i;
 
 -- shallow FIFO for buffering AXI events                    
-axi_info_fifo : entity fifo_sync
-    GENERIC MAP (
-        C_DEPTH      => 16,
-        C_DIN_WIDTH  => AXI_INFO_WIDTH,
-        C_DOUT_WIDTH => AXI_INFO_WIDTH,
-        C_THRESH     => 4
-    ) 
-PORT MAP (
-        wr_clk      => clk_i,
-        rst         => rst_i,
+--axi_info_fifo : entity fifo_sync
+--    GENERIC MAP (
+--        C_DEPTH      => 16,
+--        C_DIN_WIDTH  => AXI_INFO_WIDTH,
+--        C_DOUT_WIDTH => AXI_INFO_WIDTH,
+--        C_THRESH     => 4
+--    ) 
+--PORT MAP (
+--        wr_clk      => clk_i,
+--        rst         => rst_i,
+--
+--        din         => axi_info_wdata,
+--        prog_full   => axi_info_af,
+--        full        => axi_info_full,
+--        wr_en       => axi_info_wr,
+--
+--        dout        => axi_info_rdata,
+--        prog_empty  => OPEN,
+--        empty       => OPEN,
+--        valid       => axi_info_valid,
+--        rd_en       => axi_info_rd
+--  );
 
-        din         => axi_info_wdata,
-        prog_full   => axi_info_af,
-        full        => axi_info_full,
-        wr_en       => axi_info_wr,
-
-        dout        => axi_info_rdata,
-        prog_empty  => OPEN,
-        empty       => OPEN,
-        valid       => axi_info_valid,
-        rd_en       => axi_info_rd
-  );
+axi_info_proc : process (clk_i, rst_i) begin
+    if (rst_i = '1') then
+        axi_info_af     <= '0';
+        axi_info_valid <= '0';
+        axi_info_wdata_q  <= (others => '0');
+        axi_info_rdata    <= (others => '0');
+    elsif rising_edge(clk_i) then
+        axi_info_af      <= '0';
+        axi_info_valid   <= axi_info_rd;
+        axi_info_wdata_q <= axi_info_wdata;
+        axi_info_rdata   <= axi_info_wdata_q;
+    end if;
+end process;
 
 s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i) and (pq_ready_i);
---s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i) and (not minicam_full_i) and (pq_ready_i);
 
 sb_index     <= mc_ctr_ptr_q(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
 sb_index_int <= to_integer(unsigned(sb_index));
