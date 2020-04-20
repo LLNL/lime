@@ -112,12 +112,12 @@ signal rwaddr_resp_flag : std_logic; -- write addr, read addr, or response flags
 signal acc_going_on     : std_logic; -- access in progress flag
 
 -- FIFO interface signals
-signal axi_info_wdata   : std_logic_vector(255 downto 0);
+signal axi_info_wdata   : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
 signal axi_info_wr      : std_logic;
 signal axi_info_af      : std_logic;
 signal axi_info_full    : std_logic;
 signal axi_info_valid   : std_logic;
-signal axi_info_rdata   : std_logic_vector(255 downto 0);
+signal axi_info_rdata   : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
 signal axi_info_rd      : std_logic;
 
 -- misc. logic
@@ -221,15 +221,15 @@ end generate;
 s_axi_id <= w_id_i when (CHANNEL_TYPE = "W") else s_axi_id_i;
 
 -- concatenate all axi input signals (outputs are not concatenated)
-axi_info_wdata <= C_ZERO(255 downto AXI_INFO_WIDTH) & s_axi_resp_i & s_axi_id & s_axi_addr_i & s_axi_data_i & s_axi_strb_i & s_axi_len_i & s_axi_size_i & s_axi_burst_i & 
-                   s_axi_lock_i  & s_axi_cache_i & s_axi_prot_i & s_axi_qos_i & s_axi_region_i & s_axi_valid_i & s_axi_last_i;
+axi_info_wdata <= s_axi_resp_i & s_axi_id & s_axi_addr_i & s_axi_data_i & s_axi_strb_i & s_axi_len_i & s_axi_size_i & s_axi_burst_i & 
+                  s_axi_lock_i  & s_axi_cache_i & s_axi_prot_i & s_axi_qos_i & s_axi_region_i & s_axi_valid_i & s_axi_last_i;
 
 -- shallow FIFO for buffering AXI events                    
 axi_info_fifo : entity fifo_sync
     GENERIC MAP (
         C_DEPTH      => 16,
-        C_DIN_WIDTH  => 256,
-        C_DOUT_WIDTH => 256,
+        C_DIN_WIDTH  => AXI_INFO_WIDTH,
+        C_DOUT_WIDTH => AXI_INFO_WIDTH,
         C_THRESH     => 4
     ) 
 PORT MAP (
@@ -278,7 +278,7 @@ w_last_o      <= last_data_flag; -- used for "AW" instances only
 mc_last_o     <= last_data_flag;
 
 -----  pkt_buffer interface -----
-pb_info_data_o   <= axi_info_rdata(AXI_INFO_WIDTH-1 downto 0);
+pb_info_data_o   <= axi_info_rdata;
 pb_cntr_ptr_o    <= mc_ctr_ptr_q;
 pb_wr_o          <= axi_info_valid;
 
