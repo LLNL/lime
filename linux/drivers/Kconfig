@@ -1,0 +1,15 @@
+menu "LiME drivers"
+
+config LMCACHE
+	tristate "LiME cache management"
+	depends on ARCH_ZYNQMP
+	help
+	  Provides cache flush and invalidate operations.
+
+config LMALLOC
+	tristate "LiME memory allocation and translation"
+	depends on ARCH_ZYNQMP
+	help
+	  Provides contiguous memory allocation and address translation.
+
+endmenu

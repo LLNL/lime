@@ -17,25 +17,54 @@ ifneq ($(wildcard $(BDF)),)
 BOARD := $(word 2,$(subst :, ,$(shell cat $(BDF))))
 endif
 XSCT := xsct$(if $(findstring Linux,$(shell uname -s)),,.bat)
+# LN := cp -l
+LN := ln -s
 
 .PHONY: all
 all: boot/bootfiles.tar.xz
 	@echo "BOARD: $(BOARD)"
 
-device-tree-xlnx:
-	git clone https://github.com/Xilinx/device-tree-xlnx.git
-
 dtc/Makefile:
 	git clone https://git.kernel.org/pub/scm/utils/dtc/dtc.git
 
+device-tree-xlnx:
+	git clone https://github.com/Xilinx/device-tree-xlnx.git
+	cd device-tree-xlnx &&\
+	git checkout xilinx-v2018.2
+
 arm-trusted-firmware/Makefile:
 	git clone https://github.com/Xilinx/arm-trusted-firmware.git
+	cd arm-trusted-firmware &&\
+	git checkout xilinx-v2018.2
 
 u-boot-xlnx/Makefile:
 	git clone https://github.com/Xilinx/u-boot-xlnx.git
+	cd u-boot-xlnx &&\
+	git checkout xilinx-v2018.2
 
+DEFCONFIG = linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
 linux-xlnx/Makefile:
 	git clone https://github.com/Xilinx/linux-xlnx.git
+	cd linux-xlnx &&\
+	git checkout xlnx_rebase_v4.14_2018.2
+	# Include LiME drivers in kernel source tree
+	$(LN) -rf drivers linux-xlnx/drivers/lime
+	sed -i.bak '/endmenu/i\source "drivers/lime/Kconfig"\n' linux-xlnx/drivers/Kconfig
+	sed -i.bak '$$a\\nobj-y += lime/' linux-xlnx/drivers/Makefile
+	sed -i.bak '$$a\CONFIG_LMCACHE=y\nCONFIG_LMALLOC=y' $(DEFCONFIG)
+	$(MAKE) -C linux-xlnx/drivers/lime kpatch
+ifneq ($(findstring zcu102,$(BOARD)),)
+	# Fix for slowness caused by disabled caches and the DRM KMS driver
+	sed -i.bak '/CONFIG_DRM_XLNX=y/c\# CONFIG_DRM_XLNX=y' $(DEFCONFIG)
+	# Remove all the other DRM stuff just in case
+	sed -i.bak '/CONFIG_DRM=y/c\# CONFIG_DRM=y' $(DEFCONFIG)
+	sed -i.bak '/CONFIG_DRM_XILINX=y/c\# CONFIG_DRM_XILINX=y' $(DEFCONFIG)
+	# Remove the displayport stuff that is causing panic on boot
+	sed -i.bak '/CONFIG_SND_SOC_XILINX_DP=y/c\# CONFIG_SND_SOC_XILINX_DP=y' $(DEFCONFIG)
+	sed -i.bak '/CONFIG_VIDEO_XILINX=y/c\# CONFIG_VIDEO_XILINX=y' $(DEFCONFIG)
+	# Remove usb driver causing panic on shutdown
+	sed -i.bak '/CONFIG_USB_XHCI_HCD=y/c\# CONFIG_USB_XHCI_HCD=y' $(DEFCONFIG)
+endif
 
 # Build SDK Projects (hw_platform_0, BSPs, FSBL, PMUFW)
 # Projects are built together sequentially by a single script because
@@ -48,8 +77,6 @@ sdk/pmufw/Release/pmufw.elf: $(HDF) $(BDF)
 # Build DTS
 # Dependent on sdk/hw_platform_0 but using pmufw.elf instead
 dts/system-top.dts: sdk/pmufw/Release/pmufw.elf device-tree-xlnx
-	cd device-tree-xlnx &&\
-	git checkout xilinx-v2018.2
 	$(RM) -r dts
 	$(XSCT) dts.tcl
 	sed -i.bak '/fclk0: fclk0 {/,/status = "disabled";/c\\tfclk0: fclk0 {\n\t\tstatus = "okay";' dts/zynqmp-clk-ccf.dtsi
@@ -86,7 +113,6 @@ dts/system.dtb: dtc/dtc dts/system-top.dts
 # Build Arm Trusted Firmware (ATF)
 arm-trusted-firmware/build/zynqmp/release/bl31/bl31.elf: arm-trusted-firmware/Makefile
 	cd arm-trusted-firmware &&\
-	git checkout xilinx-v2018.2 &&\
 	export CROSS_COMPILE=aarch64-linux-gnu- &&\
 	export ARCH=arm64 &&\
 	$(MAKE) PLAT=zynqmp RESET_TO_BL31=1
@@ -94,7 +120,6 @@ arm-trusted-firmware/build/zynqmp/release/bl31/bl31.elf: arm-trusted-firmware/Ma
 # Build U-Boot
 u-boot-xlnx/u-boot.elf: u-boot-xlnx/Makefile
 	cd u-boot-xlnx &&\
-	git checkout xilinx-v2018.2 &&\
 	export CROSS_COMPILE=aarch64-linux-gnu- &&\
 	export ARCH=aarch64 &&\
 	$(MAKE) distclean &&\
@@ -102,27 +127,17 @@ u-boot-xlnx/u-boot.elf: u-boot-xlnx/Makefile
 	$(MAKE)
 
 # Build Linux Kernel
-linux-xlnx/arch/arm64/boot/Image: linux-xlnx/Makefile
-	cd linux-xlnx &&\
-	git checkout xlnx_rebase_v4.14_2018.2
-ifneq ($(findstring zcu102,$(BOARD)),)
-	# Fix for slowness caused by disabled caches caused by DRM KMS driver
-	sed -i.bak '/CONFIG_DRM_XLNX=y/c\# CONFIG_DRM_XLNX=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
-	# Remove all the other DRM stuff just in case
-	sed -i.bak '/CONFIG_DRM=y/c\# CONFIG_DRM=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
-	sed -i.bak '/CONFIG_DRM_XILINX=y/c\# CONFIG_DRM_XILINX=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
-	# Remove the displayport stuff that is causing panic on boot
-	sed -i.bak '/CONFIG_SND_SOC_XILINX_DP=y/c\# CONFIG_SND_SOC_XILINX_DP=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
-	sed -i.bak '/CONFIG_VIDEO_XILINX=y/c\# CONFIG_VIDEO_XILINX=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
-	# Remove usb driver causing panic on shutdown
-	sed -i.bak '/CONFIG_USB_XHCI_HCD=y/c\# CONFIG_USB_XHCI_HCD=y' linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
-endif
+linux-xlnx/arch/arm64/boot/Image: linux-xlnx/Makefile $(if $(filter kernel,$(MAKECMDGOALS)),FORCE)
 	cd linux-xlnx &&\
 	export CROSS_COMPILE=aarch64-linux-gnu- &&\
 	export ARCH=arm64 &&\
 	$(MAKE) xilinx_zynqmp_defconfig &&\
 	echo $(MAKE) menuconfig &&\
 	$(MAKE)
+FORCE: ;
+
+.PHONY: kernel
+kernel: all
 
 # Build Boot Files
 # FSBL and .bit file are built with PMUFW
@@ -147,5 +162,6 @@ clean:
 	$(RM) -r dtc
 	$(RM) -r arm-trusted-firmware
 	$(RM) -r u-boot-xlnx
+	$(MAKE) -iC drivers clean
 	$(RM) -r linux-xlnx
 	$(MAKE) -C boot clean

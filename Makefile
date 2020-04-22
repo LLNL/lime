@@ -1,5 +1,5 @@
 
-PACKAGE = lime-2.1.0
+PACKAGE = lime-2.2.0
 
 # Cancel version control implicit rules
 %:: %,v
@@ -23,11 +23,12 @@ all help:
 	@echo "  clean   - Remove build files"
 	@echo "  dist    - Package the release for distribution (tar)"
 	@echo "  ip      - Build IP libraries"
-	@echo "  project - Include with design target to only create a project"
+	@echo "  kernel  - Use with linux target to force kernel rebuild"
+	@echo "  project - Use with design target to only create a project"
 	@echo "  sdcard  - Format and copy Linux to an SD card"
 	@echo "            Use the make variable 'DEV' to specify the SD device."
 	@echo "            e.g., make sdcard DEV=/dev/mmcblk0"
-	@echo "  test    - Run hardware tests (standalone)"
+	@echo "  test    - Run hardware tests"
 	@echo "  trace   - Build the trace parser"
 	@echo -e "\nPreconditions:"
 	@echo "  1) Xilinx tools in path"
@@ -43,8 +44,8 @@ ip:
 $(DESIGNS): ip
 	$(MAKE) -C system $@ $(filter project,$(MAKECMDGOALS))
 
-.PHONY: project
-project:;@echo -n
+.PHONY: project kernel
+project kernel:;@echo -n
 
 .PHONY: standalone
 standalone:
@@ -52,7 +53,7 @@ standalone:
 
 .PHONY: linux
 linux:
-	$(MAKE) -C linux
+	$(MAKE) -C linux $(filter kernel,$(MAKECMDGOALS))
 
 .PHONY: trace
 trace:
@@ -60,7 +61,7 @@ trace:
 
 .PHONY: test
 test: standalone
-	$(MAKE) -C test run
+	$(MAKE) -C test fpga run
 
 .PHONY: sdcard
 sdcard: linux

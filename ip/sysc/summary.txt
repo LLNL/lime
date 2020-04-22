@@ -1,0 +1,42 @@
+
+FILE: cswitch.h
+SC_MODULE(csw_demux)
+	void ct_demux() - read from s_port, write to one of N s_ports.
+	void ct_mux() - read from one of N s_ports, write to s_port.
+SC_MODULE(cswitch)
+SC_MODULE(ctree)
+
+FILE: ctlreg.h
+SC_MODULE(ctlreg) // control port register access
+	void ct_command() - read from s_port, cond. write to signals, s_chan, or s_port.
+	void ct_response() - cond. read from s_chan or s_port, write to s_port.
+	void ms_reg_write() - write to register file based on control signals.
+	void mc_assign() - signal assign, expose internal register file to signal port.
+
+FILE: hsu.h
+SC_MODULE(short_hash)
+	void ct_mix() - read from two s_ports of different type, write to one s_port, no conditional port r/w.
+SC_MODULE(hsu) // Hash Unit
+	void ct_key_in() - cond. read from s_port or s_chan+v_reg, write to two different s_chans at same time.
+	void ct_hash_out() - read from s_chan, cond. write to s_port or s_chan+v_reg.
+
+FILE: lsu.h
+SC_MODULE(lsuctl) // LSU control
+	void ct_command() - read from s_port, write to signal and s_chan [repetitively].
+	void ct_response() - read from s_port, write to s_chan+v_reg
+SC_MODULE(mm2s)
+	void ct_command() - read from s_port (control), write transactions.
+	void ct_response() - read transactions, write s_port (data) [repetitively], write s_port (response).
+SC_MODULE(s2mm)
+	void ct_command() - read from s_port (control) and then another s_port (data) [repetitively], write transactions.
+	void ct_response() - read transactions, write to s_port (response).
+SC_MODULE(lsu)
+
+FILE: indel.h
+SC_MODULE(indel) // Insert Delete Unit
+	void ct_indel_in() - read from two s_ports sequentially, write to s_port
+
+FILE: spsel.h
+SC_MODULE(spsel)
+	void ct_ctl() - read from s_port, write to s_port
+	void ct_dat() - read from s_port, write to two s_ports at same time.
