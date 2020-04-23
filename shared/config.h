@@ -44,6 +44,7 @@
 // defined(__ARM_ARCH)     : ARM architecture 32-bit or 64-bit
 // defined(__aarch64__)    : ARM architecture 64-bit
 // defined(__linux__)      : Linux OS
+// defined(__LP64__)       : long int and pointer both use 64-bits
 
 #if defined(CLIENT) || defined(SERVER) || defined(OFFLOAD)
 // use stream communication and aport protocols

@@ -1,5 +1,5 @@
 /*
- * monitor_sa.c
+ * monitor.c
  *
  *  Created on: Sep 16, 2014
  *      Author: lloyd23
@@ -34,13 +34,20 @@ void monitor_finish(void)
 
 #if defined(STATS)
 
+// TODO: find a more reliable method to determine Slot 0 data channel width
+#if defined(__LP64__)
+#define I2_RNG_HI 15
+#else
+#define I2_RNG_HI 3
+#endif
+
 void stats_start(void)
 {
 	XAxiPmon_SetMetrics(&apm, 0, XAPM_METRIC_SET_0, XAPM_METRIC_COUNTER_0); /* Slot 0 Write Transaction Count */
 	XAxiPmon_SetMetrics(&apm, 0, XAPM_METRIC_SET_1, XAPM_METRIC_COUNTER_1); /* Slot 0 Read Transaction Count */
 	XAxiPmon_SetMetrics(&apm, 0, XAPM_METRIC_SET_2, XAPM_METRIC_COUNTER_2); /* Slot 0 Write Byte Count */
 	XAxiPmon_SetMetrics(&apm, 0, XAPM_METRIC_SET_3, XAPM_METRIC_COUNTER_3); /* Slot 0 Read Byte Count */
-	XAxiPmon_SetIncrementerRange(&apm, XAPM_INCREMENTER_2, 3, 0); /* counts data beats with low strobes on the 32-bit data channel */
+	XAxiPmon_SetIncrementerRange(&apm, XAPM_INCREMENTER_2, I2_RNG_HI, 0); /* counts data beats with low strobes on the data channel */
 #if defined(USE_ACC)
 	XAxiPmon_SetMetrics(&apm, 1, XAPM_METRIC_SET_0, XAPM_METRIC_COUNTER_4); /* Slot 1 Write Transaction Count */
 	XAxiPmon_SetMetrics(&apm, 1, XAPM_METRIC_SET_1, XAPM_METRIC_COUNTER_5); /* Slot 1 Read Transaction Count */

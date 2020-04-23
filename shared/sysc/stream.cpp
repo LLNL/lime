@@ -1,5 +1,5 @@
 /*
- * stream.c
+ * stream.cpp
  *
  *  Created on: Mar 1, 2018
  *      Author: lloyd23

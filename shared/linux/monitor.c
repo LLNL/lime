@@ -1,5 +1,5 @@
 /*
- * monitor_ln.c
+ * monitor.c
  *
  *  Created on: Sep 7, 2018
  *      Author: Maya Gokhale
@@ -159,19 +159,26 @@ void monitor_finish(void) {
 
 #if defined(STATS)
 
+// TODO: find a more reliable method to determine Slot 0 data channel width
+#if defined(__LP64__)
+#define I2_RNG_HI 15
+#else
+#define I2_RNG_HI 3
+#endif
+
 void stats_start(void) {
 	/* CPU */
 	setmetrics(0, XAPM_METRIC_SET_0, XAPM_METRIC_COUNTER_0); /* Slot 0 Write Transaction Count */
 	setmetrics(0, XAPM_METRIC_SET_1, XAPM_METRIC_COUNTER_1); /* Slot 0 Read Transaction Count */
 	setmetrics(0, XAPM_METRIC_SET_2, XAPM_METRIC_COUNTER_2); /* Slot 0 Write Byte Count */
 	setmetrics(0, XAPM_METRIC_SET_3, XAPM_METRIC_COUNTER_3); /* Slot 0 Read Byte Count */
-	setincrementerrange(XAPM_INCREMENTER_2, 3, 0); /* counts data beats with low strobes on the 32-bit data channel */
+	setincrementerrange(XAPM_INCREMENTER_2, I2_RNG_HI, 0); /* counts data beats with low strobes on the data channel */
 #if defined(USE_ACC)
 	/* ACC */
 	setmetrics(1, XAPM_METRIC_SET_0, XAPM_METRIC_COUNTER_4); /* Slot 1 Write Transaction Count */
 	setmetrics(1, XAPM_METRIC_SET_1, XAPM_METRIC_COUNTER_5); /* Slot 1 Read Transaction Count */
 	setmetrics(1, XAPM_METRIC_SET_2, XAPM_METRIC_COUNTER_6); /* Slot 1 Write Byte Count */
-	setmetrics(1, XAPM_METRIC_SET_3, XAPM_METRIC_COUNTER_6); /* Slot 1 Read Byte Count */
+	setmetrics(1, XAPM_METRIC_SET_3, XAPM_METRIC_COUNTER_7); /* Slot 1 Read Byte Count */
 	setincrementerrange(XAPM_INCREMENTER_6, 7, 0); /* counts data beats with low strobes on the 64-bit data channel */
 #endif
 	intrclear(XAPM_IXR_ALL_MASK);
