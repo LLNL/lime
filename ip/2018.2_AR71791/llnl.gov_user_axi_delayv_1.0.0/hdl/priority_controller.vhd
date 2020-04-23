@@ -68,7 +68,6 @@ constant ARBITER_W : integer := NUM_MINI_BUFS; -- arbiter width, i.e. number of 
 -- priority queue interface
 signal pq_mb_idx  : std_logic_vector(MINIBUF_IDX_WIDTH - 1 downto 0);
 signal pq_axi_id  : std_logic_vector(C_AXI_ID_WIDTH - 1 downto 0);
-signal pq_delay   : std_logic_vector(DELAY_WIDTH -1 downto 0);
 
 -- arbiter signals
 signal req        : std_logic_vector(NUM_MINI_BUFS-1 downto 0); -- arbiter request, i.e. scoreboard_valid
@@ -78,7 +77,6 @@ signal double_gnt : std_logic_vector(2*ARBITER_W-1 downto 0);
 signal priority   : std_logic_vector(ARBITER_W-1 downto 0);
 signal last_req   : std_logic_vector(ARBITER_W-1 downto 0);
 signal gnt_or     : std_logic; -- OR of all gnt bits
-signal gnt_or_q   : std_logic; -- OR of all gnt bits
 
 -- packet buffer i/o
 signal pktbuf_enb          : std_logic;                   
@@ -116,7 +114,6 @@ signal ctr_ptr_addr      : unsigned(31 downto 0);
 
 begin
 
-pq_delay  <= pq_dout_i(DELAY_WIDTH + C_AXI_ID_WIDTH + MINIBUF_IDX_WIDTH - 1 downto C_AXI_ID_WIDTH + MINIBUF_IDX_WIDTH);
 pq_axi_id <= pq_dout_i(C_AXI_ID_WIDTH + MINIBUF_IDX_WIDTH - 1 downto MINIBUF_IDX_WIDTH);
 pq_mb_idx <= pq_dout_i(MINIBUF_IDX_WIDTH - 1 downto 0);
 
@@ -154,10 +151,6 @@ pbrd_ns_proc: process(clk_i) begin
         end if;
     end if;
 end process;
-
---gnt_bit            <= log2rp_long(gnt);
---ctr_ptr_addr       <= to_unsigned(gnt_bit,32);
---base_minicam_addr  <= shift_left(ctr_ptr_addr,2);
 
 vcpsm_proc : process(pbrd_ns, gnt_or, gnt_bit, pktbuf_addrb, pktbuf_addrb_ns, pktbuf_doutb_i,
                      scoreboard_rd_idx_ns, base_minicam_addr, ctr_ptr_addr)

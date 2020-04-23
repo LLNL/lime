@@ -180,6 +180,7 @@ signal pq_dout            : std_logic_vector(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_
 signal pq_dout_valid      : std_logic;
 signal pq_dout_ready      : std_logic;
 signal count_time         : std_logic_vector(31 downto 0);
+signal pq_data_sr         : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
 
 --For Chipscope
 attribute keep : string;
@@ -204,13 +205,15 @@ m_axi_areset <= not m_axi_aresetn;
 ---------------------------------------
 axi_parser_inst : entity axi_delay_lib.axi_parser
 generic map (
-    CHANNEL_TYPE       => CHANNEL_TYPE,
-    MINIBUF_IDX_WIDTH  => MINIBUF_IDX_WIDTH,-- Number of Minibuffers = 2^MINIBUF_IDX_WIDTH
-    CTR_PTR_WIDTH      => CTR_PTR_WIDTH,    -- indexes into (i.e. addresses) the packet buffer.
-    C_AXI_ID_WIDTH     => C_AXI_ID_WIDTH,
-    C_AXI_DATA_WIDTH   => C_AXI_DATA_WIDTH,
-    C_AXI_ADDR_WIDTH   => C_AXI_ADDR_WIDTH,
-    AXI_INFO_WIDTH     => AXI_INFO_WIDTH
+    CHANNEL_TYPE         => CHANNEL_TYPE,
+    MINIBUF_IDX_WIDTH    => MINIBUF_IDX_WIDTH,-- Number of Minibuffers = 2^MINIBUF_IDX_WIDTH
+    CTR_PTR_WIDTH        => CTR_PTR_WIDTH,    -- indexes into (i.e. addresses) the packet buffer.
+    PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
+    C_AXI_ID_WIDTH       => C_AXI_ID_WIDTH,
+    C_AXI_DATA_WIDTH     => C_AXI_DATA_WIDTH,
+    C_AXI_ADDR_WIDTH     => C_AXI_ADDR_WIDTH,
+    AXI_INFO_WIDTH       => AXI_INFO_WIDTH,
+    DELAY_WIDTH          => DELAY_WIDTH
 )
 port map (
     clk_i                => s_axi_aclk,
@@ -269,6 +272,8 @@ port map (
     sb_index_o           => scoreboard_wr_idx,
 
     ----- priority_queue interface -----
+    random_dly_i         => random_dly,
+    pq_data_sr_o         => pq_data_sr,
     pq_data_o            => pq_data, --(axi_id & sb_index)
     pq_en_o              => pq_en,
     pq_ready_i           => pq_ready
@@ -479,13 +484,15 @@ generic map (
     INDEX_WIDTH          => MINIBUF_IDX_WIDTH,
     C_AXI_ID_WIDTH       => C_AXI_ID_WIDTH,
     C_AXI_ADDR_WIDTH     => C_AXI_ADDR_WIDTH,
-    C_AXI_DATA_WIDTH     => C_AXI_DATA_WIDTH
+    C_AXI_DATA_WIDTH     => C_AXI_DATA_WIDTH,
+    MINIBUF_IDX_WIDTH    => MINIBUF_IDX_WIDTH
   )
 port map (
-      clk_i               => m_axi_aclk,
-      nreset_i            => m_axi_aresetn,
+    clk_i                => m_axi_aclk,
+    nreset_i             => m_axi_aresetn,
   
     -- (delay & axi_id & sb_index) of the transaction (from axi_parser)
+    din_sr_i      => pq_data_sr,
     din_i         => pq_data_complete,
     din_en_i      => pq_en,
     din_ready_o   => pq_ready,

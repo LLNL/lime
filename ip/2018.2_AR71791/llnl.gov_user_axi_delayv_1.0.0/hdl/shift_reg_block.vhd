@@ -138,6 +138,7 @@ shift_reg_proc : process (clk_i) begin
                     else
                         delay_reg   <= (others => '0');
                     end if;
+                    debug_shift     <= "011";
                 end if;
             elsif (m_shift_ready_i = '1' and valid_reg = '1') then
                 -- bottom channel pop and shift left
@@ -158,6 +159,7 @@ shift_reg_proc : process (clk_i) begin
                 else
                     delay_reg <= (others => '0');
                 end if;
+                debug_shift   <= "101";
             end if;
         end if;
     end if;

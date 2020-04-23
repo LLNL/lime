@@ -39,7 +39,7 @@ end entity axi_slave;
 
 architecture arch_axi_slave of axi_slave is
 
-file maxi_out : TEXT open write_mode is "../../../../axi_variable_delay.srcs/sim_1/data_out/maxi_out.txt";
+file maxi_out : TEXT open write_mode is "../../../../data_out/maxi_out.txt";
 
 --------------------------------------------------------------------------------
 -- Component Declarations (needed for verilog modules, which are not entities)

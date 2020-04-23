@@ -22,10 +22,12 @@ entity axi_parser is
                                                -- minimum depth of Packet Buffer DPRAM = 2^(CTR_PTR_WIDTH)
      
         -- AXI-Full Bus Interface
+        PRIORITY_QUEUE_WIDTH : integer := 32;
         C_AXI_ID_WIDTH     : integer := 16;
         C_AXI_ADDR_WIDTH   : integer := 40;
         C_AXI_DATA_WIDTH   : integer := 128;
         AXI_INFO_WIDTH     : integer := 192;
+        DELAY_WIDTH        : integer := 16;
         AIDBUF_ADDR_WIDTH  : integer := 6
     );
     port (
@@ -84,6 +86,8 @@ entity axi_parser is
         sb_wr_o              : out std_logic; -- s_axi_last_i detected, assert corresonding valid bit
         sb_index_o           : out integer;   -- index of scoreboard valid bit
 
+        random_dly_i         : in  std_logic_vector(DELAY_WIDTH-1 downto 0);
+        pq_data_sr_o         : out std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
         pq_data_o            : out std_logic_vector(C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH-1 downto 0);
         pq_en_o              : out std_logic;
         pq_ready_i           : in  std_logic
@@ -95,8 +99,7 @@ architecture behavioral of axi_parser is
 --******************************************************************************
 -- Constants
 --******************************************************************************
-constant C_ZERO : std_logic_vector(255 downto 0) := (others => '0'); -- create std_logic_vector for FIFO i/p leading zeros
-
+constant C_ZERO   : std_logic_vector(255 downto 0) := (others => '0'); -- create std_logic_vector for FIFO i/p leading zeros
 --******************************************************************************
 -- Components
 --******************************************************************************
@@ -251,22 +254,27 @@ axi_info_wdata <= s_axi_resp_i & s_axi_id & s_axi_addr_i & s_axi_data_i & s_axi_
 
 axi_info_proc : process (clk_i, rst_i) begin
     if (rst_i = '1') then
-        axi_info_af     <= '0';
-        axi_info_valid <= '0';
-        axi_info_wdata_q  <= (others => '0');
-        axi_info_rdata    <= (others => '0');
+        axi_info_af         <= '0';
+        axi_info_valid      <= '0';
+        axi_info_wdata_q    <= (others => '0');
+        axi_info_rdata      <= (others => '0');
+        pq_data_sr_o        <= (others => '0');
     elsif rising_edge(clk_i) then
         axi_info_af      <= '0';
         axi_info_valid   <= axi_info_rd;
         axi_info_wdata_q <= axi_info_wdata;
         axi_info_rdata   <= axi_info_wdata_q;
+
+        pq_data_sr_loop :
+            for j in 0 to PRIORITY_QUEUE_WIDTH-1 loop
+              pq_data_sr_o((j+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto j*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)) <= 
+                  random_dly_i & axi_info_wdata_q(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH) & mc_ctr_ptr_i(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
+        end loop pq_data_sr_loop;            
+
     end if;
 end process;
 
 s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i) and (pq_ready_i);
-
-sb_index     <= mc_ctr_ptr_q(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
-sb_index_int <= to_integer(unsigned(sb_index));
 
 --------------------------------------------------------------------------------
 -- Pipeline registers
@@ -282,6 +290,9 @@ pipeline_proc : process (clk_i, rst_i) begin
         mc_ctr_ptr_q    <= mc_ctr_ptr_i;
     end if;
 end process;
+
+sb_index     <= mc_ctr_ptr_q(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
+sb_index_int <= to_integer(unsigned(sb_index));
 
 ----------------------------------------------------------------------------------------------
 -- Output assignments

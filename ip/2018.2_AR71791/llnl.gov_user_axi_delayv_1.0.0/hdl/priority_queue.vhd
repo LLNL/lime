@@ -20,14 +20,16 @@ generic (
     DELAY_WIDTH          : integer := 32;
     INDEX_WIDTH          : integer := 32;
     C_AXI_ID_WIDTH       : integer := 1;
-	C_AXI_ADDR_WIDTH     : integer := 32;
-	C_AXI_DATA_WIDTH     : integer := 32
+    C_AXI_ADDR_WIDTH     : integer := 32;
+    C_AXI_DATA_WIDTH     : integer := 32;
+    MINIBUF_IDX_WIDTH    : integer := 6
 );
 port (
     clk_i         : in  std_logic;
     nreset_i      : in  std_logic;
 
     -- (delay & axi_id & sb_index) of the transaction (from axi_parser)
+    din_sr_i      : in  std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
     din_i         : in  std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
     din_en_i      : in  std_logic;
     din_ready_o   : out std_logic;
@@ -51,32 +53,32 @@ architecture behavioral of priority_queue is
 --Signal Definitions
 --******************************************************************************
 type dat is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(32+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
-signal s_shift_data  : dat;
-signal m_shift_data  : dat;
-signal m_data        : dat;
-signal s_data        : dat;
+signal s_shift_data    : dat;
+signal m_shift_data    : dat;
+signal m_data          : dat;
+signal s_data          : dat;
 type delay_array is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(DELAY_WIDTH-1 downto 0);
-signal delay_reg     : delay_array;
+signal delay_reg       : delay_array;
 type id_array is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
-signal id_reg        : id_array;
+signal id_reg          : id_array;
 
-signal valid_reg     : std_logic_vector(PRIORITY_QUEUE_WIDTH-1 downto 0);
-signal delay_new     : std_logic_vector(DELAY_WIDTH-1 downto 0);   
-signal delay_srb_low : integer; -- lowest srb for delay insertion
-signal axi_id_new    : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
-signal axi_id_max_hi : integer; -- highest SRB with matching axi_id
-signal srb_insert    : integer;
+signal valid_reg       : std_logic_vector(PRIORITY_QUEUE_WIDTH-1 downto 0);
+signal delay_new       : std_logic_vector(DELAY_WIDTH-1 downto 0);   
+signal delay_srb_low   : integer; -- lowest srb for delay insertion
+signal axi_id_new      : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
+signal axi_id_max_hi   : integer; -- highest SRB with matching axi_id
+signal srb_insert      : integer;
 
 type bit_signal is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic;
-signal s_shift_valid : bit_signal;
-signal s_shift_ready : bit_signal;
-signal m_shift_valid : bit_signal;
-signal m_shift_ready : bit_signal;
-signal m_data_en     : bit_signal;
-signal s_data_en     : bit_signal;
-signal count_time    : std_logic_vector(31 downto 0);
+signal s_shift_valid   : bit_signal;
+signal s_shift_ready   : bit_signal;
+signal m_shift_valid   : bit_signal;
+signal m_shift_ready   : bit_signal;
+signal m_data_en       : bit_signal;
+signal s_data_en       : bit_signal;
+signal count_time      : std_logic_vector(31 downto 0);
 
-signal dout_ready    : std_logic;
+signal dout_ready      : std_logic;
 
 --******************************************************************************
 -- Connectivity and Logic
@@ -121,7 +123,8 @@ for i in 0 to PRIORITY_QUEUE_WIDTH-1 generate
 
         -- input from Priority controller (deletion, or pop, towards Priority Controller)
         index_srb_i       => std_logic_vector(to_unsigned(i, 32)),
-        din_i             => din_i,
+        din_i             => din_sr_i((i+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto i*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)),
+--        din_i             => din_i,
         din_en_i          => din_en_i,
 
         -- Top Channel from previous device
@@ -193,6 +196,10 @@ end generate GEN_shift_reg_blocks;
 -- This loop determines which of these is the *first* srb (i.e. lowest number) where its stored delay
 -- is higher than the new packet's delay. The new packet info is stored in this one, all others are
 -- shifted left
+
+-- NOTE (2020-0422): The timing of this path is horrible (~0.35ns worst case). Although the design works
+-- in hardware, this must be fixed, and the only way is to pipeline this path. There may be a corner
+-- case that occurs in HW testing that doesn't show up in simulation, so take note during hardware operation.
 ----------------------------------------------------------------------------------------------
 
 delay_new  <= din_i(DELAY_WIDTH+C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+INDEX_WIDTH);

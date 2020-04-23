@@ -51,8 +51,8 @@ end entity axi_master;
 
 architecture axi_master of axi_master is
 
-file file_in      : text open read_mode is "../../../../axi_variable_delay.srcs/sim_1/data_in/axi_event.in";
-file stat_out     : text open write_mode is "../../../../axi_variable_delay.srcs/sim_1/data_out/status_out.txt";
+file file_in      : text open read_mode is "../../../../data_in/axi_event.in";
+file stat_out     : text open write_mode is "../../../../data_out/status_out.txt";
 
 --*********************************************************************
 -- Constants
