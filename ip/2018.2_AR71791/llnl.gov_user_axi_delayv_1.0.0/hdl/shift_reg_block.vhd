@@ -76,6 +76,9 @@ signal delay_ip      : std_logic_vector(C_DELAY_WIDTH-1 downto 0);
 signal id_ip         : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
 signal index_ip      : std_logic_vector(C_INDEX_WIDTH-1 downto 0);
 
+signal delay_ip_lt_delay_reg : std_logic;
+signal delay_ip_ne_zero      : std_logic;
+
 signal debug_shift   : std_logic_vector(2 downto 0); -- for tracking "state" during simulation
 
 --******************************************************************************
@@ -96,6 +99,10 @@ s_shift_ready_o <= m_shift_ready_i;
 --------------------------------------------------------------------------------
 -- Shift register
 --------------------------------------------------------------------------------
+--compare terms, for timing
+delay_ip_lt_delay_reg <= '1' when (delay_ip < delay_reg) else '0';
+delay_ip_ne_zero      <= '1' when ((ZEROS_ID & delay_ip) > x"00000000") else '0';
+
 shift_reg_proc : process (clk_i) begin
     if(rising_edge(clk_i)) then
        if (nreset_i = '0') then
@@ -108,10 +115,11 @@ shift_reg_proc : process (clk_i) begin
         else
             debug_shift <= (others => '0');
             if (din_en_i = '1')then
-                if (delay_ip < delay_reg) and (srb_insert_i < to_integer(unsigned(index_srb_i))) and s_data_en_i = '1' then
+                if (delay_ip_lt_delay_reg = '1') and (srb_insert_i < to_integer(unsigned(index_srb_i))) and s_data_en_i = '1' then
                     -- top channel receiving from left and sending right
                     -- receiving
-                    if (s_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) > x"00000000") then
+                    if (s_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) /= x"00000000") then -- change > to /= for timing
+--                    if (s_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) > x"00000000") then
                         delay_reg   <= s_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) - '1';
                     else
                         delay_reg   <= (others => '0');
@@ -120,10 +128,10 @@ shift_reg_proc : process (clk_i) begin
                     index_reg   <= s_data_i(C_INDEX_WIDTH-1                   downto 0);
                     valid_reg   <= s_data_en_i;
                     debug_shift <= "001";
-                elsif (delay_ip < delay_reg) and (srb_insert_i = to_integer(unsigned(index_srb_i))) then
+                elsif (delay_ip_lt_delay_reg = '1') and (srb_insert_i = to_integer(unsigned(index_srb_i))) then
                     -- top channel storing new information and sending right
                     -- receiving
-                    if (ZEROS_ID & delay_ip) > x"00000000" then
+                    if delay_ip_ne_zero = '1' then
                         delay_reg   <= (ZEROS_ID & delay_ip) - '1';
                     else
                         delay_reg   <= (others => '0');
@@ -133,7 +141,7 @@ shift_reg_proc : process (clk_i) begin
                     valid_reg   <= din_en_i;          
                     debug_shift <= "010";
                 elsif (valid_reg = '1') then
-                    if (ZEROS_ID & delay_ip) > x"00000000" then
+                    if delay_ip_ne_zero = '1' then
                         delay_reg   <= (ZEROS_ID & delay_ip) - '1';
                     else
                         delay_reg   <= (others => '0');
@@ -143,7 +151,8 @@ shift_reg_proc : process (clk_i) begin
             elsif (m_shift_ready_i = '1' and valid_reg = '1') then
                 -- bottom channel pop and shift left
                 -- shift left
-                if (s_shift_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH)) > x"00000000" then
+                if (s_shift_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH)) /= x"00000000" then -- change > to /= for timing
+--                if (s_shift_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH)) > x"00000000" then
                     delay_reg   <= s_shift_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) - '1';
                 else 
                     delay_reg   <= (others => '0');

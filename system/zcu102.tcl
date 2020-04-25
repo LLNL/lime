@@ -501,6 +501,16 @@ add_files -fileset [current_fileset -constrset] "$cpath/system.xdc"
 set_property TARGET_CONSTRS_FILE "$cpath/system.xdc" [current_fileset -constrset]
 set_property USED_IN_SYNTHESIS 0 [get_files "$cpath/system.xdc"]
 puts "########## create system.xdc end ##########"
+ 
+##create_run -flow {Vivado Synthesis 2018} synth_1
+
+set_property STEPS.SYNTH_DESIGN.ARGS.FANOUT_LIMIT 100 [get_runs synth_1]
+set_property STEPS.SYNTH_DESIGN.ARGS.DIRECTIVE AlternateRoutability [get_runs synth_1]
+
+set_property STEPS.PLACE_DESIGN.ARGS.DIRECTIVE ExtraTimingOpt [get_runs impl_1]
+set_property STEPS.ROUTE_DESIGN.ARGS.DIRECTIVE NoTimingRelaxation [get_runs impl_1]
+
+##create_run impl_1 -parent_run synth_1 -flow {Vivado Implementation 2018}
 
 puts "INFO: Project created: ${proj_name}"
 close_project
