@@ -49,18 +49,14 @@ typedef enum {
 	cmd_d_invalidate_rng
 } lmc_cmd_t;
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 #if !defined(__KERNEL__)
 
-inline int lmc_d_flush(int fd)
+static inline int lmc_d_flush(int fd)
 {
 	return ioctl(fd, LMC_D_FLUSH);
 }
 
-inline int lmc_d_flush_rng(int fd, void *addr, size_t size)
+static inline int lmc_d_flush_rng(int fd, void *addr, size_t size)
 {
 	rng_t rng;
 	rng.addr = addr;
@@ -68,12 +64,12 @@ inline int lmc_d_flush_rng(int fd, void *addr, size_t size)
 	return ioctl(fd, LMC_D_FLUSH_RNG, &rng);
 }
 
-inline int lmc_d_flush_invalidate(int fd)
+static inline int lmc_d_flush_invalidate(int fd)
 {
 	return ioctl(fd, LMC_D_FLUSH_INVALIDATE);
 }
 
-inline int lmc_d_flush_invalidate_rng(int fd, void *addr, size_t size)
+static inline int lmc_d_flush_invalidate_rng(int fd, void *addr, size_t size)
 {
 	rng_t rng;
 	rng.addr = addr;
@@ -81,12 +77,12 @@ inline int lmc_d_flush_invalidate_rng(int fd, void *addr, size_t size)
 	return ioctl(fd, LMC_D_FLUSH_INVALIDATE_RNG, &rng);
 }
 
-inline int lmc_d_invalidate(int fd)
+static inline int lmc_d_invalidate(int fd)
 {
 	return ioctl(fd, LMC_D_INVALIDATE);
 }
 
-inline int lmc_d_invalidate_rng(int fd, void *addr, size_t size)
+static inline int lmc_d_invalidate_rng(int fd, void *addr, size_t size)
 {
 	rng_t rng;
 	rng.addr = addr;
@@ -95,9 +91,5 @@ inline int lmc_d_invalidate_rng(int fd, void *addr, size_t size)
 }
 
 #endif /* end __KERNEL__ */
-
-#if defined(__cplusplus)
-} /* end extern "C" */
-#endif
 
 #endif /* end LMCACHE_H_ */

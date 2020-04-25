@@ -84,7 +84,7 @@ void *smemcpy(void *dst, const void *src, size_t block_sz, size_t dst_inc, size_
 #define THIS_ID getID(THIS_PN)
 #define LSU0_ID getID(LSU0_PN)
 
-inline void dump_reg(void)
+static inline void dump_reg(void)
 {
 	int i;
 	for (i = 0; i < 6; i++) cprintf(" LSU0_RD[%d]:%x\r\n", i, aport_read(LSU0_ID+READ_CH, THIS_ID, i));

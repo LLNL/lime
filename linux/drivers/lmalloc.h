@@ -45,13 +45,9 @@ typedef enum {
 	cmd_free
 } lma_cmd_t;
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 #if !defined(__KERNEL__)
 
-inline int lma_tran(int fd, uintptr_t* paddr, void* addr)
+static inline int lma_tran(int fd, uintptr_t* paddr, void* addr)
 {
 	int ret;
 	lma_t lma;
@@ -61,14 +57,14 @@ inline int lma_tran(int fd, uintptr_t* paddr, void* addr)
 	return ret;
 }
 
-inline int lma_alloc(int fd, void** addr, size_t size)
+static inline int lma_alloc(int fd, void** addr, size_t size)
 {
 	*addr = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_LOCKED|MAP_SHARED, fd, 0);
 	if (*addr == MAP_FAILED) return -1;
 	return 0;
 }
 
-inline int lma_free(int fd, void* addr)
+static inline int lma_free(int fd, void* addr)
 {
 	lma_t lma;
 	lma.addr = addr;
@@ -76,9 +72,5 @@ inline int lma_free(int fd, void* addr)
 }
 
 #endif /* end __KERNEL__ */
-
-#if defined(__cplusplus)
-} /* end extern "C" */
-#endif
 
 #endif /* end LMALLOC_H_ */

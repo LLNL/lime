@@ -50,7 +50,7 @@ typedef uint32_t flit_t;
 #include "accmem.h"
 #define ATRAN(addr) addr_tran(addr)
 #else
-inline uintptr_t addr_cast(const void *addr)
+static inline uintptr_t addr_cast(const void *addr)
 {
 #ifdef __cplusplus
 	return reinterpret_cast<uintptr_t>(addr);

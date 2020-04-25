@@ -44,7 +44,7 @@ static dev_t devno;
 static struct device *dev;
 
 
-inline void print_vma(struct vm_area_struct *vma)
+static inline void print_vma(struct vm_area_struct *vma)
 {
 	printk_dbg("vm_start: 0x%016lx\n", vma->vm_start);
 	printk_dbg("vm_end: 0x%016lx\n", vma->vm_end);
