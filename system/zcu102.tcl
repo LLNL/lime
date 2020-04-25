@@ -504,10 +504,15 @@ puts "########## create system.xdc end ##########"
  
 ##create_run -flow {Vivado Synthesis 2018} synth_1
 
+set_property STEPS.SYNTH_DESIGN.ARGS.FLATTEN_HIERARCHY rebuilt [get_runs synth_1]
 set_property STEPS.SYNTH_DESIGN.ARGS.FANOUT_LIMIT 100 [get_runs synth_1]
 set_property STEPS.SYNTH_DESIGN.ARGS.DIRECTIVE AlternateRoutability [get_runs synth_1]
 
+set_property STEPS.OPT_DESIGN.ARGS.IS_ENABLED true [get_runs impl_1]
+set_property STEPS.OPT_DESIGN.ARGS.DIRECTIVE Default [get_runs impl_1]
 set_property STEPS.PLACE_DESIGN.ARGS.DIRECTIVE ExtraTimingOpt [get_runs impl_1]
+set_property STEPS.PHYS_OPT_DESIGN.ARGS.IS_ENABLED true [get_runs impl_1]
+set_property STEPS.PHYS_OPT_DESIGN.ARGS.DIRECTIVE Explore [get_runs impl_1]
 set_property STEPS.ROUTE_DESIGN.ARGS.DIRECTIVE NoTimingRelaxation [get_runs impl_1]
 
 ##create_run impl_1 -parent_run synth_1 -flow {Vivado Implementation 2018}
