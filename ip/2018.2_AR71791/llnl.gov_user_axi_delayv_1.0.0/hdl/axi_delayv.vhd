@@ -814,13 +814,7 @@ port map (
     gdt_wren_i       => gdt_b_wren,
     gdt_addr_i       => gdt_b_addr,
     gdt_wdata_i      => gdt_b_wdata,
-    gdt_rdata_o      => gdt_b_rdata,
-    
-    ----- AW (address write) ID output to W (write) ID input	
-    aw_id_o       => OPEN,
-    w_last_i      => '0',
-    w_last_o      => OPEN,
-    w_id_i        => (others => '0')
+    gdt_rdata_o      => gdt_b_rdata
 );
 
 ---------------------------------------
@@ -1003,13 +997,7 @@ port map (
     gdt_wren_i       => gdt_r_wren,
     gdt_addr_i       => gdt_r_addr,
     gdt_wdata_i      => gdt_r_wdata,
-    gdt_rdata_o      => gdt_r_rdata,
-	
-	----- AW (address write) ID output to W (write) ID input	
-    aw_id_o       => OPEN,
-    w_last_i      => '0',
-    w_last_o      => OPEN,
-    w_id_i        => (others => '0')
+    gdt_rdata_o      => gdt_r_rdata
 );
 
 end behavioral;

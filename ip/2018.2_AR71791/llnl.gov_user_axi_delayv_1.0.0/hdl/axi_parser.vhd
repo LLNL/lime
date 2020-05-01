@@ -58,12 +58,6 @@ entity axi_parser is
         s_axi_last_i     : in  std_logic;
         s_axi_resp_i     : in  std_logic_vector(1 downto 0);
 
-        ----- AW ID latch output to W ID input
-        aw_id_o          : out std_logic_vector(C_AXI_ID_WIDTH-1 downto 0); -- only for "AW" instance - open for others
-        w_last_i         : in  std_logic;                                   -- only for "AW" instance, '0' for others
-        w_last_o         : out std_logic;                                   -- only for "W" instance - open for others
-        w_id_i           : in  std_logic_vector(C_AXI_ID_WIDTH-1 downto 0); -- only for "W" instance - tie to zeroes for others
-
         ----- minicam interface -----
         mc_valid_o       : out std_logic;
         mc_axi_id_o      : out std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
@@ -87,7 +81,7 @@ entity axi_parser is
         sb_index_o           : out integer;   -- index of scoreboard valid bit
 
         random_dly_i         : in  std_logic_vector(DELAY_WIDTH-1 downto 0);
---        pq_data_sr_o         : out std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
+        pq_data_sr_o         : out std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
         pq_data_o            : out std_logic_vector(C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH-1 downto 0);
         pq_en_o              : out std_logic;
         pq_ready_i           : in  std_logic
@@ -121,7 +115,10 @@ signal axi_info_wr      : std_logic;
 signal axi_info_af      : std_logic;
 --signal axi_info_full    : std_logic;
 signal axi_info_valid   : std_logic;
+signal axi_info_valid_q : std_logic;
 signal axi_info_rdata   : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
+signal axi_info_rdata_qa: std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
+signal axi_info_rdata_qb: std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
 signal axi_info_rd      : std_logic;
 
 -- misc. logic
@@ -130,10 +127,13 @@ signal s_axi_ready      : std_logic;
 signal sb_index         : std_logic_vector(MINIBUF_IDX_WIDTH-1 downto 0);
 signal sb_index_int     : integer;
 signal mc_ctr_ptr_wr_q  : std_logic;
+signal mc_ctr_ptr_wr_q2 : std_logic;
 signal mc_ctr_ptr_q     : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
+signal mc_ctr_ptr_q2    : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
 
 --------------------------------------------------------------------------------
 attribute mark_debug : string;
+attribute keep       : string;
 
 attribute mark_debug of axi_info_wr    : signal is "true";
 attribute mark_debug of axi_info_af    : signal is "true";
@@ -141,6 +141,9 @@ attribute mark_debug of axi_info_valid : signal is "true";
 attribute mark_debug of axi_info_rd    : signal is "true";
 attribute mark_debug of minibuf_fe_i   : signal is "true";
 attribute mark_debug of pq_ready_i     : signal is "true";
+
+attribute keep of axi_info_rdata_qa    : signal is "true";
+attribute keep of axi_info_rdata_qb    : signal is "true";
 
 --******************************************************************************
 -- Connectivity and Logic
@@ -187,55 +190,13 @@ data_flag_gen : if (CHANNEL_TYPE = "W" or CHANNEL_TYPE = "R") generate
     mc_axi_id_o <= s_axi_id;
 end generate;
 
---------------------------------------------------------------------------------
--- AXI WID processing - *************FOR "AW" INSTANCES ONLY!!!*************
--- The "W" bus is the only AXI bus that doesn't contain a valid ID field for AXI4. However, an ID field is required
--- for the minicam and packet buffer operation.
--- If there are any AXI3 masters that feed data to this module, then "write interleaving depth" must be set to a value of "1"
--- to make it compatible with an AXI4 slave.
--- In any case, since ordering can/should be guaranteed, we can latch the AW bus ID and use it for succeeding W bus transactions
--- A FIFO is required because the "W" cycle for a corresponsing "AW" cycle may not appear on the bus until after several more
--- "AW"'s have appeared on the bus.
---------------------------------------------------------------------------------
-
--- generate FIFO for AW instance only. This will buffer/save AWIDs (in the AW instance) for corelation with WIDs (in the W instance)
-awid_fifo_gen : if (CHANNEL_TYPE = "AW") generate
-    awid_fifo : entity fifo_sync
-        GENERIC MAP (
-            C_DEPTH      => 32,
-            C_DIN_WIDTH  => C_AXI_ID_WIDTH,
-            C_DOUT_WIDTH => C_AXI_ID_WIDTH,
-            C_THRESH     => 4
-        )    
-        PORT MAP (
-            wr_clk      => clk_i,
-            rst         => rst_i,
-
-            din         => s_axi_id_i,
-            prog_full   => OPEN,
-            full        => OPEN,
-            wr_en       => rwaddr_resp_flag,
-
-            dout        => aw_id_o,
-            prog_empty  => OPEN,
-            empty       => OPEN,
-            valid       => OPEN,
-            rd_en       => w_last_i
-        );        
-end generate;
-
-not_awid_gen : if (CHANNEL_TYPE /= "AW") generate
-    aw_id_o  <= (others => '0');
-end generate;
+mc_last_o     <= last_data_flag;
 
 --------------------------------------------------------------------------------
 -- AXI Information FIFO - buffers all information from AXI events
 --------------------------------------------------------------------------------
-
-s_axi_id <= w_id_i when (CHANNEL_TYPE = "W") else s_axi_id_i;
-
 -- concatenate all axi input signals (outputs are not concatenated)
-axi_info_wdata <= s_axi_resp_i & s_axi_id & s_axi_addr_i & s_axi_data_i & s_axi_strb_i & s_axi_len_i & s_axi_size_i & s_axi_burst_i & 
+axi_info_wdata <= s_axi_resp_i & s_axi_id_i & s_axi_addr_i & s_axi_data_i & s_axi_strb_i & s_axi_len_i & s_axi_size_i & s_axi_burst_i & 
                    s_axi_lock_i  & s_axi_cache_i & s_axi_prot_i & s_axi_qos_i & s_axi_region_i & s_axi_valid_i & s_axi_last_i;
 
 -- shallow FIFO for buffering AXI events                    
@@ -261,6 +222,8 @@ PORT MAP (
         valid       => axi_info_valid,
         rd_en       => axi_info_rd
   );
+  
+axi_info_rd     <= not axi_info_af;  
 
 --axi_info_proc : process (clk_i, rst_i) begin
 --    if (rst_i = '1') then
@@ -287,49 +250,70 @@ PORT MAP (
 s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i) and (pq_ready_i);
 
 --------------------------------------------------------------------------------
--- Pipeline registers
+-- Timing and Pipeline registers
 --------------------------------------------------------------------------------
-pipeline_proc : process (clk_i, rst_i) begin
+timing_proc : process (clk_i, rst_i) begin
     if (rst_i = '1') then
-        axi_info_rd     <= '0';
         mc_ctr_ptr_wr_q <= '0';
         mc_ctr_ptr_q    <= (others => '0');
     elsif rising_edge(clk_i) then
-        axi_info_rd     <= axi_info_wr;
         mc_ctr_ptr_wr_q <= mc_ctr_ptr_wr_i;
         mc_ctr_ptr_q    <= mc_ctr_ptr_i;
     end if;
 end process;
 
-sb_index     <= mc_ctr_ptr_q(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
-sb_index_int <= to_integer(unsigned(sb_index));
+pipeline_proc : process (clk_i, rst_i) begin
+    if (rst_i = '1') then
+        sb_index         <= (others => '0');
+        sb_index_int     <= 0;
+        mc_ctr_ptr_wr_q2 <= '0';
+        mc_ctr_ptr_q2    <= (others => '0');
+        axi_info_valid_q <= '0';
+        axi_info_rdata_qa<= (others => '0');
+        axi_info_rdata_qb<= (others => '0');
+        pq_data_sr_o     <= (others => '0');
+
+    elsif rising_edge(clk_i) then
+        sb_index         <= mc_ctr_ptr_q(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
+        sb_index_int     <= to_integer(unsigned(sb_index));
+        mc_ctr_ptr_wr_q2 <= mc_ctr_ptr_wr_q;
+        mc_ctr_ptr_q2    <= mc_ctr_ptr_q;
+        axi_info_valid_q <= axi_info_valid;
+        axi_info_rdata_qa<= axi_info_rdata;
+        axi_info_rdata_qb<= axi_info_rdata;
+
+        pq_data_sr_loop :
+            for j in 0 to PRIORITY_QUEUE_WIDTH-1 loop
+              pq_data_sr_o((j+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto j*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)) <= 
+                  random_dly_i & axi_info_rdata(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH) & mc_ctr_ptr_q(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
+        end loop pq_data_sr_loop;            
+
+    end if;
+end process;
 
 ----------------------------------------------------------------------------------------------
 -- Output assignments
 ----------------------------------------------------------------------------------------------
 s_axi_ready_o <= s_axi_ready;
---s_axi_resp_o  <= axi_info_full & '0'; --status = "okay" when axi_info_full = 0, "slave error" when = 1. See IHI022E for other codes
-w_last_o      <= last_data_flag; -- used for "AW" instances only
-mc_last_o     <= last_data_flag;
 
 -----  pkt_buffer interface -----
-pb_info_data_o   <= axi_info_rdata;
-pb_cntr_ptr_o    <= mc_ctr_ptr_q;
-pb_wr_o          <= axi_info_valid;
+pb_info_data_o   <= axi_info_rdata_qa;
+pb_cntr_ptr_o    <= mc_ctr_ptr_q2;
+pb_wr_o          <= axi_info_valid_q;
 
 ----- axi_id_buffer interface -----
-aidb_id_o            <= axi_info_rdata(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH);
+aidb_id_o            <= axi_info_rdata_qa(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH);
 aidb_cntr_ptr_base_o <= sb_index;
-aidb_wr_o            <= mc_ctr_ptr_wr_q;
+aidb_wr_o            <= mc_ctr_ptr_wr_q2;
 
 ----- scoreboard interface -----
 sb_index_o <= sb_index_int;
-sb_wr_o    <= mc_ctr_ptr_wr_q and axi_info_rdata(0); -- Assert scoreboard valid bit if last_data_flag = 1
+sb_wr_o    <= mc_ctr_ptr_wr_q2 and axi_info_rdata_qa(0); -- Assert scoreboard valid bit if last_data_flag = 1
 
------ priority_controller interface -----
+----- priority_queue interface -----
 -- pq_data_o contains (axi_id & sb_index), width = C_AXI_ID_WIDTH + MINIBUF_IDX_WIDTH
-pq_data_o  <= axi_info_rdata(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH) & sb_index;
-pq_en_o    <= mc_ctr_ptr_wr_q and axi_info_rdata(0);
+pq_data_o  <= axi_info_rdata_qb(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH) & sb_index;
+pq_en_o    <= mc_ctr_ptr_wr_q2 and axi_info_rdata_qb(0);
 
 ----------------------------------------------------------------------------------------------
 end behavioral;

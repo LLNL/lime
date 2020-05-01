@@ -93,13 +93,7 @@ port (
     gdt_wren_i    : in  std_logic_vector(0 downto 0);
     gdt_addr_i    : in  std_logic_vector(15 downto 0); 
     gdt_wdata_i   : in  std_logic_vector(23 downto 0);
-    gdt_rdata_o   : out std_logic_vector(23 downto 0);
-
-    ----- AW (address write) ID output to W (write) ID input	
-    aw_id_o       : out std_logic_vector(C_AXI_ID_WIDTH-1 downto 0); -- only for "AW" instance - open for others
-    w_last_i      : in  std_logic;                                   -- only for "AW" instance, '0' for others
-    w_last_o      : out std_logic;                                   -- only for "W" instance - open for others
-    w_id_i        : in  std_logic_vector(C_AXI_ID_WIDTH-1 downto 0)  -- only for "W" instance - tie to zeroes for others
+    gdt_rdata_o   : out std_logic_vector(23 downto 0)
 );
 
 end chan_delay_variable;
@@ -180,7 +174,7 @@ signal pq_dout            : std_logic_vector(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_
 signal pq_dout_valid      : std_logic;
 signal pq_dout_ready      : std_logic;
 signal count_time         : std_logic_vector(31 downto 0);
---signal pq_data_sr         : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
+signal pq_data_sr         : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
 
 --For Chipscope
 attribute keep : string;
@@ -243,12 +237,6 @@ port map (
     s_axi_last_i         => s_axi_last,  
     s_axi_resp_i         => s_axi_resp,
     		     
-    ----- AW (address write) ID output to W (write) ID input
-    aw_id_o              => aw_id_o,  
-    w_last_i             => w_last_i, 
-    w_last_o             => w_last_o, 
-    w_id_i               => w_id_i,   
-    		     
     ----- minicam interface -----
     mc_valid_o           => mc_valid,
     mc_axi_id_o          => mc_axi_id,
@@ -273,7 +261,7 @@ port map (
 
     ----- priority_queue interface -----
     random_dly_i         => random_dly,
---    pq_data_sr_o         => pq_data_sr,
+    pq_data_sr_o         => pq_data_sr,
     pq_data_o            => pq_data, --(axi_id & sb_index)
     pq_en_o              => pq_en,
     pq_ready_i           => pq_ready
@@ -475,7 +463,7 @@ port map (
     nreset_i             => m_axi_aresetn,
   
     -- (delay & axi_id & sb_index) of the transaction (from axi_parser)
---    din_sr_i      => pq_data_sr,
+    din_sr_i      => pq_data_sr,
     din_i         => pq_data_complete,
     din_en_i      => pq_en,
     din_ready_o   => pq_ready,

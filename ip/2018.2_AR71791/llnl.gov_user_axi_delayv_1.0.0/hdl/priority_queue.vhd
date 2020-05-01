@@ -29,7 +29,7 @@ port (
     nreset_i      : in  std_logic;
 
     -- (delay & axi_id & sb_index) of the transaction (from axi_parser)
---    din_sr_i      : in  std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
+    din_sr_i      : in  std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
     din_i         : in  std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
     din_en_i      : in  std_logic;
     din_ready_o   : out std_logic;
@@ -150,8 +150,8 @@ for i in 0 to PRIORITY_QUEUE_WIDTH-1 generate
 
         -- input from Priority controller (deletion, or pop, towards Priority Controller)
         index_srb_i       => std_logic_vector(to_unsigned(i, 32)),
---        din_i             => din_sr_i((i+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto i*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)),
-        din_i             => din_i,
+        din_i             => din_sr_i((i+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto i*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)),
+--        din_i             => din_i,
         din_en_i          => din_en_i,
 
         -- Top Channel from previous device

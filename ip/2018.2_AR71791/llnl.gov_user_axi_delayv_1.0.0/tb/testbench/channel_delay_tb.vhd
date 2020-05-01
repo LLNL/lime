@@ -228,11 +228,7 @@ channel_delay_inst : entity axi_delay_lib.chan_delay_variable
     
             ----- AW (address write) ID output to W (write) ID input	
         dclk_i        => '0',
-        dresetn_i     => '1',
-        aw_id_o       => OPEN, --aw_id, 
-        w_last_i      => '0', --w_last,
-        w_last_o      => OPEN, -- w_last,
-        w_id_i        => (others => '0') --w_id  
+        dresetn_i     => '1'
 );    
 
 ---------------------------------------
