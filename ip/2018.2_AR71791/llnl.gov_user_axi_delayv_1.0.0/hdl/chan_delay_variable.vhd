@@ -180,7 +180,7 @@ signal pq_dout            : std_logic_vector(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_
 signal pq_dout_valid      : std_logic;
 signal pq_dout_ready      : std_logic;
 signal count_time         : std_logic_vector(31 downto 0);
-signal pq_data_sr         : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
+--signal pq_data_sr         : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
 
 --For Chipscope
 attribute keep : string;
@@ -273,7 +273,7 @@ port map (
 
     ----- priority_queue interface -----
     random_dly_i         => random_dly,
-    pq_data_sr_o         => pq_data_sr,
+--    pq_data_sr_o         => pq_data_sr,
     pq_data_o            => pq_data, --(axi_id & sb_index)
     pq_en_o              => pq_en,
     pq_ready_i           => pq_ready
@@ -406,23 +406,6 @@ PORT MAP (
     doutb => aidb_bdata
 );
 
-
--- axi_id_buffer : entity DPRAM_64x16
--- PORT MAP (
---     clka  => s_axi_aclk,
---     ena   => '1',
---     wea   => aidb_wr,
---     addra => aidb_cntr_ptr_base,
---     dina  => aidb_id_zero,
-      
---     clkb  => m_axi_aclk,
---     enb   => '1',
---     addrb => aidb_baddr,
---     doutb => aidb_bdata_zero
--- );	
-
---aidb_bdata <= aidb_bdata_zero(C_AXI_ID_WIDTH-1 downto 0);
-
 ---------------------------------------
 -- ScoreBoard
 ---------------------------------------
@@ -492,7 +475,7 @@ port map (
     nreset_i             => m_axi_aresetn,
   
     -- (delay & axi_id & sb_index) of the transaction (from axi_parser)
-    din_sr_i      => pq_data_sr,
+--    din_sr_i      => pq_data_sr,
     din_i         => pq_data_complete,
     din_en_i      => pq_en,
     din_ready_o   => pq_ready,

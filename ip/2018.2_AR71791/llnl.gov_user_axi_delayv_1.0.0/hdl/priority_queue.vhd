@@ -29,7 +29,7 @@ port (
     nreset_i      : in  std_logic;
 
     -- (delay & axi_id & sb_index) of the transaction (from axi_parser)
-    din_sr_i      : in  std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
+--    din_sr_i      : in  std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
     din_i         : in  std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
     din_en_i      : in  std_logic;
     din_ready_o   : out std_logic;
@@ -78,7 +78,34 @@ signal m_data_en       : bit_signal;
 signal s_data_en       : bit_signal;
 signal count_time      : std_logic_vector(31 downto 0);
 
+signal axi_id_ins_err  : std_logic; -- axi_id insertione erro (no availble SRB)
 signal dout_ready      : std_logic;
+
+--------------------------------------------------------------------------------
+attribute mark_debug : string;
+
+attribute mark_debug of din_i           : signal is "true";
+attribute mark_debug of din_en_i        : signal is "true";
+attribute mark_debug of din_ready_o     : signal is "true";
+
+attribute mark_debug of dout_o          : signal is "true";
+attribute mark_debug of dout_valid_o    : signal is "true";
+attribute mark_debug of dout_ready_i    : signal is "true";
+attribute mark_debug of count_time      : signal is "true";
+attribute mark_debug of axi_id_ins_err  : signal is "true";
+
+attribute mark_debug of delay_reg       : signal is "true";
+attribute mark_debug of id_reg          : signal is "true";
+attribute mark_debug of valid_reg       : signal is "true";
+attribute mark_debug of srb_insert      : signal is "true";
+
+attribute mark_debug of m_data_en       : signal is "true";
+attribute mark_debug of s_data_en       : signal is "true";
+
+attribute mark_debug of m_shift_valid   : signal is "true";
+attribute mark_debug of m_shift_ready   : signal is "true";
+attribute mark_debug of s_shift_valid   : signal is "true";
+attribute mark_debug of s_shift_ready   : signal is "true";
 
 --******************************************************************************
 -- Connectivity and Logic
@@ -123,8 +150,8 @@ for i in 0 to PRIORITY_QUEUE_WIDTH-1 generate
 
         -- input from Priority controller (deletion, or pop, towards Priority Controller)
         index_srb_i       => std_logic_vector(to_unsigned(i, 32)),
-        din_i             => din_sr_i((i+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto i*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)),
---        din_i             => din_i,
+--        din_i             => din_sr_i((i+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto i*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)),
+        din_i             => din_i,
         din_en_i          => din_en_i,
 
         -- Top Channel from previous device
@@ -216,7 +243,7 @@ axi_id_chk_loop_proc : process (din_en_i, valid_reg, axi_id_new, id_reg) begin
     end loop;
 end process;
 
-axi_id_ins_err_o <= '1' when (axi_id_max_hi = (PRIORITY_QUEUE_WIDTH-1)) else '0';
+axi_id_ins_err <= '1' when (axi_id_max_hi = (PRIORITY_QUEUE_WIDTH-1)) else '0';
 
 ins_chk_loop_proc : process (din_en_i, delay_new, delay_reg) begin
     insert_check_loop: for jj in 0 to (PRIORITY_QUEUE_WIDTH-1) loop
@@ -232,7 +259,8 @@ srb_insert <= axi_id_max_hi when (axi_id_max_hi > delay_srb_low) else delay_srb_
 ----------------------------------------------------------------------------------------------
 -- Output assignments
 ----------------------------------------------------------------------------------------------
-din_ready_o <= '1';
+din_ready_o      <= not axi_id_ins_err; --'1';
+axi_id_ins_err_o <= axi_id_ins_err;
 
 dout_o           <= m_shift_data(0)(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
 dout_valid_o     <= m_shift_valid(0);
