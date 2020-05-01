@@ -177,9 +177,9 @@ signal count_time         : std_logic_vector(31 downto 0);
 signal pq_data_sr         : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
 
 --For Chipscope
-attribute keep : string;
-attribute keep of random_dly      : signal is "true";
-attribute keep of random_dly_req  : signal is "true";
+--attribute keep : string;
+--attribute keep of random_dly      : signal is "true";
+--attribute keep of random_dly_req  : signal is "true";
 
 --******************************************************************************
 --Component Definitions

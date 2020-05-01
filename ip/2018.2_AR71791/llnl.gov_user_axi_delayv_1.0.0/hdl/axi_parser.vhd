@@ -132,18 +132,18 @@ signal mc_ctr_ptr_q     : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
 signal mc_ctr_ptr_q2    : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
 
 --------------------------------------------------------------------------------
-attribute mark_debug : string;
-attribute keep       : string;
+--attribute mark_debug : string;
+--attribute keep       : string;
 
-attribute mark_debug of axi_info_wr    : signal is "true";
-attribute mark_debug of axi_info_af    : signal is "true";
-attribute mark_debug of axi_info_valid : signal is "true";
-attribute mark_debug of axi_info_rd    : signal is "true";
-attribute mark_debug of minibuf_fe_i   : signal is "true";
-attribute mark_debug of pq_ready_i     : signal is "true";
+--attribute mark_debug of axi_info_wr    : signal is "true";
+--attribute mark_debug of axi_info_af    : signal is "true";
+--attribute mark_debug of axi_info_valid : signal is "true";
+--attribute mark_debug of axi_info_rd    : signal is "true";
+--attribute mark_debug of minibuf_fe_i   : signal is "true";
+--attribute mark_debug of pq_ready_i     : signal is "true";
 
-attribute keep of axi_info_rdata_qa    : signal is "true";
-attribute keep of axi_info_rdata_qb    : signal is "true";
+--attribute keep of axi_info_rdata_qa    : signal is "true";
+--attribute keep of axi_info_rdata_qb    : signal is "true";
 
 --******************************************************************************
 -- Connectivity and Logic

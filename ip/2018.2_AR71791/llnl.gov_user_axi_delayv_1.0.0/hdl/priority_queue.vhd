@@ -82,30 +82,30 @@ signal axi_id_ins_err  : std_logic; -- axi_id insertione erro (no availble SRB)
 signal dout_ready      : std_logic;
 
 --------------------------------------------------------------------------------
-attribute mark_debug : string;
+--attribute mark_debug : string;
 
-attribute mark_debug of din_i           : signal is "true";
-attribute mark_debug of din_en_i        : signal is "true";
-attribute mark_debug of din_ready_o     : signal is "true";
+--attribute mark_debug of din_i           : signal is "true";
+--attribute mark_debug of din_en_i        : signal is "true";
+--attribute mark_debug of din_ready_o     : signal is "true";
 
-attribute mark_debug of dout_o          : signal is "true";
-attribute mark_debug of dout_valid_o    : signal is "true";
-attribute mark_debug of dout_ready_i    : signal is "true";
-attribute mark_debug of count_time      : signal is "true";
-attribute mark_debug of axi_id_ins_err  : signal is "true";
+--attribute mark_debug of dout_o          : signal is "true";
+--attribute mark_debug of dout_valid_o    : signal is "true";
+--attribute mark_debug of dout_ready_i    : signal is "true";
+--attribute mark_debug of count_time      : signal is "true";
+--attribute mark_debug of axi_id_ins_err  : signal is "true";
 
-attribute mark_debug of delay_reg       : signal is "true";
-attribute mark_debug of id_reg          : signal is "true";
-attribute mark_debug of valid_reg       : signal is "true";
-attribute mark_debug of srb_insert      : signal is "true";
+--attribute mark_debug of delay_reg       : signal is "true";
+--attribute mark_debug of id_reg          : signal is "true";
+--attribute mark_debug of valid_reg       : signal is "true";
+--attribute mark_debug of srb_insert      : signal is "true";
 
-attribute mark_debug of m_data_en       : signal is "true";
-attribute mark_debug of s_data_en       : signal is "true";
+--attribute mark_debug of m_data_en       : signal is "true";
+--attribute mark_debug of s_data_en       : signal is "true";
 
-attribute mark_debug of m_shift_valid   : signal is "true";
-attribute mark_debug of m_shift_ready   : signal is "true";
-attribute mark_debug of s_shift_valid   : signal is "true";
-attribute mark_debug of s_shift_ready   : signal is "true";
+--attribute mark_debug of m_shift_valid   : signal is "true";
+--attribute mark_debug of m_shift_ready   : signal is "true";
+--attribute mark_debug of s_shift_valid   : signal is "true";
+--attribute mark_debug of s_shift_ready   : signal is "true";
 
 --******************************************************************************
 -- Connectivity and Logic
