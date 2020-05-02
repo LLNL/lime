@@ -48,7 +48,7 @@ generic (
     -- chan_delay_variable generics
     PRIORITY_QUEUE_WIDTH : integer := 16;
     DELAY_WIDTH          : integer := 24;
-    BYPASS_MINICAM       : integer := 0;
+    BYPASS_MINICAM       : integer := 1;
     CAM_DEPTH            : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
 --    CAM_WIDTH            : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
     NUM_MINI_BUFS        : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported    
