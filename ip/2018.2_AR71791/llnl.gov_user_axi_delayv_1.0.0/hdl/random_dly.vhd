@@ -78,7 +78,7 @@ PORT MAP (
     rsta  => rst_i,
     ena   => '1',
     wea   => gdt_wren_i,
-    addra => gdt_addr_i(GDT_ADDR_BITS-1 downto 0),
+    addra => gdt_addr_i(GDT_ADDR_BITS+2-1 downto 2),
     dina  => gdt_wdata_i, 
     douta => gdt_rdata_o,
     
@@ -86,7 +86,7 @@ PORT MAP (
     rstb  => dreset,
     enb   => '1',
     web   => (others => '0'),
-    addrb => lfsr_tmp(GDT_ADDR_BITS-1 downto 0),
+    addrb => lfsr_tmp(GDT_ADDR_BITS+2-1 downto 2),
     dinb  => (others => '0'),
     doutb => random_dly
 );

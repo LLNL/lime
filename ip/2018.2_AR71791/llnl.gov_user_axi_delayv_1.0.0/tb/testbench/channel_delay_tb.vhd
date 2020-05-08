@@ -221,14 +221,12 @@ channel_delay_inst : entity axi_delay_lib.chan_delay_variable
         m_axi_last    => m_axi_last,  
         m_axi_resp    => m_axi_resp,  
 
+        dclk_i        => '0',
+        dresetn_i     => '1',
         gdt_wren_i    => (others => '0'), --gdt_wren, 
         gdt_addr_i    => (others => '0'), --gdt_addr, 
         gdt_wdata_i   => (others => '0'), --gdt_wdata, 
-        gdt_rdata_o   => OPEN,            --gdt_rdata, 
-    
-            ----- AW (address write) ID output to W (write) ID input	
-        dclk_i        => '0',
-        dresetn_i     => '1'
+        gdt_rdata_o   => OPEN             --gdt_rdata,  
 );    
 
 ---------------------------------------

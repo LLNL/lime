@@ -57,26 +57,15 @@ signal s_shift_data    : dat;
 signal m_shift_data    : dat;
 signal m_data          : dat;
 signal s_data          : dat;
-
 type delay_array is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(DELAY_WIDTH-1 downto 0);
 signal delay_reg       : delay_array;
-
 type id_array is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
 signal id_reg          : id_array;
 
-type dinsr_array is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH-1 downto 0);
-signal din_sr          : dinsr_array;
-
-type delaynew_array is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(DELAY_WIDTH-1 downto 0);
-signal delay_new       : delaynew_array;   
-
-type axiidnew_array is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
-signal axi_id_new      : axiidnew_array;
-
 signal valid_reg       : std_logic_vector(PRIORITY_QUEUE_WIDTH-1 downto 0);
---signal delay_new       : std_logic_vector(DELAY_WIDTH-1 downto 0);   
+signal delay_new       : std_logic_vector(DELAY_WIDTH-1 downto 0);   
 signal delay_srb_low   : integer; -- lowest srb for delay insertion
---signal axi_id_new      : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
+signal axi_id_new      : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
 signal axi_id_max_hi   : integer; -- highest SRB with matching axi_id
 signal srb_insert      : integer;
 
@@ -89,34 +78,34 @@ signal m_data_en       : bit_signal;
 signal s_data_en       : bit_signal;
 signal count_time      : std_logic_vector(31 downto 0);
 
-signal axi_id_ins_err  : std_logic; -- axi_id insertione erro (no availble SRB)
 signal dout_ready      : std_logic;
 
 --------------------------------------------------------------------------------
 --attribute mark_debug : string;
-
+--
 --attribute mark_debug of din_i           : signal is "true";
 --attribute mark_debug of din_en_i        : signal is "true";
 --attribute mark_debug of din_ready_o     : signal is "true";
-
+--
 --attribute mark_debug of dout_o          : signal is "true";
 --attribute mark_debug of dout_valid_o    : signal is "true";
 --attribute mark_debug of dout_ready_i    : signal is "true";
 --attribute mark_debug of count_time      : signal is "true";
---attribute mark_debug of axi_id_ins_err  : signal is "true";
-
+--attribute mark_debug of axi_id_ins_err_o  : signal is "true";
+--
 --attribute mark_debug of delay_reg       : signal is "true";
 --attribute mark_debug of id_reg          : signal is "true";
 --attribute mark_debug of valid_reg       : signal is "true";
 --attribute mark_debug of srb_insert      : signal is "true";
-
+--
 --attribute mark_debug of m_data_en       : signal is "true";
 --attribute mark_debug of s_data_en       : signal is "true";
-
+--
 --attribute mark_debug of m_shift_valid   : signal is "true";
 --attribute mark_debug of m_shift_ready   : signal is "true";
 --attribute mark_debug of s_shift_valid   : signal is "true";
 --attribute mark_debug of s_shift_ready   : signal is "true";
+
 
 --******************************************************************************
 -- Connectivity and Logic
@@ -138,13 +127,6 @@ end process;
 count_time_o  <= count_time;
 dout_ready    <= '1' when (dout_ready_i = '1' and din_en_i = '0' and (delay_reg(0) = x"000000")) else
                  '0';
-
-GEN_dinsr :
-for j in 0 to PRIORITY_QUEUE_WIDTH-1 generate
-    din_sr(j)    <= din_sr_i((j+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto j*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH));
-    delay_new(j) <= din_sr(j)(DELAY_WIDTH+C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+INDEX_WIDTH);
-    axi_id_new(j)<= din_sr(j)(C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto INDEX_WIDTH);
-end generate GEN_dinsr;
 
 GEN_shift_reg_blocks :
 for i in 0 to PRIORITY_QUEUE_WIDTH-1 generate
@@ -168,8 +150,7 @@ for i in 0 to PRIORITY_QUEUE_WIDTH-1 generate
 
         -- input from Priority controller (deletion, or pop, towards Priority Controller)
         index_srb_i       => std_logic_vector(to_unsigned(i, 32)),
-        din_i             => din_sr(i),
---        din_i             => din_sr_i((i+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto i*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)),
+        din_i             => din_sr_i((i+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto i*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)),
 --        din_i             => din_i,
         din_en_i          => din_en_i,
 
@@ -248,27 +229,27 @@ end generate GEN_shift_reg_blocks;
 -- case that occurs in HW testing that doesn't show up in simulation, so take note during hardware operation.
 ----------------------------------------------------------------------------------------------
 
---delay_new  <= din_i(DELAY_WIDTH+C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+INDEX_WIDTH);
---axi_id_new <= din_i(C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto INDEX_WIDTH);
+delay_new  <= din_i(DELAY_WIDTH+C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+INDEX_WIDTH);
+axi_id_new <= din_i(C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto INDEX_WIDTH);
 
 axi_id_chk_loop_proc : process (din_en_i, valid_reg, axi_id_new, id_reg) begin
     axi_id_chk_loop: for kk in (PRIORITY_QUEUE_WIDTH-1) downto 0 loop
-        if (din_en_i = '1') and valid_reg(kk) = '1' and (axi_id_new(kk) = id_reg(kk)) then
+        if (din_en_i = '1') and valid_reg(kk) = '1' and (axi_id_new = id_reg(kk)) then
             axi_id_max_hi <= kk;
-            exit axi_id_chk_loop when (din_en_i = '1') and (axi_id_new(kk) = id_reg(kk)); -- same as if condition
+            exit axi_id_chk_loop when (din_en_i = '1') and (axi_id_new = id_reg(kk)); -- same as if condition
         else
             axi_id_max_hi <= 0;
         end if;
     end loop;
 end process;
 
-axi_id_ins_err <= '1' when (axi_id_max_hi = (PRIORITY_QUEUE_WIDTH-1)) else '0';
+axi_id_ins_err_o <= '1' when (axi_id_max_hi = (PRIORITY_QUEUE_WIDTH-1)) else '0';
 
 ins_chk_loop_proc : process (din_en_i, delay_new, delay_reg) begin
     insert_check_loop: for jj in 0 to (PRIORITY_QUEUE_WIDTH-1) loop
-        if (din_en_i = '1') and (delay_new(jj) <  delay_reg(jj)) then
+        if (din_en_i = '1') and (delay_new <  delay_reg(jj)) then
             delay_srb_low <= jj;
-            exit insert_check_loop when (delay_new(jj) <  delay_reg(jj)); -- same as if condition
+            exit insert_check_loop when (delay_new <  delay_reg(jj)); -- same as if condition
         end if;
     end loop;   
 end process;
@@ -278,8 +259,7 @@ srb_insert <= axi_id_max_hi when (axi_id_max_hi > delay_srb_low) else delay_srb_
 ----------------------------------------------------------------------------------------------
 -- Output assignments
 ----------------------------------------------------------------------------------------------
-din_ready_o      <= not axi_id_ins_err; --'1';
-axi_id_ins_err_o <= axi_id_ins_err;
+din_ready_o <= '1';
 
 dout_o           <= m_shift_data(0)(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
 dout_valid_o     <= m_shift_valid(0);

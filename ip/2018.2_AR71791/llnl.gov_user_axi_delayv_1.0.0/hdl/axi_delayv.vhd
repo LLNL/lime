@@ -21,37 +21,37 @@ use xpm.vcomponents.all;
 entity axi_delayv is
 
 generic (
-	C_FAMILY         : string := "rtl";
-	C_AXI_PROTOCOL   : integer := P_AXI4;
-	C_MEM_ADDR_WIDTH : integer := 30;
-	C_COUNTER_WIDTH  : integer := 20;
-	C_FIFO_DEPTH_AW  : integer := 0;
-	C_FIFO_DEPTH_W   : integer := 0;
-	C_FIFO_DEPTH_B   : integer := 0;
-	C_FIFO_DEPTH_AR  : integer := 0;
-	C_FIFO_DEPTH_R   : integer := 0;
+	C_FAMILY              : string := "rtl";
+	C_AXI_PROTOCOL        : integer := P_AXI4;
+	C_MEM_ADDR_WIDTH      : integer := 30;
+	C_COUNTER_WIDTH       : integer := 20;
+	C_FIFO_DEPTH_AW       : integer := 0;
+	C_FIFO_DEPTH_W        : integer := 0;
+	C_FIFO_DEPTH_B        : integer := 0;
+	C_FIFO_DEPTH_AR       : integer := 0;
+	C_FIFO_DEPTH_R        : integer := 0;
 
 	-- AXI-Lite Bus Interface
 	C_AXI_LITE_ADDR_WIDTH : integer := 18;
 	C_AXI_LITE_DATA_WIDTH : integer := 32;
 
 	-- AXI-Full Bus Interface
-	C_AXI_ID_WIDTH     : integer := 16;
-	C_AXI_ADDR_WIDTH   : integer := 40;
-	C_AXI_DATA_WIDTH   : integer := 128;
---	C_AXI_AWUSER_WIDTH : integer := 1; -- AXI4
---	C_AXI_ARUSER_WIDTH : integer := 1; -- AXI4
---	C_AXI_WUSER_WIDTH  : integer := 1; -- AXI4
---	C_AXI_RUSER_WIDTH  : integer := 1; -- AXI4
---	C_AXI_BUSER_WIDTH  : integer := 1 -- AXI4
+	C_AXI_ID_WIDTH        : integer := 16;
+	C_AXI_ADDR_WIDTH      : integer := 40;
+	C_AXI_DATA_WIDTH      : integer := 128;
+--	C_AXI_AWUSER_WIDTH    : integer := 1; -- AXI4
+--	C_AXI_ARUSER_WIDTH    : integer := 1; -- AXI4
+--	C_AXI_WUSER_WIDTH     : integer := 1; -- AXI4
+--	C_AXI_RUSER_WIDTH     : integer := 1; -- AXI4
+--	C_AXI_BUSER_WIDTH     : integer := 1 -- AXI4
 
-    -- chan_delay_variable generics
-    PRIORITY_QUEUE_WIDTH : integer := 16;
-    DELAY_WIDTH          : integer := 24;
-    BYPASS_MINICAM       : integer := 1;
-    CAM_DEPTH            : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
---    CAM_WIDTH            : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
-    NUM_MINI_BUFS        : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported    
+        -- chan_delay_variable generics
+        PRIORITY_QUEUE_WIDTH  : integer := 16;
+        DELAY_WIDTH           : integer := 24;
+        BYPASS_MINICAM        : integer := 1;
+        CAM_DEPTH             : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
+--        CAM_WIDTH             : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
+        NUM_MINI_BUFS         : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported    
 );
 
 port (
@@ -177,7 +177,7 @@ port (
 	m_axi_bvalid   : in  std_logic;
 	m_axi_bready   : out std_logic;
 	--
-	----- Master Port: Read Data -----
+	----- Master Port: Read Address -----
 	m_axi_arid     : out std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
 	m_axi_araddr   : out std_logic_vector(C_AXI_ADDR_WIDTH-1 downto 0); -- AXILITE
 	m_axi_arlen    : out std_logic_vector(AXI_LEN_WIDTH(C_AXI_PROTOCOL)-1 downto 0); -- AXI3 (3 downto 0), AXI4 (7 downto 0)
@@ -233,6 +233,7 @@ signal counter : std_logic_vector(C_COUNTER_WIDTH-1 downto 0);
 signal s_axi_lite_awready_i : std_logic;
 signal s_axi_lite_wready_i  : std_logic;
 signal s_axi_lite_bvalid_i  : std_logic;
+signal s_axi_lite_bvalid_r  : std_logic;
 
 signal s_axi_lite_awaddr_r  : std_logic_vector(C_AXI_LITE_ADDR_WIDTH-1 downto 0);
 signal s_axi_lite_awvalid_r : std_logic;
@@ -246,6 +247,7 @@ signal s_axi_lite_rvalid_i  : std_logic;
 
 signal s_axi_lite_araddr_r  : std_logic_vector(C_AXI_LITE_ADDR_WIDTH-1 downto 0);
 signal s_axi_lite_arvalid_r : std_logic;
+signal s_axi_lite_arvalid_rr: std_logic;
 
 signal s_axi_awaddr_i : std_logic_vector(C_MEM_ADDR_WIDTH-1 downto 0);
 signal s_axi_araddr_i : std_logic_vector(C_MEM_ADDR_WIDTH-1 downto 0);
@@ -280,56 +282,81 @@ signal gdt_r_addr      : std_logic_vector(15 downto 0);
 
 --------------------------------------------------------------------------------
 --attribute mark_debug : string;
-
+--
+--attribute mark_debug of s_axi_lite_aresetn : signal is "true";
 --attribute mark_debug of s_axi_lite_araddr  : signal is "true";
 --attribute mark_debug of s_axi_lite_arvalid : signal is "true";
 --attribute mark_debug of s_axi_lite_arready : signal is "true";
-
+--
 --attribute mark_debug of s_axi_lite_awaddr  : signal is "true";
 --attribute mark_debug of s_axi_lite_awvalid : signal is "true";
 --attribute mark_debug of s_axi_lite_awready : signal is "true";
-
+--
 --attribute mark_debug of s_axi_lite_wvalid  : signal is "true";
 --attribute mark_debug of s_axi_lite_wready  : signal is "true";
-
+--
 --attribute mark_debug of s_axi_lite_bvalid  : signal is "true";
 --attribute mark_debug of s_axi_lite_bready  : signal is "true";
-
+--
 --attribute mark_debug of s_axi_lite_rvalid  : signal is "true";
 --attribute mark_debug of s_axi_lite_rready  : signal is "true";
-
+--
+--attribute mark_debug of s_axi_aresetn      : signal is "true";
 --attribute mark_debug of s_axi_arid         : signal is "true";
 --attribute mark_debug of s_axi_araddr       : signal is "true";
 --attribute mark_debug of s_axi_arvalid      : signal is "true";
 --attribute mark_debug of s_axi_arready      : signal is "true";
-
+--
 --attribute mark_debug of s_axi_rid          : signal is "true";
 --attribute mark_debug of s_axi_rlast        : signal is "true";
 --attribute mark_debug of s_axi_rvalid       : signal is "true";
 --attribute mark_debug of s_axi_rready       : signal is "true";
-
+--
 --attribute mark_debug of s_axi_awid         : signal is "true";
 --attribute mark_debug of s_axi_awaddr       : signal is "true";
 --attribute mark_debug of s_axi_awvalid      : signal is "true";
 --attribute mark_debug of s_axi_awready      : signal is "true";
-
+--
 --attribute mark_debug of s_axi_wid          : signal is "true";
 --attribute mark_debug of s_axi_wlast        : signal is "true";
 --attribute mark_debug of s_axi_wvalid       : signal is "true";
 --attribute mark_debug of s_axi_wready       : signal is "true";
-
+--
 --attribute mark_debug of s_axi_bid          : signal is "true";
 --attribute mark_debug of s_axi_bvalid       : signal is "true";
 --attribute mark_debug of s_axi_bready       : signal is "true";
-
---attribute mark_debug of w_chipsel       : signal is "true";
---attribute mark_debug of r_chipsel       : signal is "true";
-
---attribute mark_debug of gdt_b_wren       : signal is "true";
---attribute mark_debug of gdt_b_addr       : signal is "true";
-
---attribute mark_debug of gdt_r_wren       : signal is "true";
---attribute mark_debug of gdt_r_addr       : signal is "true";
+--
+--attribute mark_debug of m_axi_aresetn  : signal is "true";
+--attribute mark_debug of m_axi_awid     : signal is "true";
+--attribute mark_debug of m_axi_awvalid  : signal is "true";
+--attribute mark_debug of m_axi_awready  : signal is "true";
+--
+--attribute mark_debug of m_axi_wid      : signal is "true";
+--attribute mark_debug of m_axi_wlast    : signal is "true";
+--attribute mark_debug of m_axi_wvalid   : signal is "true";
+--attribute mark_debug of m_axi_wready   : signal is "true";
+--
+--attribute mark_debug of m_axi_bid      : signal is "true";
+--attribute mark_debug of m_axi_bvalid   : signal is "true";
+--attribute mark_debug of m_axi_bready   : signal is "true";
+--
+--attribute mark_debug of m_axi_arid     : signal is "true";
+--attribute mark_debug of m_axi_arvalid  : signal is "true";
+--attribute mark_debug of m_axi_arready  : signal is "true";
+--
+--attribute mark_debug of m_axi_rid      : signal is "true";
+--attribute mark_debug of m_axi_rlast    : signal is "true";
+--attribute mark_debug of m_axi_rvalid   : signal is "true";
+--attribute mark_debug of m_axi_rready   : signal is "true";
+--
+--attribute mark_debug of w_chipsel      : signal is "true";
+--attribute mark_debug of r_chipsel      : signal is "true";
+--
+--attribute mark_debug of gdt_b_wren     : signal is "true";
+--attribute mark_debug of gdt_b_addr     : signal is "true";
+--
+--attribute mark_debug of gdt_r_wren     : signal is "true";
+--attribute mark_debug of gdt_r_addr     : signal is "true";
 
 --------------------------------------------------------------------------------
 
@@ -379,10 +406,10 @@ begin
 -- AXI-Lite slave address memory map
 ---------------------------------------
 -- AXI Lite Memory Mapping:
---  r/w_chipsel(0) : 0x0000 - 0x0FFFF -- control/status registers
---  r/w_chipsel(1) : 0x4000 - 0x1FFFF -- gaussian delay table (B Channel)
---  r/w_chipsel(2) : 0x8000 - 0x2FFFF -- gaussian delay table (R Channel)
---  r/w_chipsel(3) : 0xC000 - 0x3FFFF -- spare
+--  r/w_chipsel(0) : 0x00000 - 0x0FFFF -- control/status registers
+--  r/w_chipsel(1) : 0x10000 - 0x1FFFF -- gaussian delay table (B Channel)
+--  r/w_chipsel(2) : 0x20000 - 0x2FFFF -- gaussian delay table (R Channel)
+--  r/w_chipsel(3) : 0x30000 - 0x3FFFF -- spare
 
 ---------------------------------------
 ----- Chip select decoding - logic for decoding the chip selects for read and write processes
@@ -470,8 +497,17 @@ end process;
 				for i in reg_rng loop
 					slv_reg(i) <= (others => '0');
 				end loop;
-			else 
 
+                s_axi_lite_bvalid_r <= '0';
+    			gdt_r_wren   <= (others => '0');
+	    		gdt_r_waddr  <= (others => '0');
+		    	gdt_r_wdata  <= (others => '0');
+			    gdt_b_wren   <= (others => '0');
+			    gdt_b_waddr  <= (others => '0');
+			    gdt_b_wdata  <= (others => '0');
+
+			else 
+                s_axi_lite_bvalid_r <= s_axi_lite_bvalid_i;
     			gdt_r_wren   <= (others => '0');
 	    		gdt_r_waddr  <= (others => '0');
 		    	gdt_r_wdata  <= (others => '0');
@@ -523,10 +559,9 @@ end process;
 	s_axi_lite_rdata  <= s_axi_lite_rdata_i;
 	s_axi_lite_rresp  <= (others => '0');
 	s_axi_lite_rvalid <= s_axi_lite_rvalid_i;
---	s_axi_lite_rready
 
 	s_axi_lite_arready_i <= not s_axi_lite_arvalid_r;
-	s_axi_lite_rvalid_i  <= s_axi_lite_arvalid_r;
+	s_axi_lite_rvalid_i  <= s_axi_lite_arvalid_r and s_axi_lite_arvalid_rr;
 
     s_axil_r: process(s_axi_lite_aclk)
 	begin
@@ -534,9 +569,12 @@ end process;
             if (s_axi_lite_aresetn = '0') then -- synchronous reset
                 s_axi_lite_araddr_r  <= (others => '0');
                 s_axi_lite_arvalid_r <= '0';
-            else
+                s_axi_lite_arvalid_rr<= '0';
+            else               
+                s_axi_lite_arvalid_rr <= s_axi_lite_arvalid_r;
+                
                 if (s_axi_lite_arvalid = '1' and s_axi_lite_arready_i = '1') then
-                    s_axi_lite_araddr_r <= s_axi_lite_araddr;
+                    s_axi_lite_araddr_r  <= s_axi_lite_araddr;
                     s_axi_lite_arvalid_r <= '1';
                 end if;
                 if (s_axi_lite_rvalid_i = '1' and s_axi_lite_rready = '1') then
@@ -544,9 +582,9 @@ end process;
                 end if;
             end if;
         end if;
-    end process;
+    end process;    
 
-    c_axil_rr: process(s_axi_lite_rvalid_i, s_axi_lite_araddr_r, slv_reg)
+    c_axil_rr: process(s_axi_lite_rvalid_i, s_axi_lite_araddr_r, slv_reg, r_chipsel, gdt_b_rdata, gdt_r_rdata)
         variable rsel : reg_rng;  begin
         s_axi_lite_rdata_i <= (others => '0');
         if (s_axi_lite_rvalid_i = '1') then
@@ -559,10 +597,8 @@ end process;
                 when others => null;
 				end case;
             elsif (r_chipsel(1) = '1') then
-                gdt_b_raddr        <= s_axi_lite_araddr_r(15 downto 0);
                 s_axi_lite_rdata_i <= x"00" & gdt_b_rdata;
             elsif (r_chipsel(2) = '1') then
-                gdt_r_raddr        <= s_axi_lite_araddr_r(15 downto 0);
                 s_axi_lite_rdata_i <= x"00" & gdt_r_rdata;			
             else
                 s_axi_lite_rdata_i <= (others=>'0');
@@ -571,6 +607,9 @@ end process;
         end if;
     end process;
 
+    gdt_b_raddr <= s_axi_lite_araddr_r(15 downto 0);
+    gdt_r_raddr <= s_axi_lite_araddr_r(15 downto 0);
+    
 	-- wrap-around counter
 
 	s_counter: process(s_axi_aclk)
@@ -596,8 +635,8 @@ end process;
 	m_axi_wlast      <= m_axi_wlast_i(0);
 	m_axi_rlast_i(0) <= m_axi_rlast;
 
-	gdt_r_addr <= gdt_r_waddr when (s_axi_lite_bvalid_i = '1') else gdt_r_raddr;
-	gdt_b_addr <= gdt_b_waddr when (s_axi_lite_bvalid_i = '1') else gdt_b_raddr;
+    gdt_r_addr <= gdt_r_waddr when (s_axi_lite_bvalid_r = '1') else gdt_r_raddr;
+    gdt_b_addr <= gdt_b_waddr when (s_axi_lite_bvalid_r = '1') else gdt_b_raddr;
 
 ---------------------------------------
 -- AW AXI Channel
