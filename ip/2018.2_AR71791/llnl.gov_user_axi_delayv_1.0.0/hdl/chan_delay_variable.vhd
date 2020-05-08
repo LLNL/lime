@@ -125,9 +125,8 @@ signal m_axi_areset   : std_logic;
 
 signal pktbuf_enb     : std_logic;
 signal pktbuf_addrb   : std_logic_vector(7 downto 0);
-signal pktbuf_dinb    : std_logic_vector(1023 downto 0); 
-signal pktbuf_dinb_cat: std_logic_vector(AXI_INFO_WIDTH-1 downto 0); 
-signal pktbuf_doutb   : std_logic_vector(1023 downto 0); 
+signal pktbuf_dinb    : std_logic_vector(AXI_INFO_WIDTH-1 downto 0); 
+signal pktbuf_doutb   : std_logic_vector(AXI_INFO_WIDTH-1 downto 0); 
 
 signal mc_valid       : std_logic;
 signal mc_axi_id      : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
@@ -146,7 +145,7 @@ signal aidb_bdata         : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
 
 signal pb_info_data       : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
 signal pb_cntr_ptr        : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
-signal pb_dina            : std_logic_vector(1023 downto 0);
+--signal pb_dina            : std_logic_vector(1023 downto 0);
 signal pb_wr              : std_logic_vector(0 downto 0);
 
 signal minibuf_fe         : std_logic;
@@ -329,7 +328,7 @@ skip_minicam : if (BYPASS_MINICAM = 1) generate
     );
 end generate skip_minicam;
 
-pb_dina <= C_ZERO(1023 downto AXI_INFO_WIDTH) & pb_info_data;
+--pb_dina <= C_ZERO(1023 downto AXI_INFO_WIDTH) & pb_info_data;
 
 ---------------------------------------
 -- Packet Buffer
@@ -337,7 +336,7 @@ pb_dina <= C_ZERO(1023 downto AXI_INFO_WIDTH) & pb_info_data;
 packet_buffer : entity dpram_true
 GENERIC MAP (
     ADDR_WIDTH       => CTR_PTR_WIDTH,
-    DATA_WIDTH       => 1024,
+    DATA_WIDTH       => AXI_INFO_WIDTH,
     CLOCKING_MODE    => "independent_clock",
     MEMORY_INIT_FILE => "none"
 )
@@ -347,7 +346,7 @@ PORT MAP (
     ena   => '1',
     wea   => pb_wr,
     addra => pb_cntr_ptr,
-    dina  => pb_dina, 
+    dina  => pb_info_data, --pb_dina, 
     douta => OPEN,
     
     clkb  => m_axi_aclk,
@@ -358,8 +357,6 @@ PORT MAP (
     dinb  => pktbuf_dinb,
     doutb => pktbuf_doutb
 );
-
-pktbuf_dinb <= C_ZERO(1023 downto AXI_INFO_WIDTH) & pktbuf_dinb_cat;
 
 ---------------------------------------
 -- AXI ID Buffer
@@ -502,8 +499,8 @@ port map (
 
     pktbuf_enb_o        => pktbuf_enb,
     pktbuf_addrb_o      => pktbuf_addrb,
-    pktbuf_dinb_o       => pktbuf_dinb_cat,
-    pktbuf_doutb_i      => pktbuf_doutb(AXI_INFO_WIDTH-1 downto 0),
+    pktbuf_dinb_o       => pktbuf_dinb,
+    pktbuf_doutb_i      => pktbuf_doutb,
     
     aidb_baddr_o        => aidb_baddr,
     aidb_bdata_i        => aidb_bdata,

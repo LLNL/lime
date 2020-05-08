@@ -119,7 +119,6 @@ signal axi_info_rdata   : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
 signal axi_info_rd      : std_logic;
 
 -- misc. logic
-signal s_axi_id         : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0); -- multiplexed axi_id for use with the "W" bus
 signal s_axi_ready      : std_logic;
 signal s_axi_last       : std_logic;
 signal sb_index         : std_logic_vector(MINIBUF_IDX_WIDTH-1 downto 0);
@@ -184,17 +183,15 @@ end generate;
 data_flag_gen : if (CHANNEL_TYPE = "W" or CHANNEL_TYPE = "R") generate
     axi_info_wr <= first_data_flag or mid_data_flag or last_data_flag; 
     mc_valid_o  <= first_data_flag or mid_data_flag or last_data_flag; 
-    mc_axi_id_o <= s_axi_id;
+    mc_axi_id_o <= s_axi_id_i;
 end generate;
 
 --------------------------------------------------------------------------------
 -- AXI Information FIFO - buffers all information from AXI events
 --------------------------------------------------------------------------------
 
-s_axi_id <= s_axi_id_i;
-
 -- concatenate all axi input signals (outputs are not concatenated)
-axi_info_wdata <= s_axi_resp_i & s_axi_id & s_axi_addr_i & s_axi_data_i & s_axi_strb_i & s_axi_len_i & s_axi_size_i & s_axi_burst_i & 
+axi_info_wdata <= s_axi_resp_i & s_axi_id_i & s_axi_addr_i & s_axi_data_i & s_axi_strb_i & s_axi_len_i & s_axi_size_i & s_axi_burst_i & 
                    s_axi_lock_i  & s_axi_cache_i & s_axi_prot_i & s_axi_qos_i & s_axi_region_i & s_axi_valid_i & s_axi_last;
 
 -- shallow FIFO for buffering AXI events                    

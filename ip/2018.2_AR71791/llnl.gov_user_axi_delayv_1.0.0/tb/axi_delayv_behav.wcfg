@@ -13,15 +13,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="10671334787fs"></ZoomStartTime>
-      <ZoomEndTime time="10824696689fs"></ZoomEndTime>
-      <Cursor1Time time="9678413000fs"></Cursor1Time>
+      <ZoomStartTime time="15060407248fs"></ZoomStartTime>
+      <ZoomEndTime time="16905963763fs"></ZoomEndTime>
+      <Cursor1Time time="15480000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="243"></NameColumnWidth>
-      <ValueColumnWidth column_width="223"></ValueColumnWidth>
+      <ValueColumnWidth column_width="215"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="6" />
+   <WVObjectSize size="7" />
    <wvobject fp_name="/axi_delayv_tb/s_axi_lite_aclk" type="logic">
       <obj_property name="ElementShortName">s_axi_lite_aclk</obj_property>
       <obj_property name="ObjectShortName">s_axi_lite_aclk</obj_property>
@@ -108,6 +108,167 @@
       <wvobject fp_name="/axi_delayv_tb/s_axi_lite_rready" type="logic">
          <obj_property name="ElementShortName">s_axi_lite_rready</obj_property>
          <obj_property name="ObjectShortName">s_axi_lite_rready</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group2047" type="group">
+      <obj_property name="label">AXI Master Write Model</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/clock" type="logic">
+         <obj_property name="ElementShortName">clock</obj_property>
+         <obj_property name="ObjectShortName">clock</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/resetn" type="logic">
+         <obj_property name="ElementShortName">resetn</obj_property>
+         <obj_property name="ObjectShortName">resetn</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/awaddr" type="array">
+         <obj_property name="ElementShortName">awaddr[31:0]</obj_property>
+         <obj_property name="ObjectShortName">awaddr[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/awlen" type="array">
+         <obj_property name="ElementShortName">awlen[7:0]</obj_property>
+         <obj_property name="ObjectShortName">awlen[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/awsize" type="array">
+         <obj_property name="ElementShortName">awsize[2:0]</obj_property>
+         <obj_property name="ObjectShortName">awsize[2:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/awburst" type="array">
+         <obj_property name="ElementShortName">awburst[1:0]</obj_property>
+         <obj_property name="ObjectShortName">awburst[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/awprot" type="array">
+         <obj_property name="ElementShortName">awprot[2:0]</obj_property>
+         <obj_property name="ObjectShortName">awprot[2:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/awcache" type="array">
+         <obj_property name="ElementShortName">awcache[3:0]</obj_property>
+         <obj_property name="ObjectShortName">awcache[3:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/awvalid" type="logic">
+         <obj_property name="ElementShortName">awvalid</obj_property>
+         <obj_property name="ObjectShortName">awvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/awready" type="logic">
+         <obj_property name="ElementShortName">awready</obj_property>
+         <obj_property name="ObjectShortName">awready</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/wdata" type="array">
+         <obj_property name="ElementShortName">wdata[127:0]</obj_property>
+         <obj_property name="ObjectShortName">wdata[127:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/wstrb" type="array">
+         <obj_property name="ElementShortName">wstrb[15:0]</obj_property>
+         <obj_property name="ObjectShortName">wstrb[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/wlast" type="logic">
+         <obj_property name="ElementShortName">wlast</obj_property>
+         <obj_property name="ObjectShortName">wlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/wvalid" type="logic">
+         <obj_property name="ElementShortName">wvalid</obj_property>
+         <obj_property name="ObjectShortName">wvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/wready" type="logic">
+         <obj_property name="ElementShortName">wready</obj_property>
+         <obj_property name="ObjectShortName">wready</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/bresp" type="array">
+         <obj_property name="ElementShortName">bresp[1:0]</obj_property>
+         <obj_property name="ObjectShortName">bresp[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/bvalid" type="logic">
+         <obj_property name="ElementShortName">bvalid</obj_property>
+         <obj_property name="ObjectShortName">bvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/bready" type="logic">
+         <obj_property name="ElementShortName">bready</obj_property>
+         <obj_property name="ObjectShortName">bready</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/done_write_success" type="logic">
+         <obj_property name="ElementShortName">done_write_success</obj_property>
+         <obj_property name="ObjectShortName">done_write_success</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/running_burst_down_count" type="other">
+         <obj_property name="ElementShortName">running_burst_down_count</obj_property>
+         <obj_property name="ObjectShortName">running_burst_down_count</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/running_transfer_down_count" type="other">
+         <obj_property name="ElementShortName">running_transfer_down_count</obj_property>
+         <obj_property name="ObjectShortName">running_transfer_down_count</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/data_counter" type="array">
+         <obj_property name="ElementShortName">data_counter[7:0]</obj_property>
+         <obj_property name="ObjectShortName">data_counter[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/data_phase_completed" type="logic">
+         <obj_property name="ElementShortName">data_phase_completed</obj_property>
+         <obj_property name="ObjectShortName">data_phase_completed</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/data_phase_completed_d1" type="logic">
+         <obj_property name="ElementShortName">data_phase_completed_d1</obj_property>
+         <obj_property name="ObjectShortName">data_phase_completed_d1</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/data_phase_completed_re_pulse" type="logic">
+         <obj_property name="ElementShortName">data_phase_completed_re_pulse</obj_property>
+         <obj_property name="ObjectShortName">data_phase_completed_re_pulse</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/start_data_phase" type="logic">
+         <obj_property name="ElementShortName">start_data_phase</obj_property>
+         <obj_property name="ObjectShortName">start_data_phase</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/start_data_phase_d1" type="logic">
+         <obj_property name="ElementShortName">start_data_phase_d1</obj_property>
+         <obj_property name="ObjectShortName">start_data_phase_d1</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/start_data_phase_re_pulse" type="logic">
+         <obj_property name="ElementShortName">start_data_phase_re_pulse</obj_property>
+         <obj_property name="ObjectShortName">start_data_phase_re_pulse</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/done_all_addr_write" type="logic">
+         <obj_property name="ElementShortName">done_all_addr_write</obj_property>
+         <obj_property name="ObjectShortName">done_all_addr_write</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/wvalid_i" type="logic">
+         <obj_property name="ElementShortName">wvalid_i</obj_property>
+         <obj_property name="ObjectShortName">wvalid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/awvalid_i" type="logic">
+         <obj_property name="ElementShortName">awvalid_i</obj_property>
+         <obj_property name="ObjectShortName">awvalid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/awaddr_i" type="array">
+         <obj_property name="ElementShortName">awaddr_i[31:0]</obj_property>
+         <obj_property name="ObjectShortName">awaddr_i[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="group2086" type="group">
+         <obj_property name="label">CONSTANTS</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/MEM_DATA_WIDTH" type="other">
+            <obj_property name="ElementShortName">MEM_DATA_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">MEM_DATA_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/BURST_LENGTH" type="other">
+            <obj_property name="ElementShortName">BURST_LENGTH</obj_property>
+            <obj_property name="ObjectShortName">BURST_LENGTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/C_NUM_BURST" type="other">
+            <obj_property name="ElementShortName">C_NUM_BURST</obj_property>
+            <obj_property name="ObjectShortName">C_NUM_BURST</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/C_START_ADDR" type="array">
+            <obj_property name="ElementShortName">C_START_ADDR[31:0]</obj_property>
+            <obj_property name="ObjectShortName">C_START_ADDR[31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/total_transfers_count" type="other">
+            <obj_property name="ElementShortName">total_transfers_count</obj_property>
+            <obj_property name="ObjectShortName">total_transfers_count</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_master_write_inst/per_burst_byte_transfers" type="other">
+            <obj_property name="ElementShortName">per_burst_byte_transfers</obj_property>
+            <obj_property name="ObjectShortName">per_burst_byte_transfers</obj_property>
+         </wvobject>
       </wvobject>
    </wvobject>
    <wvobject fp_name="group1104" type="group">
@@ -275,6 +436,18 @@
             <obj_property name="ElementShortName">s_axi_arvalid</obj_property>
             <obj_property name="ObjectShortName">s_axi_arvalid</obj_property>
          </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_rready" type="logic">
+            <obj_property name="ElementShortName">s_axi_rready</obj_property>
+            <obj_property name="ObjectShortName">s_axi_rready</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_rvalid" type="logic">
+            <obj_property name="ElementShortName">s_axi_rvalid</obj_property>
+            <obj_property name="ObjectShortName">s_axi_rvalid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_rlast_i" type="array">
+            <obj_property name="ElementShortName">s_axi_rlast_i[0:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_rlast_i[0:0]</obj_property>
+         </wvobject>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_rdata" type="array">
             <obj_property name="ElementShortName">s_axi_rdata[127:0]</obj_property>
             <obj_property name="ObjectShortName">s_axi_rdata[127:0]</obj_property>
@@ -287,21 +460,9 @@
             <obj_property name="ElementShortName">s_axi_rlast</obj_property>
             <obj_property name="ObjectShortName">s_axi_rlast</obj_property>
          </wvobject>
-         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_rlast_i" type="array">
-            <obj_property name="ElementShortName">s_axi_rlast_i[0:0]</obj_property>
-            <obj_property name="ObjectShortName">s_axi_rlast_i[0:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_rready" type="logic">
-            <obj_property name="ElementShortName">s_axi_rready</obj_property>
-            <obj_property name="ObjectShortName">s_axi_rready</obj_property>
-         </wvobject>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_rresp" type="array">
             <obj_property name="ElementShortName">s_axi_rresp[1:0]</obj_property>
             <obj_property name="ObjectShortName">s_axi_rresp[1:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_rvalid" type="logic">
-            <obj_property name="ElementShortName">s_axi_rvalid</obj_property>
-            <obj_property name="ObjectShortName">s_axi_rvalid</obj_property>
          </wvobject>
       </wvobject>
       <wvobject fp_name="group7411" type="group">
@@ -1344,7 +1505,6 @@
    <wvobject fp_name="group1015" type="group">
       <obj_property name="label">AXI SLAVE - axi_bram_8Kx128 Model</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/axi_delayv_tb/axi_slave_mem/s_axi_aclk" type="logic">
          <obj_property name="ElementShortName">s_axi_aclk</obj_property>
          <obj_property name="ObjectShortName">s_axi_aclk</obj_property>
@@ -1705,10 +1865,6 @@
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/axi_parser_inst/axi_info_rd" type="logic">
             <obj_property name="ElementShortName">axi_info_rd</obj_property>
             <obj_property name="ObjectShortName">axi_info_rd</obj_property>
-         </wvobject>
-         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/axi_parser_inst/s_axi_id" type="array">
-            <obj_property name="ElementShortName">s_axi_id[15:0]</obj_property>
-            <obj_property name="ObjectShortName">s_axi_id[15:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/axi_parser_inst/s_axi_ready" type="logic">
             <obj_property name="ElementShortName">s_axi_ready</obj_property>

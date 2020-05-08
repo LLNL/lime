@@ -76,7 +76,7 @@ entity axi_delayv_tb is
         C_AXI_LITE_NUM_BURST  : integer := 10;
         
         C_AXI_START_ADDR      : std_logic_vector(39 downto 0) := x"0000001000";
-        C_AXI_BURST_LEN       : integer := 4;  -- No. of Transfers
+        C_AXI_BURST_LEN       : integer := 1;  -- No. of Transfers
         C_AXI_NUM_BURST       : integer := 40 -- Total transfers = C_NUM_BURST*BURST_LENGTH
     );   
     Port (

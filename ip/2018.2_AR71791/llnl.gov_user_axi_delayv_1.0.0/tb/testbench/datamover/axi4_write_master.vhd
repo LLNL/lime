@@ -130,6 +130,9 @@ signal wvalid_i                      : std_logic := '0';
 signal awvalid_i                     : std_logic := '0';
 signal awaddr_i                      : std_logic_vector(31 downto 0):= (others => '0');
 
+signal wlast_single                  : std_logic;
+signal wlast_burst                   : std_logic;
+
 -------------------------------------------------------------------------------
 -- Begin architecture logic
 -------------------------------------------------------------------------------
@@ -221,38 +224,42 @@ start_data_phase_re_pulse <= start_data_phase and not start_data_phase_d1;
                running_transfer_down_count 	<= BURST_LENGTH;
                data_counter <= (others => '0');
                data_phase_completed <= '0';
-               wlast <= '0';
+               wlast_burst <= '0';
 
            elsif (start_data_phase_re_pulse = '1') then     
                wvalid_i <= '1';
                running_transfer_down_count 	<= BURST_LENGTH;
                data_phase_completed <= '0';
-               wlast <= '0';
+               wlast_burst <= '0';
 
            elsif (wvalid_i = '1' and wready = '1' and running_transfer_down_count = 2) then
                wvalid_i <= '1';
                data_counter   <= std_logic_vector(unsigned(data_counter) + 1);
                running_transfer_down_count 	<= running_transfer_down_count -1;
                data_phase_completed <= '0';
-               wlast <= '1';
+               wlast_burst <= '1';
 
            elsif (wvalid_i = '1' and wready = '1' and running_transfer_down_count = 1) then
                wvalid_i <= '0';
                data_counter   <= std_logic_vector(unsigned(data_counter) + 1);
                running_transfer_down_count 	<= running_transfer_down_count -1;
                data_phase_completed <= '1';
-               wlast <= '0';
+               wlast_burst <= '0';
 
            elsif (wvalid_i = '1' and wready = '1' and running_transfer_down_count /= 0) then
                wvalid_i <= '1';
                data_counter   <= std_logic_vector(unsigned(data_counter) + 1);
                running_transfer_down_count 	<= running_transfer_down_count -1;
                data_phase_completed <= '0';
-               wlast <= '0';
+               wlast_burst <= '0';
 
            end if;
         end if;
    end process;  
+   
+ wlast_single <= '1' when (wvalid_i = '1' and wready = '1' and running_transfer_down_count = 1 and BURST_LENGTH = 1) else
+                 '0';
+ wlast <= wlast_single or wlast_burst;
 
 ----------------------------------------------------------------------- 
 -- Data Genreation                                               
