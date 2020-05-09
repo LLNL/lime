@@ -125,10 +125,12 @@ signal sb_index         : std_logic_vector(MINIBUF_IDX_WIDTH-1 downto 0);
 signal sb_index_int     : integer;
 signal mc_ctr_ptr_wr_q  : std_logic;
 signal mc_ctr_ptr_q     : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
+signal pq_data_sr       : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
 
 --------------------------------------------------------------------------------
 --attribute mark_debug : string;
---attribute keep       : string;
+attribute DONT_TOUCH       : string;
+attribute keep       : string;
 --
 --attribute mark_debug of axi_info_wr    : signal is "true";
 --attribute mark_debug of axi_info_af    : signal is "true";
@@ -139,6 +141,8 @@ signal mc_ctr_ptr_q     : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
 --
 --attribute keep of axi_info_rdata    : signal is "true";
 --attribute keep of axi_info_wdata_q    : signal is "true";
+
+attribute keep of pq_data_sr    : signal is "true";
 
 --******************************************************************************
 -- Connectivity and Logic
@@ -224,7 +228,7 @@ axi_info_proc : process (clk_i, rst_i) begin
         axi_info_valid      <= '0';
         axi_info_wdata_q    <= (others => '0');
         axi_info_rdata      <= (others => '0');
-        pq_data_sr_o        <= (others => '0');
+        pq_data_sr          <= (others => '0');
     elsif rising_edge(clk_i) then
         axi_info_af      <= '0';
         axi_info_valid   <= axi_info_rd;
@@ -233,7 +237,7 @@ axi_info_proc : process (clk_i, rst_i) begin
 
         pq_data_sr_loop :
             for j in 0 to PRIORITY_QUEUE_WIDTH-1 loop
-              pq_data_sr_o((j+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto j*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)) <= 
+              pq_data_sr((j+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto j*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)) <= 
                   random_dly_i & axi_info_wdata_q(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH) & mc_ctr_ptr_i(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
         end loop pq_data_sr_loop;            
 
@@ -282,8 +286,9 @@ sb_wr_o    <= mc_ctr_ptr_wr_q and axi_info_rdata(0); -- Assert scoreboard valid 
 
 ----- priority_controller interface -----
 -- pq_data_o contains (axi_id & sb_index), width = C_AXI_ID_WIDTH + MINIBUF_IDX_WIDTH
-pq_data_o  <= axi_info_rdata(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH) & sb_index;
-pq_en_o    <= mc_ctr_ptr_wr_q and axi_info_rdata(0);
+pq_data_sr_o <= pq_data_sr;
+pq_data_o    <= axi_info_rdata(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH) & sb_index;
+pq_en_o      <= mc_ctr_ptr_wr_q and axi_info_rdata(0);
 
 ----------------------------------------------------------------------------------------------
 end behavioral;
