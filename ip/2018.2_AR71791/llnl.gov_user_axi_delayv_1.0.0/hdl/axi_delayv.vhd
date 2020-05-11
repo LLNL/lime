@@ -312,7 +312,7 @@ attribute mark_debug of s_axi_rlast        : signal is "true";
 attribute mark_debug of s_axi_rvalid       : signal is "true";
 attribute mark_debug of s_axi_rready       : signal is "true";
 
---attribute mark_debug of s_axi_awid         : signal is "true";
+attribute mark_debug of s_axi_awid         : signal is "true";
 --attribute mark_debug of s_axi_awaddr       : signal is "true";
 attribute mark_debug of s_axi_awvalid      : signal is "true";
 attribute mark_debug of s_axi_awready      : signal is "true";
@@ -340,11 +340,11 @@ attribute mark_debug of m_axi_wready   : signal is "true";
 attribute mark_debug of m_axi_bvalid   : signal is "true";
 attribute mark_debug of m_axi_bready   : signal is "true";
 
---attribute mark_debug of m_axi_arid     : signal is "true";
+attribute mark_debug of m_axi_arid     : signal is "true";
 attribute mark_debug of m_axi_arvalid  : signal is "true";
 attribute mark_debug of m_axi_arready  : signal is "true";
 
---attribute mark_debug of m_axi_rid      : signal is "true";
+attribute mark_debug of m_axi_rid      : signal is "true";
 attribute mark_debug of m_axi_rlast    : signal is "true";
 attribute mark_debug of m_axi_rvalid   : signal is "true";
 attribute mark_debug of m_axi_rready   : signal is "true";
