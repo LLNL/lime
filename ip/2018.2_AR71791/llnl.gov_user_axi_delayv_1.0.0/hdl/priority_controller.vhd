@@ -34,7 +34,6 @@ port (
     pq_dout_i           : in  std_logic_vector(DELAY_WIDTH+MINIBUF_IDX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
     pq_dout_valid_i     : in  std_logic;
     pq_dout_ready_o     : out std_logic;
-    pq_count_time_i     : in  std_logic_vector(31 downto 0);
 
     pktbuf_enb_o        : out std_logic;                        -- packet buffer enable
     pktbuf_addrb_o      : out std_logic_vector(7 downto 0);     -- packet buffer address

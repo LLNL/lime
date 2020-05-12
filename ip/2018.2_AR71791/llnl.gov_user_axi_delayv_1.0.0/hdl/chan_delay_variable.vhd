@@ -172,17 +172,17 @@ signal pq_ready           : std_logic;
 signal pq_dout            : std_logic_vector(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH-1 downto 0);
 signal pq_dout_valid      : std_logic;
 signal pq_dout_ready      : std_logic;
-signal count_time         : std_logic_vector(31 downto 0);
 signal pq_data_sr         : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
 
+--------------------------------------------------------------------------------
 --For Chipscope
-attribute mark_debug : string;
-attribute mark_debug of pb_wr        : signal is "true";
-attribute mark_debug of pb_cntr_ptr  : signal is "true";
-attribute mark_debug of pb_info_data : signal is "true";
-attribute mark_debug of pktbuf_enb   : signal is "true";
-attribute mark_debug of pktbuf_addrb : signal is "true";
-attribute mark_debug of pktbuf_doutb : signal is "true";
+--attribute mark_debug : string;
+--attribute mark_debug of pb_wr        : signal is "true";
+--attribute mark_debug of pb_cntr_ptr  : signal is "true";
+--attribute mark_debug of pb_info_data : signal is "true";
+--attribute mark_debug of pktbuf_enb   : signal is "true";
+--attribute mark_debug of pktbuf_addrb : signal is "true";
+--attribute mark_debug of pktbuf_doutb : signal is "true";
 
 --******************************************************************************
 --Component Definitions
@@ -472,8 +472,7 @@ port map (
     -- (delay & axi_id & sb_index) of the transaction (to priority controller)
     dout_o        => pq_dout,
     dout_valid_o  => pq_dout_valid,
-    dout_ready_i  => pq_dout_ready,
-    count_time_o  => count_time
+    dout_ready_i  => pq_dout_ready
   );
   
 ---------------------------------------
@@ -499,7 +498,6 @@ port map (
     pq_dout_i           => pq_dout,
     pq_dout_valid_i     => pq_dout_valid,
     pq_dout_ready_o     => pq_dout_ready,
-    pq_count_time_i     => count_time,
 
     pktbuf_enb_o        => pktbuf_enb,
     pktbuf_addrb_o      => pktbuf_addrb,

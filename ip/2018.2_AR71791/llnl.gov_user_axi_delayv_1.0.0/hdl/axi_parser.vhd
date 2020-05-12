@@ -22,7 +22,7 @@ entity axi_parser is
                                                -- minimum depth of Packet Buffer DPRAM = 2^(CTR_PTR_WIDTH)
      
         -- AXI-Full Bus Interface
-        PRIORITY_QUEUE_WIDTH : integer := 32;
+        PRIORITY_QUEUE_WIDTH : integer := 16;
         C_AXI_ID_WIDTH     : integer := 16;
         C_AXI_ADDR_WIDTH   : integer := 40;
         C_AXI_DATA_WIDTH   : integer := 128;
@@ -128,22 +128,22 @@ signal mc_ctr_ptr_q     : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
 signal pq_data_sr       : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
 
 --------------------------------------------------------------------------------
-attribute mark_debug : string;
-attribute DONT_TOUCH       : string;
-attribute keep       : string;
+--attribute mark_debug : string;
+--attribute DONT_TOUCH : string;
+--attribute keep       : string;
 
 --attribute mark_debug of axi_info_wr    : signal is "true";
 --attribute mark_debug of axi_info_af    : signal is "true";
-attribute mark_debug of axi_info_valid : signal is "true";
-attribute mark_debug of axi_info_rdata : signal is "true";
-attribute mark_debug of axi_info_rd    : signal is "true";
-attribute mark_debug of minibuf_fe_i   : signal is "true";
-attribute mark_debug of pq_ready_i     : signal is "true";
+--attribute mark_debug of axi_info_valid : signal is "true";
+--attribute DONT_TOUCH of axi_info_rdata : signal is "true";
+--attribute mark_debug of axi_info_rd    : signal is "true";
+--attribute mark_debug of minibuf_fe_i   : signal is "true";
+--attribute mark_debug of pq_ready_i     : signal is "true";
 
-attribute keep of axi_info_rdata    : signal is "true";
-attribute keep of axi_info_wdata_q    : signal is "true";
+--attribute keep of axi_info_rdata    : signal is "true";
+--attribute keep of axi_info_wdata_q    : signal is "true";
 
-attribute keep of pq_data_sr    : signal is "true";
+--attribute DONT_TOUCH of pq_data_sr    : signal is "true";
 
 --******************************************************************************
 -- Connectivity and Logic

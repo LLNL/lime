@@ -46,7 +46,7 @@ generic (
 --	C_AXI_BUSER_WIDTH     : integer := 1 -- AXI4
 
         -- chan_delay_variable generics
-        PRIORITY_QUEUE_WIDTH  : integer := 16;
+        PRIORITY_QUEUE_WIDTH  : integer := 10;
         DELAY_WIDTH           : integer := 24;
         BYPASS_MINICAM        : integer := 1;
         CAM_DEPTH             : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
@@ -281,82 +281,82 @@ signal gdt_r_rdata     : std_logic_vector(23 downto 0);
 signal gdt_r_addr      : std_logic_vector(15 downto 0);
 
 --------------------------------------------------------------------------------
-attribute mark_debug : string;
-
-attribute mark_debug of s_axi_lite_aresetn : signal is "true";
-attribute mark_debug of s_axi_lite_araddr  : signal is "true";
-attribute mark_debug of s_axi_lite_arvalid : signal is "true";
-attribute mark_debug of s_axi_lite_arready : signal is "true";
-
-attribute mark_debug of s_axi_lite_awaddr  : signal is "true";
-attribute mark_debug of s_axi_lite_awvalid : signal is "true";
-attribute mark_debug of s_axi_lite_awready : signal is "true";
-
-attribute mark_debug of s_axi_lite_wvalid  : signal is "true";
-attribute mark_debug of s_axi_lite_wready  : signal is "true";
-
-attribute mark_debug of s_axi_lite_bvalid  : signal is "true";
-attribute mark_debug of s_axi_lite_bready  : signal is "true";
-
-attribute mark_debug of s_axi_lite_rvalid  : signal is "true";
-attribute mark_debug of s_axi_lite_rready  : signal is "true";
-
-attribute mark_debug of s_axi_aresetn      : signal is "true";
+--attribute mark_debug : string;
+--
+--attribute mark_debug of s_axi_lite_aresetn : signal is "true";
+--attribute mark_debug of s_axi_lite_araddr  : signal is "true";
+--attribute mark_debug of s_axi_lite_arvalid : signal is "true";
+--attribute mark_debug of s_axi_lite_arready : signal is "true";
+--
+--attribute mark_debug of s_axi_lite_awaddr  : signal is "true";
+--attribute mark_debug of s_axi_lite_awvalid : signal is "true";
+--attribute mark_debug of s_axi_lite_awready : signal is "true";
+--
+--attribute mark_debug of s_axi_lite_wvalid  : signal is "true";
+--attribute mark_debug of s_axi_lite_wready  : signal is "true";
+--
+--attribute mark_debug of s_axi_lite_bvalid  : signal is "true";
+--attribute mark_debug of s_axi_lite_bready  : signal is "true";
+--
+--attribute mark_debug of s_axi_lite_rvalid  : signal is "true";
+--attribute mark_debug of s_axi_lite_rready  : signal is "true";
+--
+--attribute mark_debug of s_axi_aresetn      : signal is "true";
 --attribute mark_debug of s_axi_arid         : signal is "true";
 --attribute mark_debug of s_axi_araddr       : signal is "true";
-attribute mark_debug of s_axi_arvalid      : signal is "true";
-attribute mark_debug of s_axi_arready      : signal is "true";
-
+--attribute mark_debug of s_axi_arvalid      : signal is "true";
+--attribute mark_debug of s_axi_arready      : signal is "true";
+--
 --attribute mark_debug of s_axi_rid          : signal is "true";
-attribute mark_debug of s_axi_rlast        : signal is "true";
-attribute mark_debug of s_axi_rvalid       : signal is "true";
-attribute mark_debug of s_axi_rready       : signal is "true";
-
-attribute mark_debug of s_axi_awid         : signal is "true";
+--attribute mark_debug of s_axi_rlast        : signal is "true";
+--attribute mark_debug of s_axi_rvalid       : signal is "true";
+--attribute mark_debug of s_axi_rready       : signal is "true";
+--
+--attribute mark_debug of s_axi_awid         : signal is "true";
 --attribute mark_debug of s_axi_awaddr       : signal is "true";
-attribute mark_debug of s_axi_awvalid      : signal is "true";
-attribute mark_debug of s_axi_awready      : signal is "true";
+--attribute mark_debug of s_axi_awvalid      : signal is "true";
+--attribute mark_debug of s_axi_awready      : signal is "true";
 --
 --attribute mark_debug of s_axi_wid          : signal is "true";
-attribute mark_debug of s_axi_wlast        : signal is "true";
-attribute mark_debug of s_axi_wvalid       : signal is "true";
-attribute mark_debug of s_axi_wready       : signal is "true";
-
---attribute mark_debug of s_axi_bid          : signal is "true";
-attribute mark_debug of s_axi_bvalid       : signal is "true";
-attribute mark_debug of s_axi_bready       : signal is "true";
+--attribute mark_debug of s_axi_wlast        : signal is "true";
+--attribute mark_debug of s_axi_wvalid       : signal is "true";
+--attribute mark_debug of s_axi_wready       : signal is "true";
 --
-attribute mark_debug of m_axi_aresetn  : signal is "true";
+--attribute mark_debug of s_axi_bid          : signal is "true";
+--attribute mark_debug of s_axi_bvalid       : signal is "true";
+--attribute mark_debug of s_axi_bready       : signal is "true";
+--
+--attribute mark_debug of m_axi_aresetn  : signal is "true";
 --attribute mark_debug of m_axi_awid     : signal is "true";
-attribute mark_debug of m_axi_awvalid  : signal is "true";
-attribute mark_debug of m_axi_awready  : signal is "true";
-
+--attribute mark_debug of m_axi_awvalid  : signal is "true";
+--attribute mark_debug of m_axi_awready  : signal is "true";
+--
 --attribute mark_debug of m_axi_wid      : signal is "true";
-attribute mark_debug of m_axi_wlast    : signal is "true";
-attribute mark_debug of m_axi_wvalid   : signal is "true";
-attribute mark_debug of m_axi_wready   : signal is "true";
-
+--attribute mark_debug of m_axi_wlast    : signal is "true";
+--attribute mark_debug of m_axi_wvalid   : signal is "true";
+--attribute mark_debug of m_axi_wready   : signal is "true";
+--
 --attribute mark_debug of m_axi_bid      : signal is "true";
-attribute mark_debug of m_axi_bvalid   : signal is "true";
-attribute mark_debug of m_axi_bready   : signal is "true";
-
-attribute mark_debug of m_axi_arid     : signal is "true";
-attribute mark_debug of m_axi_arvalid  : signal is "true";
-attribute mark_debug of m_axi_arready  : signal is "true";
-
-attribute mark_debug of m_axi_rid      : signal is "true";
-attribute mark_debug of m_axi_rlast    : signal is "true";
-attribute mark_debug of m_axi_rvalid   : signal is "true";
-attribute mark_debug of m_axi_rready   : signal is "true";
-
-attribute mark_debug of w_chipsel      : signal is "true";
-attribute mark_debug of r_chipsel      : signal is "true";
-
-attribute mark_debug of gdt_b_wren     : signal is "true";
-attribute mark_debug of gdt_b_addr     : signal is "true";
-
-attribute mark_debug of gdt_r_wren     : signal is "true";
-attribute mark_debug of gdt_r_addr     : signal is "true";
+--attribute mark_debug of m_axi_bvalid   : signal is "true";
+--attribute mark_debug of m_axi_bready   : signal is "true";
+--
+--attribute mark_debug of m_axi_arid     : signal is "true";
+--attribute mark_debug of m_axi_arvalid  : signal is "true";
+--attribute mark_debug of m_axi_arready  : signal is "true";
+--
+--attribute mark_debug of m_axi_rid      : signal is "true";
+--attribute mark_debug of m_axi_rlast    : signal is "true";
+--attribute mark_debug of m_axi_rvalid   : signal is "true";
+--attribute mark_debug of m_axi_rready   : signal is "true";
+--
+--attribute mark_debug of w_chipsel      : signal is "true";
+--attribute mark_debug of r_chipsel      : signal is "true";
+--
+--attribute mark_debug of gdt_b_wren     : signal is "true";
+--attribute mark_debug of gdt_b_addr     : signal is "true";
+--
+--attribute mark_debug of gdt_r_wren     : signal is "true";
+--attribute mark_debug of gdt_r_addr     : signal is "true";
 
 --------------------------------------------------------------------------------
 

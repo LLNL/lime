@@ -25,7 +25,6 @@ port (
     clk_i           : in  std_logic;
     nreset_i        : in  std_logic;
 
-    count_time_i    : in  std_logic_vector(31 downto 0); -- not sure what this is, all it does is count up and roll over
     index_srb_i     : in  std_logic_vector(31 downto 0);  -- this is the index (i.e. identifier) of THIS shift reg block
     delay_reg_o     : out std_logic_vector(C_DELAY_WIDTH-1 downto 0);
     id_reg_o        : out std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);

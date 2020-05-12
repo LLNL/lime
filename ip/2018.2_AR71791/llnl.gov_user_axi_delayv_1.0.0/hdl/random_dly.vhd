@@ -75,7 +75,7 @@ GENERIC MAP (
 )
 PORT MAP (
     clka  => dclk_i,
-    rsta  => rst_i,
+    rsta  => dreset,
     ena   => '1',
     wea   => gdt_wren_i,
     addra => gdt_addr_i(GDT_ADDR_BITS+2-1 downto 2),
@@ -83,7 +83,7 @@ PORT MAP (
     douta => gdt_rdata_o,
     
     clkb  => clk_i,
-    rstb  => dreset,
+    rstb  => rst_i,
     enb   => '1',
     web   => (others => '0'),
     addrb => lfsr_tmp(GDT_ADDR_BITS+2-1 downto 2),

@@ -38,7 +38,6 @@ port (
     dout_o        : out std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
     dout_valid_o  : out std_logic;
     dout_ready_i  : in  std_logic;
-    count_time_o  : out std_logic_vector(31 downto 0);
     axi_id_ins_err_o : out std_logic   -- axi_id insertione erro (no availble SRB)
 );
 end priority_queue;
@@ -76,35 +75,33 @@ signal m_shift_valid   : bit_signal;
 signal m_shift_ready   : bit_signal;
 signal m_data_en       : bit_signal;
 signal s_data_en       : bit_signal;
-signal count_time      : std_logic_vector(31 downto 0);
 
 signal dout_ready      : std_logic;
 
 --------------------------------------------------------------------------------
-attribute mark_debug : string;
+--attribute mark_debug : string;
 
-attribute mark_debug of din_i           : signal is "true";
-attribute mark_debug of din_en_i        : signal is "true";
-attribute mark_debug of din_ready_o     : signal is "true";
+--attribute mark_debug of din_i           : signal is "true";
+--attribute mark_debug of din_en_i        : signal is "true";
+--attribute mark_debug of din_ready_o     : signal is "true";
 
-attribute mark_debug of dout_o          : signal is "true";
-attribute mark_debug of dout_valid_o    : signal is "true";
-attribute mark_debug of dout_ready_i    : signal is "true";
-attribute mark_debug of count_time      : signal is "true";
-attribute mark_debug of axi_id_ins_err_o  : signal is "true";
+--attribute mark_debug of dout_o          : signal is "true";
+--attribute mark_debug of dout_valid_o    : signal is "true";
+--attribute mark_debug of dout_ready_i    : signal is "true";
+--attribute mark_debug of axi_id_ins_err_o  : signal is "true";
 
 --attribute mark_debug of delay_reg       : signal is "true";
 --attribute mark_debug of id_reg          : signal is "true";
 --attribute mark_debug of valid_reg       : signal is "true";
-attribute mark_debug of srb_insert      : signal is "true";
+--attribute mark_debug of srb_insert      : signal is "true";
 
 --attribute mark_debug of m_data_en       : signal is "true";
 --attribute mark_debug of s_data_en       : signal is "true";
 
-attribute mark_debug of m_shift_valid   : signal is "true";
-attribute mark_debug of m_shift_ready   : signal is "true";
-attribute mark_debug of s_shift_valid   : signal is "true";
-attribute mark_debug of s_shift_ready   : signal is "true";
+--attribute mark_debug of m_shift_valid   : signal is "true";
+--attribute mark_debug of m_shift_ready   : signal is "true";
+--attribute mark_debug of s_shift_valid   : signal is "true";
+--attribute mark_debug of s_shift_ready   : signal is "true";
 
 
 --******************************************************************************
@@ -113,18 +110,6 @@ attribute mark_debug of s_shift_ready   : signal is "true";
 
 begin
 
-counter_queue : process(clk_i)
-begin
-    if (rising_edge(clk_i)) then
-        if (nreset_i = '0') then
-            count_time <= (others => '0');
-        else
-            count_time <= count_time + '1';
-        end if;
-    end if;
-end process;
-
-count_time_o  <= count_time;
 dout_ready    <= '1' when (dout_ready_i = '1' and din_en_i = '0' and (delay_reg(0) = x"000000")) else
                  '0';
 
@@ -142,7 +127,6 @@ for i in 0 to PRIORITY_QUEUE_WIDTH-1 generate
     port map(
         clk_i             => clk_i,
         nreset_i          => nreset_i,
-        count_time_i      => count_time,
         delay_reg_o       => delay_reg(i),
         id_reg_o          => id_reg(i),
         valid_reg_o       => valid_reg(i),
