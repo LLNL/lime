@@ -36,7 +36,7 @@ awidth = 10
 dwidth = 24
 
 ## Maximum time delay, in clock cycles
-delay_clocks = 15 ##255 ##(2**dwidth)-1
+delay_clocks = 0 #15 ##255 ##(2**dwidth)-1
 
 ## Create check plot (use 1 or 0)
 CHECK_PLOT = 1
