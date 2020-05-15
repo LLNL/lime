@@ -18,7 +18,7 @@ generic (
     C_DELAY_WIDTH    : integer := 32;
     C_INDEX_WIDTH    : integer := 32;
     C_AXI_ID_WIDTH   : integer := 1;
-	C_AXI_ADDR_WIDTH : integer := 32;
+    C_AXI_ADDR_WIDTH : integer := 32;
     C_AXI_DATA_WIDTH : integer := 32
 );
 port (
@@ -36,20 +36,20 @@ port (
     din_en_i        : in  std_logic;
 
     -- Top Channel from previous device (insertion, i.e. movement away from Priority Controller)
-    s_data_i        : in  std_logic_vector(32+C_INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+    s_data_i        : in  std_logic_vector(C_DELAY_WIDTH+C_INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
     s_data_en_i     : in  std_logic;
 
     -- Top Channel to next device (insertion, i.e. movement away from Priority Controller))
-    m_data_o        : out std_logic_vector(32+C_INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+    m_data_o        : out std_logic_vector(C_DELAY_WIDTH+C_INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
     m_data_en_o     : out std_logic;
 
     -- Bottom Channel data from previous device (deletion, or pop, towards Priority Controller)
-    s_shift_data_i  : in  std_logic_vector(32+C_INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+    s_shift_data_i  : in  std_logic_vector(C_DELAY_WIDTH+C_INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
     s_shift_valid_i : in  std_logic;
     s_shift_ready_o : out std_logic;
 
     -- Bottom Channel data to next device (deletion, or pop, towards Priority Controller), or output to Priority Controller
-    m_shift_data_o  : out std_logic_vector(32+C_INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+    m_shift_data_o  : out std_logic_vector(C_DELAY_WIDTH+C_INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
     m_shift_valid_o : out std_logic;
     m_shift_ready_i : in  std_logic
 );
@@ -60,13 +60,12 @@ architecture behavioral of shift_reg_block is
 --******************************************************************************
 -- Constants
 --******************************************************************************
-constant DATA_WIDTH  : integer := C_AXI_ID_WIDTH + C_INDEX_WIDTH + 32;
 constant ZEROS_ID    : std_logic_vector(31 downto C_DELAY_WIDTH) := (others => '0');
 
 --******************************************************************************
 --Signal Definitions
 --******************************************************************************
-signal delay_reg     : std_logic_vector(31 downto 0);
+signal delay_reg     : std_logic_vector(C_DELAY_WIDTH-1 downto 0);
 signal id_reg        : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
 signal index_reg     : std_logic_vector(C_INDEX_WIDTH-1 downto 0);
 signal valid_reg     : std_logic;
@@ -79,6 +78,34 @@ signal delay_ip_lt_delay_reg : std_logic;
 signal delay_ip_ne_zero      : std_logic;
 
 signal debug_shift   : std_logic_vector(2 downto 0); -- for tracking "state" during simulation
+
+--------------------------------------------------------------------------------
+attribute mark_debug : string;
+
+attribute mark_debug of delay_ip     : signal is "true";
+attribute mark_debug of id_ip        : signal is "true";
+attribute mark_debug of index_ip     : signal is "true";
+
+attribute mark_debug of delay_ip_lt_delay_reg : signal is "true";
+attribute mark_debug of delay_ip_ne_zero      : signal is "true";
+
+attribute mark_debug of id_reg        : signal is "true";
+attribute mark_debug of index_reg     : signal is "true";
+attribute mark_debug of delay_reg     : signal is "true";
+attribute mark_debug of valid_reg     : signal is "true";
+attribute mark_debug of debug_shift     : signal is "true";
+
+attribute mark_debug of s_shift_ready_o : signal is "true";
+attribute mark_debug of srb_insert_i    : signal is "true";
+attribute mark_debug of index_srb_i     : signal is "true";
+
+attribute mark_debug of m_data_o        : signal is "true";
+attribute mark_debug of m_data_en_o    	: signal is "true";
+attribute mark_debug of m_shift_data_o 	: signal is "true";
+attribute mark_debug of m_shift_valid_o	: signal is "true";
+attribute mark_debug of delay_reg_o 	: signal is "true";
+attribute mark_debug of id_reg_o    	: signal is "true";
+attribute mark_debug of valid_reg_o 	: signal is "true";
 
 --******************************************************************************
 -- Connectivity and Logic
@@ -99,7 +126,7 @@ s_shift_ready_o <= m_shift_ready_i;
 -- Shift register
 --------------------------------------------------------------------------------
 --compare terms, for timing
-delay_ip_lt_delay_reg <= '1' when (delay_ip < delay_reg) else '0';
+delay_ip_lt_delay_reg <= '1' when (delay_ip <= delay_reg) else '0';
 delay_ip_ne_zero      <= '1' when ((ZEROS_ID & delay_ip) > x"00000000") else '0';
 
 shift_reg_proc : process (clk_i) begin
@@ -117,9 +144,9 @@ shift_reg_proc : process (clk_i) begin
                 if (delay_ip_lt_delay_reg = '1') and (srb_insert_i < to_integer(unsigned(index_srb_i))) and s_data_en_i = '1' then
                     -- top channel receiving from left and sending right
                     -- receiving
-                    if (s_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) /= x"00000000") then -- change > to /= for timing
+                    if (s_data_i(C_DELAY_WIDTH+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) /= x"00000000") then -- change > to /= for timing
 --                    if (s_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) > x"00000000") then
-                        delay_reg   <= s_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) - '1';
+                        delay_reg   <= s_data_i(C_DELAY_WIDTH+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) - '1';
                     else
                         delay_reg   <= (others => '0');
                     end if;
@@ -131,7 +158,7 @@ shift_reg_proc : process (clk_i) begin
                     -- top channel storing new information and sending right
                     -- receiving
                     if delay_ip_ne_zero = '1' then
-                        delay_reg   <= (ZEROS_ID & delay_ip) - '1';
+                        delay_reg   <= (delay_ip) - '1';
                     else
                         delay_reg   <= (others => '0');
                     end if;
@@ -141,7 +168,7 @@ shift_reg_proc : process (clk_i) begin
                     debug_shift <= "010";
                 elsif (valid_reg = '1') then
                     if delay_ip_ne_zero = '1' then
-                        delay_reg   <= (ZEROS_ID & delay_ip) - '1';
+                        delay_reg   <= (delay_ip) - '1';
                     else
                         delay_reg   <= (others => '0');
                     end if;
@@ -150,9 +177,9 @@ shift_reg_proc : process (clk_i) begin
             elsif (m_shift_ready_i = '1' and valid_reg = '1') then
                 -- bottom channel pop and shift left
                 -- shift left
-                if (s_shift_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH)) /= x"00000000" then -- change > to /= for timing
+                if (s_shift_data_i(C_DELAY_WIDTH+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH)) /= x"00000000" then -- change > to /= for timing
 --                if (s_shift_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH)) > x"00000000" then
-                    delay_reg   <= s_shift_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) - '1';
+                    delay_reg   <= s_shift_data_i(C_DELAY_WIDTH+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) - '1';
                 else 
                     delay_reg   <= (others => '0');
                 end if;
@@ -162,7 +189,7 @@ shift_reg_proc : process (clk_i) begin
                 debug_shift     <= "100";
             else 
                 -- decrement delay_reg, hold state on all other signals
-                if (delay_reg > x"00000000") then
+                if (delay_reg > x"00000000") then  -- qualify with valid_reg and simulate!!!
                     delay_reg <= delay_reg - '1';
                 else
                     delay_reg <= (others => '0');

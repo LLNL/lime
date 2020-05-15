@@ -13,15 +13,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="15060407248fs"></ZoomStartTime>
-      <ZoomEndTime time="16905963763fs"></ZoomEndTime>
-      <Cursor1Time time="15480000000fs"></Cursor1Time>
+      <ZoomStartTime time="2500224248fs"></ZoomStartTime>
+      <ZoomEndTime time="2614952441fs"></ZoomEndTime>
+      <Cursor1Time time="2558225000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="243"></NameColumnWidth>
-      <ValueColumnWidth column_width="215"></ValueColumnWidth>
+      <ValueColumnWidth column_width="203"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="7" />
+   <WVObjectSize size="8" />
    <wvobject fp_name="/axi_delayv_tb/s_axi_lite_aclk" type="logic">
       <obj_property name="ElementShortName">s_axi_lite_aclk</obj_property>
       <obj_property name="ObjectShortName">s_axi_lite_aclk</obj_property>
@@ -274,7 +274,6 @@
    <wvobject fp_name="group1104" type="group">
       <obj_property name="label">axi_delayv_top.vhd</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="group922" type="group">
          <obj_property name="label"> axi_delayv - Slave Write I/F</obj_property>
          <obj_property name="DisplayName">label</obj_property>
@@ -347,6 +346,10 @@
             <obj_property name="ElementShortName">s_axi_wlast_i[0:0]</obj_property>
             <obj_property name="ObjectShortName">s_axi_wlast_i[0:0]</obj_property>
          </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_wvalid" type="logic">
+            <obj_property name="ElementShortName">s_axi_wvalid</obj_property>
+            <obj_property name="ObjectShortName">s_axi_wvalid</obj_property>
+         </wvobject>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_wready" type="logic">
             <obj_property name="ElementShortName">s_axi_wready</obj_property>
             <obj_property name="ObjectShortName">s_axi_wready</obj_property>
@@ -354,10 +357,6 @@
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_wstrb" type="array">
             <obj_property name="ElementShortName">s_axi_wstrb[15:0]</obj_property>
             <obj_property name="ObjectShortName">s_axi_wstrb[15:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_wvalid" type="logic">
-            <obj_property name="ElementShortName">s_axi_wvalid</obj_property>
-            <obj_property name="ObjectShortName">s_axi_wvalid</obj_property>
          </wvobject>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_bid" type="array">
             <obj_property name="ElementShortName">s_axi_bid[15:0]</obj_property>
@@ -379,7 +378,6 @@
       <wvobject fp_name="group923" type="group">
          <obj_property name="label">axi_delay - Slave Read I/F</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/s_axi_araddr" type="array">
             <obj_property name="ElementShortName">s_axi_araddr[39:0]</obj_property>
             <obj_property name="ObjectShortName">s_axi_araddr[39:0]</obj_property>
@@ -737,16 +735,12 @@
             <obj_property name="ObjectShortName">pktbuf_addrb[7:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/pktbuf_dinb" type="array">
-            <obj_property name="ElementShortName">pktbuf_dinb[1023:0]</obj_property>
-            <obj_property name="ObjectShortName">pktbuf_dinb[1023:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/pktbuf_dinb_cat" type="array">
-            <obj_property name="ElementShortName">pktbuf_dinb_cat[233:0]</obj_property>
-            <obj_property name="ObjectShortName">pktbuf_dinb_cat[233:0]</obj_property>
+            <obj_property name="ElementShortName">pktbuf_dinb[233:0]</obj_property>
+            <obj_property name="ObjectShortName">pktbuf_dinb[233:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/pktbuf_doutb" type="array">
-            <obj_property name="ElementShortName">pktbuf_doutb[1023:0]</obj_property>
-            <obj_property name="ObjectShortName">pktbuf_doutb[1023:0]</obj_property>
+            <obj_property name="ElementShortName">pktbuf_doutb[233:0]</obj_property>
+            <obj_property name="ObjectShortName">pktbuf_doutb[233:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/mc_valid" type="logic">
             <obj_property name="ElementShortName">mc_valid</obj_property>
@@ -803,10 +797,6 @@
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/pb_cntr_ptr" type="array">
             <obj_property name="ElementShortName">pb_cntr_ptr[7:0]</obj_property>
             <obj_property name="ObjectShortName">pb_cntr_ptr[7:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/pb_dina" type="array">
-            <obj_property name="ElementShortName">pb_dina[1023:0]</obj_property>
-            <obj_property name="ObjectShortName">pb_dina[1023:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/pb_wr" type="array">
             <obj_property name="ElementShortName">pb_wr[0:0]</obj_property>
@@ -892,13 +882,9 @@
             <obj_property name="ElementShortName">pq_dout_ready</obj_property>
             <obj_property name="ObjectShortName">pq_dout_ready</obj_property>
          </wvobject>
-         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/count_time" type="array">
-            <obj_property name="ElementShortName">count_time[31:0]</obj_property>
-            <obj_property name="ObjectShortName">count_time[31:0]</obj_property>
-         </wvobject>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/pq_data_sr" type="array">
-            <obj_property name="ElementShortName">pq_data_sr[735:0]</obj_property>
-            <obj_property name="ObjectShortName">pq_data_sr[735:0]</obj_property>
+            <obj_property name="ElementShortName">pq_data_sr[459:0]</obj_property>
+            <obj_property name="ObjectShortName">pq_data_sr[459:0]</obj_property>
          </wvobject>
          <wvobject fp_name="group7522" type="group">
             <obj_property name="label">CONSTANTS</obj_property>
@@ -1320,6 +1306,7 @@
       <wvobject fp_name="group924" type="group">
          <obj_property name="label">axi_delayv - Master Write I/F</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/m_axi_awaddr" type="array">
             <obj_property name="ElementShortName">m_axi_awaddr[39:0]</obj_property>
             <obj_property name="ObjectShortName">m_axi_awaddr[39:0]</obj_property>
@@ -1658,6 +1645,7 @@
    <wvobject fp_name="group1105" type="group">
       <obj_property name="label">i_b</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="group1175" type="group">
          <obj_property name="label">i_b: axi_parser</obj_property>
          <obj_property name="DisplayName">label</obj_property>
@@ -1803,8 +1791,8 @@
             <obj_property name="ObjectShortName">random_dly_i[23:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/axi_parser_inst/pq_data_sr_o" type="array">
-            <obj_property name="ElementShortName">pq_data_sr_o[735:0]</obj_property>
-            <obj_property name="ObjectShortName">pq_data_sr_o[735:0]</obj_property>
+            <obj_property name="ElementShortName">pq_data_sr_o[459:0]</obj_property>
+            <obj_property name="ObjectShortName">pq_data_sr_o[459:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/axi_parser_inst/pq_data_o" type="array">
             <obj_property name="ElementShortName">pq_data_o[21:0]</obj_property>
@@ -1933,6 +1921,308 @@
                <obj_property name="ElementShortName">C_ZERO[255:0]</obj_property>
                <obj_property name="ObjectShortName">C_ZERO[255:0]</obj_property>
             </wvobject>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="group1063" type="group">
+         <obj_property name="label">i_b: priority_queue</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/clk_i" type="logic">
+            <obj_property name="ElementShortName">clk_i</obj_property>
+            <obj_property name="ObjectShortName">clk_i</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/nreset_i" type="logic">
+            <obj_property name="ElementShortName">nreset_i</obj_property>
+            <obj_property name="ObjectShortName">nreset_i</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/din_sr_i" type="array">
+            <obj_property name="ElementShortName">din_sr_i[459:0]</obj_property>
+            <obj_property name="ObjectShortName">din_sr_i[459:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/din_i" type="array">
+            <obj_property name="ElementShortName">din_i[45:0]</obj_property>
+            <obj_property name="ObjectShortName">din_i[45:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/din_en_i" type="logic">
+            <obj_property name="ElementShortName">din_en_i</obj_property>
+            <obj_property name="ObjectShortName">din_en_i</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/din_ready_o" type="logic">
+            <obj_property name="ElementShortName">din_ready_o</obj_property>
+            <obj_property name="ObjectShortName">din_ready_o</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/dout_o" type="array">
+            <obj_property name="ElementShortName">dout_o[45:0]</obj_property>
+            <obj_property name="ObjectShortName">dout_o[45:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/dout_valid_o" type="logic">
+            <obj_property name="ElementShortName">dout_valid_o</obj_property>
+            <obj_property name="ObjectShortName">dout_valid_o</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/dout_ready_i" type="logic">
+            <obj_property name="ElementShortName">dout_ready_i</obj_property>
+            <obj_property name="ObjectShortName">dout_ready_i</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/axi_id_ins_err_o" type="logic">
+            <obj_property name="ElementShortName">axi_id_ins_err_o</obj_property>
+            <obj_property name="ObjectShortName">axi_id_ins_err_o</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/s_shift_valid" type="array">
+            <obj_property name="ElementShortName">s_shift_valid[0:9]</obj_property>
+            <obj_property name="ObjectShortName">s_shift_valid[0:9]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/s_shift_ready" type="array">
+            <obj_property name="ElementShortName">s_shift_ready[0:9]</obj_property>
+            <obj_property name="ObjectShortName">s_shift_ready[0:9]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/m_shift_valid" type="array">
+            <obj_property name="ElementShortName">m_shift_valid[0:9]</obj_property>
+            <obj_property name="ObjectShortName">m_shift_valid[0:9]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/m_shift_ready" type="array">
+            <obj_property name="ElementShortName">m_shift_ready[0:9]</obj_property>
+            <obj_property name="ObjectShortName">m_shift_ready[0:9]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/m_data_en" type="array">
+            <obj_property name="ElementShortName">m_data_en[0:9]</obj_property>
+            <obj_property name="ObjectShortName">m_data_en[0:9]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/s_data_en" type="array">
+            <obj_property name="ElementShortName">s_data_en[0:9]</obj_property>
+            <obj_property name="ObjectShortName">s_data_en[0:9]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/dout_ready" type="logic">
+            <obj_property name="ElementShortName">dout_ready</obj_property>
+            <obj_property name="ObjectShortName">dout_ready</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/s_shift_data" type="array">
+            <obj_property name="ElementShortName">s_shift_data[0:9][53:0]</obj_property>
+            <obj_property name="ObjectShortName">s_shift_data[0:9][53:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/m_shift_data" type="array">
+            <obj_property name="ElementShortName">m_shift_data[0:9][53:0]</obj_property>
+            <obj_property name="ObjectShortName">m_shift_data[0:9][53:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/m_data" type="array">
+            <obj_property name="ElementShortName">m_data[0:9][53:0]</obj_property>
+            <obj_property name="ObjectShortName">m_data[0:9][53:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/s_data" type="array">
+            <obj_property name="ElementShortName">s_data[0:9][53:0]</obj_property>
+            <obj_property name="ObjectShortName">s_data[0:9][53:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/delay_reg" type="array">
+            <obj_property name="ElementShortName">delay_reg[0:9][23:0]</obj_property>
+            <obj_property name="ObjectShortName">delay_reg[0:9][23:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/id_reg" type="array">
+            <obj_property name="ElementShortName">id_reg[0:9][15:0]</obj_property>
+            <obj_property name="ObjectShortName">id_reg[0:9][15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/delay_srb_low" type="other">
+            <obj_property name="ElementShortName">delay_srb_low</obj_property>
+            <obj_property name="ObjectShortName">delay_srb_low</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/axi_id_max_hi" type="other">
+            <obj_property name="ElementShortName">axi_id_max_hi</obj_property>
+            <obj_property name="ObjectShortName">axi_id_max_hi</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/srb_insert" type="other">
+            <obj_property name="ElementShortName">srb_insert</obj_property>
+            <obj_property name="ObjectShortName">srb_insert</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/valid_reg" type="array">
+            <obj_property name="ElementShortName">valid_reg[9:0]</obj_property>
+            <obj_property name="ObjectShortName">valid_reg[9:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/delay_new" type="array">
+            <obj_property name="ElementShortName">delay_new[23:0]</obj_property>
+            <obj_property name="ObjectShortName">delay_new[23:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/axi_id_new" type="array">
+            <obj_property name="ElementShortName">axi_id_new[15:0]</obj_property>
+            <obj_property name="ObjectShortName">axi_id_new[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/PRIORITY_QUEUE_WIDTH" type="other">
+            <obj_property name="ElementShortName">PRIORITY_QUEUE_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">PRIORITY_QUEUE_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/DELAY_WIDTH" type="other">
+            <obj_property name="ElementShortName">DELAY_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">DELAY_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/INDEX_WIDTH" type="other">
+            <obj_property name="ElementShortName">INDEX_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">INDEX_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/C_AXI_ID_WIDTH" type="other">
+            <obj_property name="ElementShortName">C_AXI_ID_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">C_AXI_ID_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/C_AXI_ADDR_WIDTH" type="other">
+            <obj_property name="ElementShortName">C_AXI_ADDR_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">C_AXI_ADDR_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/C_AXI_DATA_WIDTH" type="other">
+            <obj_property name="ElementShortName">C_AXI_DATA_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">C_AXI_DATA_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/MINIBUF_IDX_WIDTH" type="other">
+            <obj_property name="ElementShortName">MINIBUF_IDX_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">MINIBUF_IDX_WIDTH</obj_property>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group1097" type="group">
+      <obj_property name="label">i_b:SHIFT_REG_BLOCK(0)</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/clk_i" type="logic">
+         <obj_property name="ElementShortName">clk_i</obj_property>
+         <obj_property name="ObjectShortName">clk_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/nreset_i" type="logic">
+         <obj_property name="ElementShortName">nreset_i</obj_property>
+         <obj_property name="ObjectShortName">nreset_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/debug_shift" type="array">
+         <obj_property name="ElementShortName">debug_shift[2:0]</obj_property>
+         <obj_property name="ObjectShortName">debug_shift[2:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/index_srb_i" type="array">
+         <obj_property name="ElementShortName">index_srb_i[31:0]</obj_property>
+         <obj_property name="ObjectShortName">index_srb_i[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/srb_insert_i" type="other">
+         <obj_property name="ElementShortName">srb_insert_i</obj_property>
+         <obj_property name="ObjectShortName">srb_insert_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/din_i" type="array">
+         <obj_property name="ElementShortName">din_i[45:0]</obj_property>
+         <obj_property name="ObjectShortName">din_i[45:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/din_en_i" type="logic">
+         <obj_property name="ElementShortName">din_en_i</obj_property>
+         <obj_property name="ObjectShortName">din_en_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/s_data_i" type="array">
+         <obj_property name="ElementShortName">s_data_i[53:0]</obj_property>
+         <obj_property name="ObjectShortName">s_data_i[53:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/s_data_en_i" type="logic">
+         <obj_property name="ElementShortName">s_data_en_i</obj_property>
+         <obj_property name="ObjectShortName">s_data_en_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/m_data_o" type="array">
+         <obj_property name="ElementShortName">m_data_o[53:0]</obj_property>
+         <obj_property name="ObjectShortName">m_data_o[53:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/m_data_en_o" type="logic">
+         <obj_property name="ElementShortName">m_data_en_o</obj_property>
+         <obj_property name="ObjectShortName">m_data_en_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/s_shift_data_i" type="array">
+         <obj_property name="ElementShortName">s_shift_data_i[53:0]</obj_property>
+         <obj_property name="ObjectShortName">s_shift_data_i[53:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/s_shift_valid_i" type="logic">
+         <obj_property name="ElementShortName">s_shift_valid_i</obj_property>
+         <obj_property name="ObjectShortName">s_shift_valid_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/s_shift_ready_o" type="logic">
+         <obj_property name="ElementShortName">s_shift_ready_o</obj_property>
+         <obj_property name="ObjectShortName">s_shift_ready_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/m_shift_data_o" type="array">
+         <obj_property name="ElementShortName">m_shift_data_o[53:0]</obj_property>
+         <obj_property name="ObjectShortName">m_shift_data_o[53:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/m_shift_valid_o" type="logic">
+         <obj_property name="ElementShortName">m_shift_valid_o</obj_property>
+         <obj_property name="ObjectShortName">m_shift_valid_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/m_shift_ready_i" type="logic">
+         <obj_property name="ElementShortName">m_shift_ready_i</obj_property>
+         <obj_property name="ObjectShortName">m_shift_ready_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/delay_reg_o" type="array">
+         <obj_property name="ElementShortName">delay_reg_o[23:0]</obj_property>
+         <obj_property name="ObjectShortName">delay_reg_o[23:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/id_reg_o" type="array">
+         <obj_property name="ElementShortName">id_reg_o[15:0]</obj_property>
+         <obj_property name="ObjectShortName">id_reg_o[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/valid_reg_o" type="logic">
+         <obj_property name="ElementShortName">valid_reg_o</obj_property>
+         <obj_property name="ObjectShortName">valid_reg_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/delay_reg" type="array">
+         <obj_property name="ElementShortName">delay_reg[31:0]</obj_property>
+         <obj_property name="ObjectShortName">delay_reg[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/id_reg" type="array">
+         <obj_property name="ElementShortName">id_reg[15:0]</obj_property>
+         <obj_property name="ObjectShortName">id_reg[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/index_reg" type="array">
+         <obj_property name="ElementShortName">index_reg[5:0]</obj_property>
+         <obj_property name="ObjectShortName">index_reg[5:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/valid_reg" type="logic">
+         <obj_property name="ElementShortName">valid_reg</obj_property>
+         <obj_property name="ObjectShortName">valid_reg</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/delay_ip" type="array">
+         <obj_property name="ElementShortName">delay_ip[23:0]</obj_property>
+         <obj_property name="ObjectShortName">delay_ip[23:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/id_ip" type="array">
+         <obj_property name="ElementShortName">id_ip[15:0]</obj_property>
+         <obj_property name="ObjectShortName">id_ip[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/index_ip" type="array">
+         <obj_property name="ElementShortName">index_ip[5:0]</obj_property>
+         <obj_property name="ObjectShortName">index_ip[5:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/delay_ip_lt_delay_reg" type="logic">
+         <obj_property name="ElementShortName">delay_ip_lt_delay_reg</obj_property>
+         <obj_property name="ObjectShortName">delay_ip_lt_delay_reg</obj_property>
+      </wvobject>
+      <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/delay_ip_ne_zero" type="logic">
+         <obj_property name="ElementShortName">delay_ip_ne_zero</obj_property>
+         <obj_property name="ObjectShortName">delay_ip_ne_zero</obj_property>
+      </wvobject>
+      <wvobject fp_name="group1172" type="group">
+         <obj_property name="label">CONSTANTS</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/C_DELAY_WIDTH" type="other">
+            <obj_property name="ElementShortName">C_DELAY_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">C_DELAY_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/C_INDEX_WIDTH" type="other">
+            <obj_property name="ElementShortName">C_INDEX_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">C_INDEX_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/C_AXI_ID_WIDTH" type="other">
+            <obj_property name="ElementShortName">C_AXI_ID_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">C_AXI_ID_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/C_AXI_ADDR_WIDTH" type="other">
+            <obj_property name="ElementShortName">C_AXI_ADDR_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">C_AXI_ADDR_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/C_AXI_DATA_WIDTH" type="other">
+            <obj_property name="ElementShortName">C_AXI_DATA_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">C_AXI_DATA_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/DATA_WIDTH" type="other">
+            <obj_property name="ElementShortName">DATA_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">DATA_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/axi_delayv_tb/axi_delayv_int/i_b/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/ZEROS_ID" type="array">
+            <obj_property name="ElementShortName">ZEROS_ID[31:24]</obj_property>
+            <obj_property name="ObjectShortName">ZEROS_ID[31:24]</obj_property>
          </wvobject>
       </wvobject>
    </wvobject>

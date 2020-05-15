@@ -51,22 +51,22 @@ architecture behavioral of priority_queue is
 --******************************************************************************
 --Signal Definitions
 --******************************************************************************
-type dat is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(32+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+type dat is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
 signal s_shift_data    : dat;
 signal m_shift_data    : dat;
 signal m_data          : dat;
 signal s_data          : dat;
 type delay_array is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(DELAY_WIDTH-1 downto 0);
-signal delay_reg       : delay_array;
+signal delay_reg       : delay_array  := (others => (others => '0'));
 type id_array is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
-signal id_reg          : id_array;
+signal id_reg          : id_array  := (others => (others => '0'));
 
 signal valid_reg       : std_logic_vector(PRIORITY_QUEUE_WIDTH-1 downto 0);
-signal delay_new       : std_logic_vector(DELAY_WIDTH-1 downto 0);   
-signal delay_srb_low   : integer; -- lowest srb for delay insertion
-signal axi_id_new      : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
-signal axi_id_max_hi   : integer; -- highest SRB with matching axi_id
-signal srb_insert      : integer;
+signal delay_new       : std_logic_vector(DELAY_WIDTH-1 downto 0) := (others => '0');   
+signal delay_srb_low   : integer := 0; -- lowest srb for delay insertion
+signal axi_id_new      : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0) := (others => '0');
+signal axi_id_max_hi   : integer := 0; -- highest SRB with matching axi_id
+signal srb_insert      : integer := 0;
 
 type bit_signal is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic;
 signal s_shift_valid   : bit_signal;
@@ -79,29 +79,33 @@ signal s_data_en       : bit_signal;
 signal dout_ready      : std_logic;
 
 --------------------------------------------------------------------------------
---attribute mark_debug : string;
+attribute mark_debug : string;
 
---attribute mark_debug of din_i           : signal is "true";
---attribute mark_debug of din_en_i        : signal is "true";
---attribute mark_debug of din_ready_o     : signal is "true";
+attribute mark_debug of din_i           : signal is "true";
+attribute mark_debug of din_en_i        : signal is "true";
+attribute mark_debug of din_ready_o     : signal is "true";
 
---attribute mark_debug of dout_o          : signal is "true";
---attribute mark_debug of dout_valid_o    : signal is "true";
---attribute mark_debug of dout_ready_i    : signal is "true";
---attribute mark_debug of axi_id_ins_err_o  : signal is "true";
+attribute mark_debug of dout_o          : signal is "true";
+attribute mark_debug of dout_valid_o    : signal is "true";
+attribute mark_debug of dout_ready_i    : signal is "true";
+attribute mark_debug of axi_id_ins_err_o: signal is "true";
 
---attribute mark_debug of delay_reg       : signal is "true";
---attribute mark_debug of id_reg          : signal is "true";
---attribute mark_debug of valid_reg       : signal is "true";
---attribute mark_debug of srb_insert      : signal is "true";
+attribute mark_debug of delay_reg       : signal is "true";
+attribute mark_debug of id_reg          : signal is "true";
+attribute mark_debug of valid_reg       : signal is "true";
+attribute mark_debug of srb_insert      : signal is "true";
+--attribute mark_debug of delay_srb_low   : signal is "true";
+attribute mark_debug of axi_id_max_hi   : signal is "true";
+attribute mark_debug of delay_new       : signal is "true";
+attribute mark_debug of axi_id_new      : signal is "true";
 
---attribute mark_debug of m_data_en       : signal is "true";
---attribute mark_debug of s_data_en       : signal is "true";
+attribute mark_debug of m_data_en       : signal is "true";
+attribute mark_debug of s_data_en       : signal is "true";
 
---attribute mark_debug of m_shift_valid   : signal is "true";
---attribute mark_debug of m_shift_ready   : signal is "true";
---attribute mark_debug of s_shift_valid   : signal is "true";
---attribute mark_debug of s_shift_ready   : signal is "true";
+attribute mark_debug of m_shift_valid   : signal is "true";
+attribute mark_debug of m_shift_ready   : signal is "true";
+attribute mark_debug of s_shift_valid   : signal is "true";
+attribute mark_debug of s_shift_ready   : signal is "true";
 
 
 --******************************************************************************
