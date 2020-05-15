@@ -46,7 +46,7 @@ generic (
 --	C_AXI_BUSER_WIDTH     : integer := 1 -- AXI4
 
         -- chan_delay_variable generics
-        PRIORITY_QUEUE_WIDTH  : integer := 10;
+        PRIORITY_QUEUE_WIDTH  : integer := 20;
         DELAY_WIDTH           : integer := 24;
         BYPASS_MINICAM        : integer := 1;
         CAM_DEPTH             : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.

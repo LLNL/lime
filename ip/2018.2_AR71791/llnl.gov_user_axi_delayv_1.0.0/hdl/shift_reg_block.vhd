@@ -142,7 +142,7 @@ shift_reg_proc : process (clk_i) begin
             debug_shift <= (others => '0');
             if (din_en_i = '1')then
                 if (delay_ip_lt_delay_reg = '1') and (srb_insert_i < to_integer(unsigned(index_srb_i))) and s_data_en_i = '1' then
-                    -- top channel receiving from left and sending right
+                    -- top channel receiving from left and shifting right
                     -- receiving
                     if (s_data_i(C_DELAY_WIDTH+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) /= x"00000000") then -- change > to /= for timing
 --                    if (s_data_i(32+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) > x"00000000") then
@@ -155,7 +155,7 @@ shift_reg_proc : process (clk_i) begin
                     valid_reg   <= s_data_en_i;
                     debug_shift <= "001";
                 elsif (delay_ip_lt_delay_reg = '1') and (srb_insert_i = to_integer(unsigned(index_srb_i))) then
-                    -- top channel storing new information and sending right
+                    -- top channel storing new information and shifting right
                     -- receiving
                     if delay_ip_ne_zero = '1' then
                         delay_reg   <= (delay_ip) - '1';
@@ -189,10 +189,12 @@ shift_reg_proc : process (clk_i) begin
                 debug_shift     <= "100";
             else 
                 -- decrement delay_reg, hold state on all other signals
-                if (delay_reg > x"00000000") then  -- qualify with valid_reg and simulate!!!
-                    delay_reg <= delay_reg - '1';
-                else
-                    delay_reg <= (others => '0');
+                if (valid_reg = '1') then
+                    if (delay_reg > x"00000000") then  -- qualify with valid_reg and simulate!!!
+                        delay_reg <= delay_reg - '1';
+                    else
+                        delay_reg <= (others => '0');
+                    end if;
                 end if;
                 debug_shift   <= "101";
             end if;
