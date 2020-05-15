@@ -79,33 +79,33 @@ signal s_data_en       : bit_signal;
 signal dout_ready      : std_logic;
 
 --------------------------------------------------------------------------------
-attribute mark_debug : string;
+--attribute mark_debug : string;
 
-attribute mark_debug of din_i           : signal is "true";
-attribute mark_debug of din_en_i        : signal is "true";
-attribute mark_debug of din_ready_o     : signal is "true";
+--attribute mark_debug of din_i           : signal is "true";
+--attribute mark_debug of din_en_i        : signal is "true";
+--attribute mark_debug of din_ready_o     : signal is "true";
 
-attribute mark_debug of dout_o          : signal is "true";
-attribute mark_debug of dout_valid_o    : signal is "true";
-attribute mark_debug of dout_ready_i    : signal is "true";
-attribute mark_debug of axi_id_ins_err_o: signal is "true";
+--attribute mark_debug of dout_o          : signal is "true";
+--attribute mark_debug of dout_valid_o    : signal is "true";
+--attribute mark_debug of dout_ready_i    : signal is "true";
+--attribute mark_debug of axi_id_ins_err_o: signal is "true";
 
-attribute mark_debug of delay_reg       : signal is "true";
-attribute mark_debug of id_reg          : signal is "true";
-attribute mark_debug of valid_reg       : signal is "true";
-attribute mark_debug of srb_insert      : signal is "true";
+--attribute mark_debug of delay_reg       : signal is "true";
+--attribute mark_debug of id_reg          : signal is "true";
+--attribute mark_debug of valid_reg       : signal is "true";
+--attribute mark_debug of srb_insert      : signal is "true";
 --attribute mark_debug of delay_srb_low   : signal is "true";
-attribute mark_debug of axi_id_max_hi   : signal is "true";
-attribute mark_debug of delay_new       : signal is "true";
-attribute mark_debug of axi_id_new      : signal is "true";
+--attribute mark_debug of axi_id_max_hi   : signal is "true";
+--attribute mark_debug of delay_new       : signal is "true";
+--attribute mark_debug of axi_id_new      : signal is "true";
 
-attribute mark_debug of m_data_en       : signal is "true";
-attribute mark_debug of s_data_en       : signal is "true";
+--attribute mark_debug of m_data_en       : signal is "true";
+--attribute mark_debug of s_data_en       : signal is "true";
 
-attribute mark_debug of m_shift_valid   : signal is "true";
-attribute mark_debug of m_shift_ready   : signal is "true";
-attribute mark_debug of s_shift_valid   : signal is "true";
-attribute mark_debug of s_shift_ready   : signal is "true";
+--attribute mark_debug of m_shift_valid   : signal is "true";
+--attribute mark_debug of m_shift_ready   : signal is "true";
+--attribute mark_debug of s_shift_valid   : signal is "true";
+--attribute mark_debug of s_shift_ready   : signal is "true";
 
 
 --******************************************************************************
