@@ -223,6 +223,8 @@ begin
                 write      (line_out, string'(","));
                 hwrite     (line_out, s_axi_data);
                 write      (line_out, string'(","));
+                hwrite     (line_out, s_axi_addr);
+                write      (line_out, string'(","));
                 hwrite     (line_out, s_axi_id);
                 write      (line_out, string'(","));
                 hwrite     (line_out, timer);

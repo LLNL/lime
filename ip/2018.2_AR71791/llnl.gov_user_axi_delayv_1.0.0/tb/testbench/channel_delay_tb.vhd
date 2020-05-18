@@ -58,7 +58,10 @@ signal sys_clk       : std_logic := '0';
 signal sys_rst       : std_logic := '1';
 signal sys_rst_n     : std_logic := '0';
 signal transmission_en : std_logic := '0';
- 
+
+signal s_axi_lite_aclk    : std_logic := '0';
+signal s_axi_lite_aresetn : std_logic := '0';
+
 signal s_axi_id      : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0) := (others => '0');
 signal s_axi_addr    : std_logic_vector(C_AXI_ADDR_WIDTH-1 downto 0) := (others => '0'); 
 signal s_axi_data    : std_logic_vector(C_AXI_DATA_WIDTH-1 downto 0) := (others => '0'); 
@@ -120,6 +123,9 @@ sys_clk         <= not sys_clk after 10 ns;
 sys_rst         <= '0' after 1 us;  
 sys_rst_n       <= not sys_rst;
 transmission_en <= '1' after  2 us;  
+
+s_axi_lite_aclk    <= not s_axi_lite_aclk after 10 ns;
+s_axi_lite_aresetn <= '1' after 1 us;  
 
 ---------------------------------------
 -- AXI source (master)
@@ -221,8 +227,8 @@ channel_delay_inst : entity axi_delay_lib.chan_delay_variable
         m_axi_last    => m_axi_last,  
         m_axi_resp    => m_axi_resp,  
 
-        dclk_i        => '0',
-        dresetn_i     => '1',
+        dclk_i        => s_axi_lite_aclk,
+        dresetn_i     => s_axi_lite_aresetn,
         gdt_wren_i    => (others => '0'), --gdt_wren, 
         gdt_addr_i    => (others => '0'), --gdt_addr, 
         gdt_wdata_i   => (others => '0'), --gdt_wdata, 
