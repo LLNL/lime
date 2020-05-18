@@ -22,6 +22,9 @@
 #include <linux/io.h>
 #include <linux/uaccess.h>
 #include <linux/err.h>
+#include <linux/slab.h>
+#include <linux/dma-debug.h>
+#include <linux/list.h>
 #include <asm/dma-mapping.h> /* arch_setup_dma_ops, before linux/dma-mapping.h */
 #include <linux/dma-mapping.h> /* dma_alloc_attrs, dma_free_attrs, dma_mmap_attrs */
 
@@ -43,6 +46,15 @@ static struct class* dev_class;
 static dev_t devno;
 static struct device *dev;
 
+typedef struct {
+	struct list_head alloc_list;
+	void *cpu_addr;
+	dma_addr_t dma_addr;
+	size_t size;
+	unsigned long dma_attrs;
+}lma_alloc_inf_t;
+
+typedef lma_alloc_inf_t* lma_alloc_inf_p;
 
 static inline void print_vma(struct vm_area_struct *vma)
 {
@@ -116,10 +128,43 @@ static long lma_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 		printk_dbg("cmd_tran paddr: 0x%016lx\n", lma.paddr);
 		if (ret) return ret;
 		} break;
-	case cmd_free:
+	case cmd_free: {
+		int ret = -EACCES;
+		struct mm_struct *mm = current->mm;
+		unsigned long start = (unsigned long)lma.addr & PAGE_MASK;
+		struct vm_area_struct *vma;
+		lma_alloc_inf_p lma_inf_ptr;
+
+		if (down_write_killable(&mm->mmap_sem))
+                	return -EINTR;
+
+		printk_dbg("-------Free block Start--------\n");
+		vma = find_vma(mm, start);
+		
+		if (vma->vm_start <= start && vma->vm_end > start){
+			lma_inf_ptr = (lma_alloc_inf_p)vma->vm_private_data;
+			printk_dbg("BEFORE: vma for 0x%p is 0x%p\n vma start:0x%p\n vma end: 0x%p\n", lma.addr, vma, vma->vm_start, vma->vm_end);
+		}else{
+			printk_dbg("No vma found for addr: 0x%p", lma.addr);
+			up_write(&mm->mmap_sem);
+			return ret;
+		}
+		ret = do_munmap(mm,vma->vm_start, vma->vm_end - vma->vm_start, NULL);
+		up_write(&mm->mmap_sem);
+		if(ret < 0){
+			return ret;
+		}
+
+		dma_free_attrs(dev, lma_inf_ptr->size,
+		     lma_inf_ptr->cpu_addr, lma_inf_ptr->dma_addr,
+		     lma_inf_ptr->dma_attrs);
+		list_del(&(lma_inf_ptr->alloc_list));
+		kfree(lma_inf_ptr);
+		debug_dma_dump_mappings(dev);
+	
 		printk_dbg("cmd_free addr: 0x%p\n", lma.addr);
-		// TODO: unmap and free
-		break;
+		printk_dbg("------Free block end-------\n");
+		} break;
 	default:
 		printk_dbg("cmd_none\n");
 		return -EINVAL;
@@ -139,33 +184,71 @@ static long lma_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 static int lma_mmap(struct file *f, struct vm_area_struct *vma)
 {
 	int ret;
-	void *cpu_addr;
-	dma_addr_t dma_addr;
-	size_t size = PAGE_ALIGN(vma->vm_end - vma->vm_start);
-	gfp_t flags = GFP_TRANSHUGE; // GFP_KERNEL, GFP_HIGHUSER, GFP_TRANSHUGE, GFP_USER
-	unsigned long dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS|DMA_ATTR_NO_KERNEL_MAPPING|DMA_ATTR_SKIP_CPU_SYNC;
-
-	print_vma(vma);
-
-	cpu_addr = dma_alloc_attrs(dev, size, &dma_addr, flags, dma_attrs);
-	if (!cpu_addr) {
-		printk_err("failed to allocate memory\n");
+	lma_alloc_inf_p lma_inf_ptr = kzalloc(sizeof(lma_alloc_inf_t),GFP_KERNEL);
+	if(!lma_inf_ptr){
+		printk_err("failed to allocate memory for \n");
 		return -ENOMEM;
 	}
-	printk_dbg("lma_mmap cpu_addr: 0x%p\n", cpu_addr);
+	lma_inf_ptr->size = PAGE_ALIGN(vma->vm_end - vma->vm_start);
+	gfp_t flags = GFP_TRANSHUGE; // GFP_KERNEL, GFP_HIGHUSER, GFP_TRANSHUGE, GFP_USER
+	lma_inf_ptr->dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS|DMA_ATTR_NO_KERNEL_MAPPING|DMA_ATTR_SKIP_CPU_SYNC;
 
-	ret = dma_mmap_attrs(dev, vma, cpu_addr, dma_addr, size, dma_attrs);
+	lma_inf_ptr->cpu_addr = dma_alloc_attrs(dev, lma_inf_ptr->size, &(lma_inf_ptr->dma_addr), flags, lma_inf_ptr->dma_attrs);
+	if (!(lma_inf_ptr->cpu_addr)) {
+		printk_err("failed to allocate memory\n");
+		ret = -ENOMEM;
+		goto failed_attr_alloc;
+	}
+
+	ret = dma_mmap_attrs(dev, vma, lma_inf_ptr->cpu_addr, lma_inf_ptr->dma_addr, lma_inf_ptr->size, lma_inf_ptr->dma_attrs);
 	if (ret < 0) {
 		printk_err("failed to mmap\n");
-		return ret;
+		goto failed_mmap;
 	}
-	printk_dbg("lma_mmap dma_addr: 0x%016llx\n", dma_addr);
+	vma->vm_private_data = (void *)lma_inf_ptr;
 
-	printk_dbg("lma_mmap vm_flags: 0x%lx\n", vma->vm_flags);
-	// vma->vm_flags |= VM_*;
-	// vma->vm_ops = &vm_ops;
+	print_vma(vma);
+	debug_dma_dump_mappings(dev);
+	list_add(&lma_inf_ptr->alloc_list,(struct list_head *)f->private_data);
+	return 0;
+failed_mmap:
+	dma_free_attrs(dev, lma_inf_ptr->size,
+		lma_inf_ptr->cpu_addr, lma_inf_ptr->dma_addr,
+		lma_inf_ptr->dma_attrs);
+failed_attr_alloc:
+	kfree(lma_inf_ptr);
+	return ret;
+}
 
-	// TODO: save in hash table
+int lma_release(struct inode *i, struct file *f){
+	struct list_head *lma_alloc_inf_head_ptr = (struct list_head *)f->private_data;
+	lma_alloc_inf_p lma_inf_ptr;
+
+	printk_dbg("lma_release start\n");
+	debug_dma_dump_mappings(dev);
+	struct list_head *ptr, *n;	
+	list_for_each_safe(ptr, n, lma_alloc_inf_head_ptr){
+		lma_inf_ptr=list_entry(ptr,lma_alloc_inf_t,alloc_list);
+		dma_free_attrs(dev, lma_inf_ptr->size,
+			lma_inf_ptr->cpu_addr, lma_inf_ptr->dma_addr,
+			lma_inf_ptr->dma_attrs);
+		list_del(&(lma_inf_ptr->alloc_list));
+		kfree(lma_inf_ptr);
+	}
+	kfree(lma_alloc_inf_head_ptr);
+	debug_dma_dump_mappings(dev);
+	printk_dbg("lma_release end\n");
+	return 0;
+}
+
+int lma_open(struct inode *i, struct file *f){
+	struct list_head *lma_alloc_info_head = kzalloc(sizeof(struct list_head), GFP_KERNEL);
+	if(!lma_alloc_info_head){
+		printk_err("failed to allocate memory \n");
+		return -ENOMEM;
+	}
+	INIT_LIST_HEAD(lma_alloc_info_head);
+	f->private_data = lma_alloc_info_head;
 	return 0;
 }
 
@@ -173,7 +256,9 @@ static const struct file_operations lma_fops =
 {
 	.owner = THIS_MODULE,
 	.unlocked_ioctl = lma_ioctl,
-	.mmap = lma_mmap
+	.mmap = lma_mmap,
+	.release = lma_release,
+	.open = lma_open
 };
 
 static int __init lma_init(void)
