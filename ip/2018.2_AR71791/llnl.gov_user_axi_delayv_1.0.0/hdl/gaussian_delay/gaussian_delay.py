@@ -24,6 +24,7 @@ import numpy as np
 
 ## output filename
 outputfilename = "bram_del_table.csv"  ## check file
+h_filename     = "../../../../../test/shared/gdt.h" ## c header file
 mif_filename   = "bram_del_table.mif"  ## mif file format, not used
 bin_filename   = "bram_del_table.init" ## see UG901, p143 - this is the Vivado mem format, not the updatemem format
 coe_filename   = "bram_del_table.coe"  ## coe file format
@@ -36,7 +37,13 @@ awidth = 10
 dwidth = 24
 
 ## Maximum time delay, in clock cycles
-delay_clocks = 0 #15 ##255 ##(2**dwidth)-1
+delay_clocks = 511 ##(2**dwidth)-1
+
+## address offset for "B" channel GDT
+bchan_offset = 0x00010000
+
+## address offset for "R" channel GDT
+rchan_offset = 0x00020000
 
 ## Create check plot (use 1 or 0)
 CHECK_PLOT = 1
@@ -44,7 +51,8 @@ CHECK_PLOT = 1
 #------------------------------------------------------------------
 # open files for writing
 #------------------------------------------------------------------
-f = open(outputfilename, "w")
+f        = open(outputfilename, "w")
+file_h   = open(h_filename  , "w")
 file_mif = open(mif_filename, "w")
 file_bin = open(bin_filename, "w")
 file_coe = open(coe_filename, "w")
@@ -111,6 +119,14 @@ file_coe.write("memory_initialization_radix=2;")
 file_coe.write("\n")
 file_coe.write("memory_initialization_vector=")
 
+#----- Generate "header" for .h file
+file_h.write("#define B_OFFSET 0x" + str('%x' % (int(bchan_offset))).zfill(8) + "\n")
+file_h.write("#define R_OFFSET 0x" + str('%x' % (int(rchan_offset))).zfill(8) + "\n")
+file_h.write("\n")
+#file_h.write("extern void config_gdt(int, int);\n")
+#file_h.write("\n")
+file_h.write("int gdt_data[" + str(n) + "] = {\n")
+
 for x in range (0, n):
    gauss = round (gaussian(x, mu, sig) * delay_clocks)
    if (gauss == 2**n):
@@ -139,15 +155,20 @@ for x in range (0, n):
        file_coe.write(",")
    else:
        file_coe.write(";")
+
+   ## ----- write to h_file
+   if (x < n-1):
+       file_h.write("    0x" + str('%x' % (int(gauss))).zfill(int(dwidth/4)) + ",\n")
+   else:
+       file_h.write("    0x" + str('%x' % (int(gauss))).zfill(int(dwidth/4)) + "};\n")
        
    ## ----- write to mem file
-   file_mem.write(str('%x' % (int(gauss))).zfill(int(dwidth/4)))
-   file_mem.write("\n")
-   
+   file_mem.write(str('%x' % (int(gauss))).zfill(int(dwidth/4)))  
       
 f.close()
 file_bin.close()
 file_mem.close()
+file_h.close()
 
 #----- Generate the footer for .mif file
 file_mif.write("--")

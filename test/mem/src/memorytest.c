@@ -121,7 +121,7 @@ void putnum(unsigned long num)
 	}
 }
 
-/* 
+/*
  * The test_memset and test_memcpy functions do use printf,
  * so the linker script has been adjusted to allocate some heap space.
  */
@@ -256,9 +256,14 @@ void test_alias(void)
 #endif
 }
 
+void config_gdt();
+
 int main()
 {
 	int i;
+
+	/* --- Configure the Gaussian Delay Tables (GTD) --- */
+	config_gdt();
 
 	//init_pagetable(); /* done in translation_table.S */
 #if !defined(USE_CACHE)

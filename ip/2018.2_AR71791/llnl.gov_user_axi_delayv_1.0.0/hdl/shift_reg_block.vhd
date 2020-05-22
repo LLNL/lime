@@ -74,7 +74,7 @@ signal delay_ip      : std_logic_vector(C_DELAY_WIDTH-1 downto 0);
 signal id_ip         : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
 signal index_ip      : std_logic_vector(C_INDEX_WIDTH-1 downto 0);
 
-signal delay_ip_lt_delay_reg : std_logic;
+--signal delay_ip_lt_delay_reg : std_logic;
 signal delay_ip_ne_zero      : std_logic;
 
 signal debug_shift   : std_logic_vector(2 downto 0); -- for tracking "state" during simulation
@@ -126,7 +126,7 @@ s_shift_ready_o <= m_shift_ready_i;
 -- Shift register
 --------------------------------------------------------------------------------
 --compare terms, for timing
-delay_ip_lt_delay_reg <= '1' when (delay_ip <= delay_reg) else '0';
+--delay_ip_lt_delay_reg <= '1' when (delay_ip <= delay_reg) else '0';
 delay_ip_ne_zero      <= '1' when ((ZEROS_ID & delay_ip) > x"00000000") else '0';
 
 shift_reg_proc : process (clk_i) begin
@@ -141,7 +141,8 @@ shift_reg_proc : process (clk_i) begin
         else
             debug_shift <= (others => '0');
             if (din_en_i = '1')then
-                if (delay_ip_lt_delay_reg = '1') and (srb_insert_i < to_integer(unsigned(index_srb_i))) and s_data_en_i = '1' then
+--                if (delay_ip_lt_delay_reg = '1') and (srb_insert_i < to_integer(unsigned(index_srb_i))) and s_data_en_i = '1' then
+                if (srb_insert_i < to_integer(unsigned(index_srb_i))) and s_data_en_i = '1' then
                     -- top channel receiving from left and shifting right
                     -- receiving
                     if (s_data_i(C_DELAY_WIDTH+C_AXI_ID_WIDTH+C_INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+C_INDEX_WIDTH) /= x"00000000") then -- change > to /= for timing
@@ -154,7 +155,11 @@ shift_reg_proc : process (clk_i) begin
                     index_reg   <= s_data_i(C_INDEX_WIDTH-1                   downto 0);
                     valid_reg   <= s_data_en_i;
                     debug_shift <= "001";
-                elsif (delay_ip_lt_delay_reg = '1') and (srb_insert_i = to_integer(unsigned(index_srb_i))) then
+
+-- ********* NOTE: the delay_ip_lt_delay_reg term may not be necessary, because srb_insert_i already detremines
+-- ********** that this is the SRB that will receive the inserted PACKET
+--                elsif (delay_ip_lt_delay_reg = '1') and (srb_insert_i = to_integer(unsigned(index_srb_i))) then
+                elsif (srb_insert_i = to_integer(unsigned(index_srb_i))) then
                     -- top channel storing new information and shifting right
                     -- receiving
                     if delay_ip_ne_zero = '1' then

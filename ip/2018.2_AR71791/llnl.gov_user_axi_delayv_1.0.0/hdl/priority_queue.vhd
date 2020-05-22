@@ -67,6 +67,7 @@ signal delay_srb_low   : integer := 0; -- lowest srb for delay insertion
 signal axi_id_new      : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0) := (others => '0');
 signal axi_id_max_hi   : integer := 0; -- highest SRB with matching axi_id
 signal srb_insert      : integer := 0;
+signal found_axi_id    : std_logic := '0';
 
 type bit_signal is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic;
 signal s_shift_valid   : bit_signal;
@@ -212,9 +213,9 @@ end generate GEN_shift_reg_blocks;
 -- is higher than the new packet's delay. The new packet info is stored in this one, all others are
 -- shifted left
 
--- NOTE (2020-0422): The timing of this path is horrible (~0.35ns worst case). Although the design works
--- in hardware, this must be fixed, and the only way is to pipeline this path. There may be a corner
--- case that occurs in HW testing that doesn't show up in simulation, so take note during hardware operation.
+-- NOTE (2020-0422): The timing of this path is extremly poor. Although the design works
+-- in simulation, it only works in hardware at slower clock speeds. This may need fixing, and the only way 
+-- is to pipeline this path. 
 ----------------------------------------------------------------------------------------------
 
 delay_new  <= din_i(DELAY_WIDTH+C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+INDEX_WIDTH);
@@ -223,10 +224,12 @@ axi_id_new <= din_i(C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto INDEX_WIDTH);
 axi_id_chk_loop_proc : process (din_en_i, valid_reg, axi_id_new, id_reg) begin
     axi_id_chk_loop: for kk in (PRIORITY_QUEUE_WIDTH-1) downto 0 loop
         if (din_en_i = '1') and valid_reg(kk) = '1' and (axi_id_new = id_reg(kk)) then
-            axi_id_max_hi <= kk;
+            axi_id_max_hi <= kk + 1;
+            found_axi_id  <= '1';
             exit axi_id_chk_loop when (din_en_i = '1') and (axi_id_new = id_reg(kk)); -- same as if condition
         else
             axi_id_max_hi <= 0;
+            found_axi_id  <= '0';
         end if;
     end loop;
 end process;
@@ -242,7 +245,8 @@ ins_chk_loop_proc : process (din_en_i, delay_new, delay_reg) begin
     end loop;   
 end process;
 
-srb_insert <= axi_id_max_hi when (axi_id_max_hi > delay_srb_low) else delay_srb_low;
+--srb_insert <= axi_id_max_hi when (axi_id_max_hi > delay_srb_low) else delay_srb_low;
+srb_insert <= (axi_id_max_hi) when (found_axi_id = '1') and (axi_id_max_hi > delay_srb_low) else delay_srb_low;
 
 ----------------------------------------------------------------------------------------------
 -- Output assignments
