@@ -1,4 +1,4 @@
-The trace format consists of 6 columns with comma separated values (CSV)
+The trace format consists of 6 or 7 columns with comma separated values (CSV)
 
 1) Trace event source
    0: AXI Slot 0 - emulates ARM or host accesses
@@ -17,7 +17,7 @@ The trace format consists of 6 columns with comma separated values (CSV)
    LW: Last word of data in write burst
    B: Response from write
 3) Address (or software key) in HEX with 0x prefix
-4) Data in HEX with 0x prefix
+4) Data in HEX with 0x prefix, optional column
 5) Length in bytes
 6) AXI bus ID
 7) Time stamp count

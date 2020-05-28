@@ -37,7 +37,7 @@ awidth = 10
 dwidth = 24
 
 ## Maximum time delay, in clock cycles
-delay_clocks = 511 ##(2**dwidth)-1
+delay_clocks = 15 ## max =(2**dwidth)-1
 
 ## address offset for "B" channel GDT
 bchan_offset = 0x00010000
@@ -119,6 +119,9 @@ file_coe.write("memory_initialization_radix=2;")
 file_coe.write("\n")
 file_coe.write("memory_initialization_vector=")
 
+#----- Generate "header" for .mem file
+file_mem.write("@0000\n")
+
 #----- Generate "header" for .h file
 file_h.write("#define B_OFFSET 0x" + str('%x' % (int(bchan_offset))).zfill(8) + "\n")
 file_h.write("#define R_OFFSET 0x" + str('%x' % (int(rchan_offset))).zfill(8) + "\n")
@@ -163,7 +166,7 @@ for x in range (0, n):
        file_h.write("    0x" + str('%x' % (int(gauss))).zfill(int(dwidth/4)) + "};\n")
        
    ## ----- write to mem file
-   file_mem.write(str('%x' % (int(gauss))).zfill(int(dwidth/4)))  
+   file_mem.write(str('%x' % (int(gauss))).zfill(int(dwidth/4)) + "\n")  
       
 f.close()
 file_bin.close()
