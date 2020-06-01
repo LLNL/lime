@@ -19,7 +19,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 library axi_delay_lib;
 use axi_delay_lib.all;
---use axi_delay_lib.axi_delay_pkg.all;
+use axi_delay_lib.axi_delay_pkg.all;
 
 entity channel_delay_tb is
     generic (
@@ -269,8 +269,21 @@ axi_slave_inst : entity axi_delay_lib.axi_slave
         s_axi_resp_i    => m_axi_resp
 );
 
+---------------------------------------
+-- Data Sampler
+---------------------------------------
+data_sampler_inst : entity axi_delay_lib.data_sampler
+    port map (
+        SIM_clk           => SIM_clk,          
+        SIM_nreset        => SIM_nreset,       
+        SIM_random_dly    => SIM_random_dly,   
+        SIM_random_dly_en => SIM_random_dly_en,
+        SIM_lfsr_out      => SIM_lfsr_out,
+        SIM_addrb         => SIM_addrb
+   );
+
 --******************************************************************************
 dummy_o <= '0';
 --******************************************************************************
 
-end channel_delay_tb;
+end architecture channel_delay_tb;

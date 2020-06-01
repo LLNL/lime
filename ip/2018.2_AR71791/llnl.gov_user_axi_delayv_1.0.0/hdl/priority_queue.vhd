@@ -257,4 +257,12 @@ dout_o           <= m_shift_data(0)(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 dow
 dout_valid_o     <= m_shift_valid(0);
 
 ----------------------------------------------------------------------------------------------
+-- Global signals for Guassian Delay Table Analysis
+----------------------------------------------------------------------------------------------
+SIM_clk           <= clk_i;
+SIM_nreset        <= nreset_i;
+SIM_random_dly    <= din_i(DELAY_WIDTH+C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+INDEX_WIDTH);
+SIM_random_dly_en <= din_en_i;
+
+----------------------------------------------------------------------------------------------
 end behavioral;

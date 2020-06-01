@@ -431,7 +431,7 @@ random_dly_inst : entity axi_delay_lib.random_dly
 generic map (
     GDT_ADDR_BITS    => GDT_ADDR_BITS,
     GDT_DATA_BITS    => GDT_DATA_BITS,
-    LFSR_BITS        => 16
+    LFSR_BITS        => GDT_ADDR_BITS
 )
 port map (
     clk_i            => m_axi_aclk,

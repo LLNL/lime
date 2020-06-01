@@ -13,15 +13,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="5935003514fs"></ZoomStartTime>
-      <ZoomEndTime time="6750861160fs"></ZoomEndTime>
-      <Cursor1Time time="6441151000fs"></Cursor1Time>
+      <ZoomStartTime time="9387678972fs"></ZoomStartTime>
+      <ZoomEndTime time="9848740896fs"></ZoomEndTime>
+      <Cursor1Time time="9608152000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="224"></NameColumnWidth>
-      <ValueColumnWidth column_width="255"></ValueColumnWidth>
+      <ValueColumnWidth column_width="247"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="21" />
+   <WVObjectSize size="22" />
    <wvobject fp_name="/channel_delay_tb/sys_clk" type="logic">
       <obj_property name="ElementShortName">sys_clk</obj_property>
       <obj_property name="ObjectShortName">sys_clk</obj_property>
@@ -381,7 +381,6 @@
       <wvobject fp_name="group5475" type="group">
          <obj_property name="label">I/O</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_aclk" type="logic">
             <obj_property name="ElementShortName">s_axi_aclk</obj_property>
             <obj_property name="ObjectShortName">s_axi_aclk</obj_property>
@@ -1102,6 +1101,7 @@
       <wvobject fp_name="group6055" type="group">
          <obj_property name="label">random_delay</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="group12368" type="group">
             <obj_property name="label">gauss_delay_table</obj_property>
             <obj_property name="DisplayName">label</obj_property>
@@ -1218,6 +1218,10 @@
          <wvobject fp_name="/channel_delay_tb/channel_delay_inst/random_dly_inst/dreset" type="logic">
             <obj_property name="ElementShortName">dreset</obj_property>
             <obj_property name="ObjectShortName">dreset</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/random_dly_inst/addrb" type="array">
+            <obj_property name="ElementShortName">addrb[9:0]</obj_property>
+            <obj_property name="ObjectShortName">addrb[9:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/channel_delay_tb/channel_delay_inst/random_dly_inst/lfsr_tmp" type="array">
             <obj_property name="ElementShortName">lfsr_tmp[15:0]</obj_property>
@@ -2219,10 +2223,6 @@
          <obj_property name="ElementShortName">index_ip[5:0]</obj_property>
          <obj_property name="ObjectShortName">index_ip[5:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(3)\/srb/delay_ip_lt_delay_reg" type="logic">
-         <obj_property name="ElementShortName">delay_ip_lt_delay_reg</obj_property>
-         <obj_property name="ObjectShortName">delay_ip_lt_delay_reg</obj_property>
-      </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(3)\/srb/delay_ip_ne_zero" type="logic">
          <obj_property name="ElementShortName">delay_ip_ne_zero</obj_property>
          <obj_property name="ObjectShortName">delay_ip_ne_zero</obj_property>
@@ -2362,10 +2362,6 @@
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(4)\/srb/index_ip" type="array">
          <obj_property name="ElementShortName">index_ip[5:0]</obj_property>
          <obj_property name="ObjectShortName">index_ip[5:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(4)\/srb/delay_ip_lt_delay_reg" type="logic">
-         <obj_property name="ElementShortName">delay_ip_lt_delay_reg</obj_property>
-         <obj_property name="ObjectShortName">delay_ip_lt_delay_reg</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(4)\/srb/delay_ip_ne_zero" type="logic">
          <obj_property name="ElementShortName">delay_ip_ne_zero</obj_property>
@@ -2507,10 +2503,6 @@
          <obj_property name="ElementShortName">index_ip[5:0]</obj_property>
          <obj_property name="ObjectShortName">index_ip[5:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(5)\/srb/delay_ip_lt_delay_reg" type="logic">
-         <obj_property name="ElementShortName">delay_ip_lt_delay_reg</obj_property>
-         <obj_property name="ObjectShortName">delay_ip_lt_delay_reg</obj_property>
-      </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(5)\/srb/delay_ip_ne_zero" type="logic">
          <obj_property name="ElementShortName">delay_ip_ne_zero</obj_property>
          <obj_property name="ObjectShortName">delay_ip_ne_zero</obj_property>
@@ -2650,10 +2642,6 @@
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(6)\/srb/index_ip" type="array">
          <obj_property name="ElementShortName">index_ip[5:0]</obj_property>
          <obj_property name="ObjectShortName">index_ip[5:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(6)\/srb/delay_ip_lt_delay_reg" type="logic">
-         <obj_property name="ElementShortName">delay_ip_lt_delay_reg</obj_property>
-         <obj_property name="ObjectShortName">delay_ip_lt_delay_reg</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(6)\/srb/delay_ip_ne_zero" type="logic">
          <obj_property name="ElementShortName">delay_ip_ne_zero</obj_property>
@@ -2795,10 +2783,6 @@
          <obj_property name="ElementShortName">index_ip[5:0]</obj_property>
          <obj_property name="ObjectShortName">index_ip[5:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(7)\/srb/delay_ip_lt_delay_reg" type="logic">
-         <obj_property name="ElementShortName">delay_ip_lt_delay_reg</obj_property>
-         <obj_property name="ObjectShortName">delay_ip_lt_delay_reg</obj_property>
-      </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(7)\/srb/delay_ip_ne_zero" type="logic">
          <obj_property name="ElementShortName">delay_ip_ne_zero</obj_property>
          <obj_property name="ObjectShortName">delay_ip_ne_zero</obj_property>
@@ -2938,10 +2922,6 @@
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(8)\/srb/index_ip" type="array">
          <obj_property name="ElementShortName">index_ip[5:0]</obj_property>
          <obj_property name="ObjectShortName">index_ip[5:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(8)\/srb/delay_ip_lt_delay_reg" type="logic">
-         <obj_property name="ElementShortName">delay_ip_lt_delay_reg</obj_property>
-         <obj_property name="ObjectShortName">delay_ip_lt_delay_reg</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(8)\/srb/delay_ip_ne_zero" type="logic">
          <obj_property name="ElementShortName">delay_ip_ne_zero</obj_property>
@@ -3226,6 +3206,27 @@
             <obj_property name="ElementShortName">C_AXI_DATA_WIDTH</obj_property>
             <obj_property name="ObjectShortName">C_AXI_DATA_WIDTH</obj_property>
          </wvobject>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group2655" type="group">
+      <obj_property name="label">data_sampler</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/channel_delay_tb/data_sampler_inst/SIM_clk" type="logic">
+         <obj_property name="ElementShortName">SIM_clk</obj_property>
+         <obj_property name="ObjectShortName">SIM_clk</obj_property>
+      </wvobject>
+      <wvobject fp_name="/channel_delay_tb/data_sampler_inst/SIM_nreset" type="logic">
+         <obj_property name="ElementShortName">SIM_nreset</obj_property>
+         <obj_property name="ObjectShortName">SIM_nreset</obj_property>
+      </wvobject>
+      <wvobject fp_name="/channel_delay_tb/data_sampler_inst/SIM_random_dly" type="array">
+         <obj_property name="ElementShortName">SIM_random_dly[23:0]</obj_property>
+         <obj_property name="ObjectShortName">SIM_random_dly[23:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/channel_delay_tb/data_sampler_inst/SIM_random_dly_en" type="logic">
+         <obj_property name="ElementShortName">SIM_random_dly_en</obj_property>
+         <obj_property name="ObjectShortName">SIM_random_dly_en</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

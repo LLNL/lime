@@ -2,7 +2,8 @@
 -- Lawrence Livermore National Labs
 -- 20191119 CM Initial creation 
 -- random_dly.vhd: This module uses a 16-bit lfsr (from http://emmanuel.pouly.free.fr/fibo.html) to create a 
---                 random delay funtion.  The number of output bits is determined by the 
+--                 random delay funtion. The taps for the 10-bit version is from 
+--                 courses.cse.tamu.edu/walker/cscd680/lfsr_table.pdf
 --**********************************************************************************************************
 
 library ieee;
@@ -12,13 +13,14 @@ use ieee.numeric_std.all;
 
 library axi_delay_lib;
 use axi_delay_lib.all;
+use axi_delay_lib.axi_delay_pkg.all;
 
 entity random_dly is
 
 generic(
     GDT_ADDR_BITS    : integer := 10;
     GDT_DATA_BITS    : integer := 24;
-    LFSR_BITS        : integer := 16
+    LFSR_BITS        : integer := 10
 );
 port (
     clk_i            : in  std_logic;
@@ -41,17 +43,19 @@ architecture behavioral of random_dly is
 --******************************************************************************
 -- Constants
 --******************************************************************************
-constant polynome		:std_logic_vector (LFSR_BITS-1 downto 0):= "1011010000000000";
+--constant polynome : std_logic_vector (15 downto 0)          := "1011010000000000"; -- 16-bit polynomial
+constant polynome : std_logic_vector (LFSR_BITS-1 downto 0) := "1101100000";
 
 --******************************************************************************
 --Signal Definitions
 --******************************************************************************
 signal dreset       : std_logic;
-signal lfsr_tmp     :std_logic_vector (LFSR_BITS-1 downto 0):= (0=>'1',others=>'0');
+signal lfsr_tmp     : std_logic_vector (LFSR_BITS-1 downto 0):= (0=>'1',others=>'0');
 signal rst_1q       : std_logic;
 signal rst_2q       : std_logic;
 signal rst_3q       : std_logic;
 signal random_dly   : std_logic_vector(23 downto 0);
+signal addrb        : std_logic_vector(GDT_ADDR_BITS-1 downto 0);
 
 signal gdt_wren     : std_logic_vector(0 downto 0);
 --******************************************************************************
@@ -66,7 +70,7 @@ begin
 
 dreset <= not dresetn_i;
     
-gauss_delay_table : entity dpram_true
+gauss_delay_table : entity axi_delay_lib.dpram_true
 GENERIC MAP (
     ADDR_WIDTH       => GDT_ADDR_BITS,
     DATA_WIDTH       => GDT_DATA_BITS,
@@ -86,10 +90,14 @@ PORT MAP (
     rstb  => rst_i,
     enb   => '1',
     web   => (others => '0'),
-    addrb => lfsr_tmp(GDT_ADDR_BITS+2-1 downto 2),
+    addrb => addrb, --lfsr_tmp(GDT_ADDR_BITS+2-1 downto 2),
     dinb  => (others => '0'),
     doutb => random_dly
 );
+
+--addrb <= lfsr_tmp(GDT_ADDR_BITS+2-1 downto 2);
+--addrb <= lfsr_tmp(GDT_ADDR_BITS-1 downto 0);
+addrb <= lfsr_tmp(LFSR_BITS-1 downto LFSR_BITS-GDT_ADDR_BITS);
 
 process (clk_i, rst_i) 
     variable lsb       :std_logic;	 
@@ -117,6 +125,12 @@ begin
     end if;
 
 end process;
+
+----------------------------------------------------------------------------------------------
+-- Output assignments
+----------------------------------------------------------------------------------------------
+SIM_lfsr_out <= lfsr_tmp;
+SIM_addrb    <= addrb;
 
 ----------------------------------------------------------------------------------------------
 -- Output assignments

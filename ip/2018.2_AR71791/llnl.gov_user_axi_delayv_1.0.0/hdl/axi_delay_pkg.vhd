@@ -40,6 +40,20 @@ package axi_delay_pkg is
 	function log2rp (x : integer) return integer;
 	function log2rp_long (x : std_logic_vector) return integer;
 
+	-- *****************************************************************************
+	-- Global Signals - Declare global signals in order to connect signals that are deep
+	-- in the FPGA hierarchy in order to connect them to the testbench without resorting
+	-- to new I/O ports througout the hierarchy.
+	-- Declaring global signals is necessary because isim does not support VHDL-2008 
+	-- hierarchical signal names, nor does it have a signal spy / tap type of feature
+	-- *****************************************************************************
+	signal SIM_clk           : std_logic;
+	signal SIM_nreset        : std_logic;
+	signal SIM_random_dly    : std_logic_vector (23 downto 0);
+	signal SIM_random_dly_en : std_logic;
+	signal SIM_lfsr_out      : std_logic_vector (9 downto 0);
+	signal SIM_addrb         : std_logic_vector (9 downto 0);
+
 end axi_delay_pkg;
 
 package body axi_delay_pkg is

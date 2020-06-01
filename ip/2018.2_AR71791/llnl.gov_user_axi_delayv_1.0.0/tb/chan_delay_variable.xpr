@@ -32,7 +32,7 @@
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSAVendor" Val="xilinx"/>
     <Option Name="DSANumComputeUnits" Val="60"/>
-    <Option Name="WTXSimLaunchSim" Val="1044"/>
+    <Option Name="WTXSimLaunchSim" Val="1157"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -198,21 +198,12 @@
       <File Path="$PPRDIR/testbench/axi_master.vhd">
         <FileInfo>
           <Attr Name="Library" Val="axi_delay_lib"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
       <File Path="$PPRDIR/testbench/axi_slave.vhd">
         <FileInfo>
           <Attr Name="Library" Val="axi_delay_lib"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/testbench/channel_delay_tb.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="axi_delay_lib"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
@@ -224,13 +215,24 @@
       <File Path="$PPRDIR/testbench/axi_delayv_tb.vhd">
         <FileInfo>
           <Attr Name="Library" Val="axi_delay_lib"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/testbench/data_sampler.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="axi_delay_lib"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
       <File Path="$PPRDIR/testbench/axi_bram_8Kx128/axi_bram_8Kx128_sim_netlist.vhdl">
         <FileInfo>
-          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="Library" Val="axi_delay_lib"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/testbench/channel_delay_tb.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="axi_delay_lib"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
