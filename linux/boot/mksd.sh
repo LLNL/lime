@@ -17,5 +17,5 @@ sudo tar --no-same-owner -xJf bootfiles.tar.xz -C /mnt/sd-boot
 sudo umount /mnt/sd-boot
 sudo mkdir -p /mnt/sd-root
 sudo mount ${1}${PT}2 /mnt/sd-root
-sudo tar -xJf rootfs.tar.xz -C /mnt/sd-root
+sudo tar -pxJf rootfs.tar.xz -C /mnt/sd-root
 sudo umount /mnt/sd-root

@@ -4,7 +4,7 @@ openhw hw_platform_0
 repo -set device-tree-xlnx
 hsi create_sw_design devtree -os device_tree -proc psu_cortexa53_0
 hsi generate_target -dir dts
-# Add APM parameter not included in dts source
+# Add APM parameter that is not included in the dts source
 set apm_0 [hsi get_cells apm_0]
 if {$apm_0 ne ""} {
 	set tdata_w [hsi get_property CONFIG.C_FIFO_AXIS_TDATA_WIDTH $apm_0]
