@@ -39,17 +39,17 @@ coe_filename   = "bram_del_table.coe"  ## coe file format
 mem_filename   = "../bram_del_table.mem"  ## mem file format
 
 # path to lime-apps
-txt_filepath     = "../../../../../test/shared/"
-path_limeapps  = "../../../../../../lime-apps"
+#txt_filepath   = "../../../../../test/shared/"  ## use for local test code
+txt_filepath   = "../../../../../../lime-apps/shared/" ## use for lime-apps test code (change path as needed)
 
-## Width of address bus input to BRAM table
+## Width of address bus input to BRAM table. This MUST match the FPGA's BRAM address width.
 awidth = 10
 
-## Width of output, in bits
+## Width of output, in bits. This MUST match the FPGA's BRAM data width.
 dwidth = 24
 
 ## Maximum time delay, in clock cycles
-delay_clocks = 0 ## max =(2**dwidth)-1
+delay_clocks = 1000 ## max =(2**dwidth)-1
 
 ## address offset for "B" channel GDT
 bchan_offset = 0x00010000
@@ -94,27 +94,27 @@ def gaussian(x, mu, sig):
 # Check plot for GDT
 #------------------------------------------------------------------
 
-gdt_base = [None] * (n)
-
-for i in range (0, n):
-    gdt_base[i] = gaussian(i, mu, sig)
-    
-## np.linspace: return evenly space numbers over a specific interval
-x_values = np.linspace (0, n, n)
-
-print("awidth = " + str(awidth))
-print("n      = " + str(n))
-print("dwidth = " + str(dwidth))
-print("mu     = " + str(mu))
-print("sig    = " + str(sig))
-
-## plot
-print("\n")
-print("Plotting the test curve...")
-print("\n")
-plt.title('Test Plot - Normal Gaussian, prior to adjustments')
-plt.plot(x_values, gaussian(x_values, mu, sig))
-plt.show()
+##  gdt_base = [None] * (n)
+##  
+##  for i in range (0, n):
+##      gdt_base[i] = gaussian(i, mu, sig)
+##      
+##  ## np.linspace: return evenly space numbers over a specific interval
+##  x_values = np.linspace (0, n, n)
+##  
+##  print("awidth = " + str(awidth))
+##  print("n      = " + str(n))
+##  print("dwidth = " + str(dwidth))
+##  print("mu     = " + str(mu))
+##  print("sig    = " + str(sig))
+##  
+##  ## plot
+##  print("\n")
+##  print("Plotting the test curve...")
+##  print("\n")
+##  plt.title('Test Plot - Normal Gaussian, prior to adjustments')
+##  plt.plot(x_values, gaussian(x_values, mu, sig))
+##  plt.show()
 
 #******************************************************************
 # Generate GDT Contents for delay_clocks < n
@@ -213,18 +213,18 @@ file_mif.close()
 
 ##----- plot the gaussian function
 plt.plot(x_idx, gauss_table)
-plt.title('Generated Gaussian Distribution')
+plt.title('Randomized Delays In BRAM (clock cycles)')
 plt.xlabel('BRAM Address')
 plt.ylabel('Delay (clock cycles)')
 plt.show()
 
-#----- Copy .h file to lime-apps if it exists
-LimeAppsExists = os.path.isdir(path_limeapps)
-if (LimeAppsExists == True):
-   print("The lime-apps directory exists at " + path_limeapps)
-   print("copy " + txt_filepath + txt_filename + " " + path_limeapps + "/shared")
-#   os.system("copy " + txt_filepath + txt_filename + " " + path_limeapps + "/shared")
-   print("gdt.h has been copied to " + path_limeapps + "/shared")
-else:
-   print("The lime-apps directory does not exist at " + path_limeapps)
-   print("gdt.h will not be copied to the lime-apps directory")
+## Messages
+print("")
+print("")
+print("Gaussian Delay Table (GDT) file generation is complete.")
+print("")
+print("The .mem file, which will be used as the default GDT contents when the FPGA is built, ")
+print("   is stored here: " + mem_filename)
+print("")
+print("The .txt file, which will be loaded into the GDT at runtime for mem, strm, and randa, ")
+print("   is stored here: " + txt_file_path_name + txt_filename)
