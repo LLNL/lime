@@ -1,22 +1,30 @@
 #------------------------------------------------------------------
-# The goal of this code is to create an initialization file (*.init) that can be used
-# to initialize a Xilinx BRAM that is acting as a look-up table. The address to the 
+# The goal of this code is to create files that can be used
+# to initialize a Xilinx BRAM that is being used as a look-up table. The address to the 
 # lookup table BRAM will be randomized, so that the value being read out will follow the
 # gaussian distribution that is programmed.
 #
 # The programmed variables are filenames, address width, data width, and the maximum
 # value of the gaussian output (which should not exceed (2**dwidth)-1).
 #
-# Three files are created:
+# Several files are created:
 #    outputfilename = check file containint the index (address), value (float), and value (hex)
+#    h_filename     = header file for c code. This is loaded into the BRAM when a test (mem, strm, randa, etc) is run.
+#                     It is copied to lime/test/shared and (if it exists) lime-apps/shared. No longer supported - see .txt file
+#    txt_filename   = After mods to support gdt.c/h in cpp, the .h file is no longer generated; the table will be stored
+#                     in a .txt file
 #    mif_filename   = .mif file format containing the address and data, both in hex
 #    bin_filename   = binary file for Vivado initialization, containing value in binary
 #                     NOTE: this is NOT the same format as used in UpdateMem program.
+#    coe_filename   = co-efficient file format
+#    mem_filename   = .mem file format, to be loaded into the FPGA during the FPGA build process. These values are
+#                     persistent, and are only changed via CPU commands (such as when you run mem, strm, randa, etc.)
 #------------------------------------------------------------------
 
 #from matplotlib import pyplot as mp
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 #------------------------------------------------------------------
 # initialization variables
@@ -24,11 +32,15 @@ import numpy as np
 
 ## output filename
 outputfilename = "bram_del_table.csv"  ## check file
-h_filename     = "../../../../../test/shared/gdt.h" ## c header file
+txt_filename   = "gdt_data.txt"        ## text file
 mif_filename   = "bram_del_table.mif"  ## mif file format, not used
 bin_filename   = "bram_del_table.init" ## see UG901, p143 - this is the Vivado mem format, not the updatemem format
 coe_filename   = "bram_del_table.coe"  ## coe file format
 mem_filename   = "../bram_del_table.mem"  ## mem file format
+
+# path to lime-apps
+txt_filepath     = "../../../../../test/shared/"
+path_limeapps  = "../../../../../../lime-apps"
 
 ## Width of address bus input to BRAM table
 awidth = 10
@@ -37,7 +49,7 @@ awidth = 10
 dwidth = 24
 
 ## Maximum time delay, in clock cycles
-delay_clocks = 5000 ## max =(2**dwidth)-1
+delay_clocks = 0 ## max =(2**dwidth)-1
 
 ## address offset for "B" channel GDT
 bchan_offset = 0x00010000
@@ -51,8 +63,11 @@ CHECK_PLOT = 1
 #------------------------------------------------------------------
 # open files for writing
 #------------------------------------------------------------------
+txt_file_path_name = txt_filepath + txt_filename
+print("txt_file_path_name = " + txt_file_path_name)
+
 f        = open(outputfilename, "w")
-file_h   = open(h_filename  , "w")
+file_txt = open(txt_file_path_name , "w")
 file_mif = open(mif_filename, "w")
 file_bin = open(bin_filename, "w")
 file_coe = open(coe_filename, "w")
@@ -140,12 +155,10 @@ file_coe.write("memory_initialization_vector=")
 file_mem.write("@0000\n")
 
 #----- Generate "header" for .h file
-file_h.write("#define B_OFFSET 0x" + str('%x' % (int(bchan_offset))).zfill(8) + "\n")
-file_h.write("#define R_OFFSET 0x" + str('%x' % (int(rchan_offset))).zfill(8) + "\n")
-file_h.write("\n")
-#file_h.write("extern void config_gdt(int, int);\n")
+#file_h.write("#define B_OFFSET 0x" + str('%x' % (int(bchan_offset))).zfill(8) + "\n")
+#file_h.write("#define R_OFFSET 0x" + str('%x' % (int(rchan_offset))).zfill(8) + "\n")
 #file_h.write("\n")
-file_h.write("int gdt_data[" + str(n) + "] = {\n")
+#file_h.write("int gdt_data[" + str(n) + "] = {\n")
 
 #------------------------------------------------------------------
 
@@ -177,11 +190,11 @@ for x in range (0, n):
    else:
        file_coe.write(";")
 
-   ## ----- write to h_file
+   ## ----- write to txt_file
    if (x < n-1):
-       file_h.write("    0x" + str('%x' % ((gauss_table[x]))).zfill(int(dwidth/4)) + ",\n")
+       file_txt.write("    0x" + str('%x' % ((gauss_table[x]))).zfill(int(dwidth/4)) + ",\n")
    else:
-       file_h.write("    0x" + str('%x' % ((gauss_table[x]))).zfill(int(dwidth/4)) + "};\n")
+       file_txt.write("    0x" + str('%x' % ((gauss_table[x]))).zfill(int(dwidth/4)) + "\n")
        
    ## ----- write to mem file
    file_mem.write(str('%x' % ((gauss_table[x]))).zfill(int(dwidth/4)) + "\n")  
@@ -191,7 +204,7 @@ for x in range (0, n):
 f.close()
 file_bin.close()
 file_mem.close()
-file_h.close()
+file_txt.close()
 
 #----- Generate the footer for .mif file
 file_mif.write("--")
@@ -204,3 +217,14 @@ plt.title('Generated Gaussian Distribution')
 plt.xlabel('BRAM Address')
 plt.ylabel('Delay (clock cycles)')
 plt.show()
+
+#----- Copy .h file to lime-apps if it exists
+LimeAppsExists = os.path.isdir(path_limeapps)
+if (LimeAppsExists == True):
+   print("The lime-apps directory exists at " + path_limeapps)
+   print("copy " + txt_filepath + txt_filename + " " + path_limeapps + "/shared")
+#   os.system("copy " + txt_filepath + txt_filename + " " + path_limeapps + "/shared")
+   print("gdt.h has been copied to " + path_limeapps + "/shared")
+else:
+   print("The lime-apps directory does not exist at " + path_limeapps)
+   print("gdt.h will not be copied to the lime-apps directory")

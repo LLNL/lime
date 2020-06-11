@@ -4,10 +4,13 @@
  *  Created on: May 5, 2020
  *      Author: macaraeg1
  */
-
 #include <stdio.h>
 #include "gdt.h"
 #include "xparameters.h"
+
+int gdt_data[1024] = {
+#include "gdt_data.txt"
+};
 
 void config_gdt()
 {

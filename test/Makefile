@@ -12,7 +12,7 @@ build = zup
 WORKSPACE_LOC ?= ../standalone/sdk
 HWP = $(WORKSPACE_LOC)/hw_platform_0
 XSDB := xsdb$(if $(findstring Linux,$(shell uname -s)),,.bat)
-APPS = mem strm
+APPS = mem strm 
 
 # External Dependencies:
 # $(WORKSPACE_LOC)/hw_platform_0/system_wrapper.bit
