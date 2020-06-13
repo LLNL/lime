@@ -96,7 +96,7 @@ SC_MODULE(csw_mux)
 };
 
 template <int N>
-SC_MODULE(cswitch)
+SC_MODULE(cswitch) // Control-Path Switch, N to N
 {
 	sc_in<bool> clk;
 	sc_in<bool> reset;
@@ -145,7 +145,7 @@ SC_MODULE(cswitch)
 };
 
 template <int N>
-SC_MODULE(ctree)
+SC_MODULE(ctree) // Control-Path Switch, 1 to N
 {
 	sc_in<bool> clk;
 	sc_in<bool> reset;

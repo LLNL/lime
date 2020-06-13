@@ -64,7 +64,7 @@ inline void sc_trace(sc_trace_file* tf, const ACMD& ob, const std::string& nm)
 }
 
 
-SC_MODULE(ctlreg) // control port register access
+SC_MODULE(ctlreg) // Control Port Register Access
 {
 	sc_in<bool> clk;
 	sc_in<bool> reset;
@@ -222,7 +222,6 @@ SC_MODULE(ctlreg) // control port register access
 			reset_signal_is(reset, RLEVEL);
 		SC_METHOD(ms_reg_write);
 			sensitive << clk.pos();
-			reset_signal_is(reset, RLEVEL);
 		SC_METHOD(mc_assign);
 			for (int i = 0; i < CR; i++) sensitive << c_reg[i];
 	}

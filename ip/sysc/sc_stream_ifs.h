@@ -12,7 +12,10 @@
 
 #include "sysc/communication/sc_interface.h"
 
-namespace sc_core {
+
+#ifdef CHAN_NS
+namespace CHAN_NS {
+#endif
 
 // ----------------------------------------------------------------------------
 //  The sc_stream<T> input non-blocking interface class.
@@ -146,9 +149,11 @@ private:
 	sc_stream_out_if& operator = (const sc_stream_out_if&);
 };
 
+#ifdef CHAN_NS
+} // namespace CHAN_NS
+#endif
+
+#endif // SC_STREAM_IFS_H
+
 //$Log: sc_stream_ifs.h,v $
 //
-
-} // namespace sc_core
-
-#endif

@@ -7,7 +7,7 @@
 #include "port_axis.h"
 
 
-SC_MODULE(spsel)
+SC_MODULE(spsel) // Split and Select Unit
 {
 	sc_in<bool> clk;
 	sc_in<bool> reset;

@@ -5,6 +5,9 @@
 #include "systemc.h"
 #include "sc_rvd.h"
 #include "fifo_cc.h"
+#ifdef CHAN_NS
+using namespace CHAN_NS;
+#endif
 
 // Port & Channel Prefix
 // m: port master

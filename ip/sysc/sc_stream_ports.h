@@ -15,7 +15,10 @@
 #include "sc_stream_ifs.h"
 #include "sysc/tracing/sc_trace.h"
 
-namespace sc_core {
+
+#ifdef CHAN_NS
+namespace CHAN_NS {
+#endif
 
 // ----------------------------------------------------------------------------
 //  The sc_stream<T> input port class.
@@ -305,9 +308,11 @@ sc_trace(sc_trace_file* tf, const sc_stream_out<T>& ob, const std::string& nm)
 	// else ob.add_trace_internal(tf, nm); // TODO: see sc_signal_ports.(h,cpp)
 }
 
-} // namespace sc_core
+#ifdef CHAN_NS
+} // namespace CHAN_NS
+#endif
+
+#endif // SC_STREAM_PORTS_H
 
 //$Log: sc_stream_ports.h,v $
 //
-
-#endif

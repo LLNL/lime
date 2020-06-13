@@ -4,6 +4,9 @@
 
 #include "systemc.h"
 #include "sc_stream_ports.h"
+#ifdef CHAN_NS
+using namespace CHAN_NS;
+#endif
 
 // Process Prefix
 // --------------
@@ -25,7 +28,7 @@
 // IW: FIFO index and counter bit width
 // RLEV: reset active level
 template <typename T, int IW = 1,  bool RLEV = false>
-SC_MODULE(sfifo_cc)
+SC_MODULE(sfifo_cc) // Stream FIFO with Common Clock
 {
 	static constexpr int MAX_DEPTH = (1 << IW);
 	const unsigned depth;
@@ -109,7 +112,6 @@ SC_MODULE(sfifo_cc)
 			for (int i = 0; i < size_; i++) sensitive << data[i];
 		SC_METHOD(ms_proc);
 			sensitive << clk.pos();
-			reset_signal_is(reset, RLEV);
 			dont_initialize();
 	}
 

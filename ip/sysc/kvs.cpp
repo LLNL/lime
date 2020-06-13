@@ -159,7 +159,7 @@ using std::vector;
 FILE *tfp;
 sc_trace_file *tf;
 
-int sc_main(int argc , char *argv[])
+int sc_main(int argc, char *argv[])
 {
 	sc_report_handler::set_actions(SC_ID_IEEE_1666_DEPRECATION_, SC_DO_NOTHING);
 	// sc_report_handler::set_actions(SC_ID_LOGIC_X_TO_BOOL_, SC_LOG);

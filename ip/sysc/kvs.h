@@ -22,7 +22,7 @@
 // #define LSU2_PN 5 /* LSU 2 port number */
 // #define PRU0_PN 6 /* PRU 0 port number */
 
-SC_MODULE(kvs)
+SC_MODULE(kvs) // Key-Value Store, Lookup Accelerator Design
 {
 	// ports
 	sc_in<bool> clk;

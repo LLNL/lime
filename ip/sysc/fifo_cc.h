@@ -129,7 +129,6 @@ SC_MODULE(fifo_cc)
 			for (int i = 0; i < size_; i++) sensitive << data[i];
 		SC_METHOD(ms_proc);
 			sensitive << clk.pos();
-			reset_signal_is(reset, RLEV);
 			dont_initialize();
 	}
 

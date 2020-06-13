@@ -18,7 +18,10 @@
 #define ready_event() ready.value_changed_event()
 #define ready_chg() ready //.value_changed()
 
-namespace sc_core {
+
+#ifdef CHAN_NS
+namespace CHAN_NS {
+#endif
 
 template<typename T>
 class sc_rvd_export_in
@@ -289,6 +292,8 @@ sc_trace(sc_trace_file* tf, const sc_rvd<T>& ob, const std::string& nm)
 	sc_trace(tf, ob.ready, nm+".ready");
 }
 
-} // namespace sc_core
+#ifdef CHAN_NS
+} // namespace CHAN_NS
+#endif
 
 #endif // SC_RVD_H

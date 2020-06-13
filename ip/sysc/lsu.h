@@ -34,7 +34,7 @@ enum {
 	LSU_flush = 7,
 };
 
-SC_MODULE(lsuctl) // LSU control
+SC_MODULE(lsuctl) // LSU Control
 {
 	sc_in<bool> clk;
 	sc_in<bool> reset;
@@ -278,7 +278,7 @@ private:
 	payload_t *list;
 };
 
-SC_MODULE(mm2s)
+SC_MODULE(mm2s) // Memory Map to Stream
 {
 	sc_in<bool> clk;
 	sc_in<bool> reset;
@@ -491,7 +491,7 @@ SC_MODULE(mm2s)
 
 };
 
-SC_MODULE(s2mm)
+SC_MODULE(s2mm) // Stream to Memory Map
 {
 	sc_in<bool> clk;
 	sc_in<bool> reset;
@@ -706,7 +706,7 @@ SC_MODULE(s2mm)
 
 };
 
-SC_MODULE(lsu)
+SC_MODULE(lsu) // Load-Store Unit (LSU)
 {
 	sc_in<bool> clk;
 	sc_in<bool> reset;

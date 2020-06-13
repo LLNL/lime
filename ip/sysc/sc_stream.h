@@ -17,7 +17,9 @@
 #include "sc_stream_ifs.h"
 
 
-namespace sc_core {
+#ifdef CHAN_NS
+namespace CHAN_NS {
+#endif
 
 template <typename T>
 class sc_stream :
@@ -238,9 +240,11 @@ sc_trace(sc_trace_file* tf, const sc_stream<T>& ob, const std::string& nm)
 	sc_trace(tf, ob.ready, nm+".ready");
 }
 
-} // namespace sc_core
+#ifdef CHAN_NS
+} // namespace CHAN_NS
+#endif
+
+#endif // SC_STREAM_H
 
 //$Log: sc_stream.h,v $
 //
-
-#endif
