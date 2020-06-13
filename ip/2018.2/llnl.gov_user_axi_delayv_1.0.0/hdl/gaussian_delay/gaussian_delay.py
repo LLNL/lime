@@ -60,6 +60,10 @@ rchan_offset = 0x00020000
 ## Create check plot (use 1 or 0)
 CHECK_PLOT = 1
 
+## Fill GDT with constant
+FILL_WITH_CONSTANT = 1 ## When 1, the entire GDT is filed with GDT_CONSTANT
+GDT_CONSTANT       = 0
+
 #------------------------------------------------------------------
 # open files for writing
 #------------------------------------------------------------------
@@ -91,30 +95,31 @@ def gaussian(x, mu, sig):
     return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
 
 #------------------------------------------------------------------
-# Check plot for GDT
+# Check plot
 #------------------------------------------------------------------
 
-##  gdt_base = [None] * (n)
-##  
-##  for i in range (0, n):
-##      gdt_base[i] = gaussian(i, mu, sig)
-##      
-##  ## np.linspace: return evenly space numbers over a specific interval
-##  x_values = np.linspace (0, n, n)
-##  
-##  print("awidth = " + str(awidth))
-##  print("n      = " + str(n))
-##  print("dwidth = " + str(dwidth))
-##  print("mu     = " + str(mu))
-##  print("sig    = " + str(sig))
-##  
-##  ## plot
-##  print("\n")
-##  print("Plotting the test curve...")
-##  print("\n")
-##  plt.title('Test Plot - Normal Gaussian, prior to adjustments')
-##  plt.plot(x_values, gaussian(x_values, mu, sig))
-##  plt.show()
+if (CHECK_PLOT == 1):
+    gdt_base = [None] * (n)
+    
+    for i in range (0, n):
+        gdt_base[i] = gaussian(i, mu, sig)
+        
+    ## np.linspace: return evenly space numbers over a specific interval
+    x_values = np.linspace (0, n, n)
+    
+    print("awidth = " + str(awidth))
+    print("n      = " + str(n))
+    print("dwidth = " + str(dwidth))
+    print("mu     = " + str(mu))
+    print("sig    = " + str(sig))
+    
+    ## plot
+    print("\n")
+    print("Plotting the test curve...")
+    print("\n")
+    plt.title('Test Plot - Normal Gaussian, prior to adjustments')
+    plt.plot(x_values, gaussian(x_values, mu, sig))
+    plt.show()
 
 #******************************************************************
 # Generate GDT Contents for delay_clocks < n
@@ -165,8 +170,12 @@ file_mem.write("@0000\n")
 for x in range (0, n):
    if (gauss_table_fp[x] < 0):
        gauss_table_fp[x] = -gauss_table_fp[x]
+   
+   if (FILL_WITH_CONSTANT == 1):
+       gauss_table[x] = GDT_CONSTANT
+   else:
+       gauss_table[x] = int(gauss_table_fp[x])   
        
-   gauss_table[x] = int(gauss_table_fp[x])   
    x_idx[x] = x
 
    ##----- write to the check file
@@ -212,13 +221,14 @@ file_mif.write("END;")
 file_mif.close()
 
 ##----- plot the gaussian function
-plt.plot(x_idx, gauss_table)
-plt.title('Randomized Delays In BRAM (clock cycles)')
-plt.xlabel('BRAM Address')
-plt.ylabel('Delay (clock cycles)')
-plt.show()
+if (CHECK_PLOT == 1):
+    plt.plot(x_idx, gauss_table)
+    plt.title('Randomized Delays In BRAM (clock cycles)')
+    plt.xlabel('BRAM Address')
+    plt.ylabel('Delay (clock cycles)')
+    plt.show()
 
-## Messages
+##----- Messages
 print("")
 print("")
 print("Gaussian Delay Table (GDT) file generation is complete.")
