@@ -1,0 +1,35 @@
+The trace format consists of 6 or 7 columns with comma separated values (CSV)
+
+1) Trace event source
+   0: AXI Slot 0 - emulates ARM or host accesses
+   1: AXI Slot 1 - emulates DRE or on-chip accesses
+   S: Software (key in address field)
+2) Event type
+   R: Memory Read Address
+   W: Memory Write Address
+   DR: Only word in a read
+   FR: First word of data in read burst
+   MR: Middle word of data in a read burst
+   LR: Last word of data in read burst
+   DW: Only word in a write
+   FW: First word of data in write burst
+   MW: Middle word of data in a write burst
+   LW: Last word of data in write burst
+   B: Response from write
+3) Address (or software key) in HEX with 0x prefix
+4) Data in HEX with 0x prefix, optional column
+5) Length in bytes
+6) AXI bus ID
+7) Time stamp count
+   Each tick represents 3.3333 ns
+   When scaled by a factor of 20, each tick represents 0.16666 ns
+
+Note that the Address and Data fields are in HEX. The other numbers are in decimal.
+
+DRE memory accesses have a "1" in the first column and ARM accesses
+have a "0". Host or ARM accesses occur through an AXI interconnect
+monitored by Slot 0. On-chip or near memory accesses occur through
+a separate AXI interconnect monitored by Slot 1.
+
+AWK can be used to separate the events into different files or remove
+columns depending on the input requirement of downstream analysis tools.
