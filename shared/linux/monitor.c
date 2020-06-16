@@ -12,7 +12,7 @@
 #include <string.h> /* strerror */
 #include <sys/time.h> /* gettimeofday, struct timeval */
 #include <errno.h> /* errno */
-#include <stdint.h> /* uint16_t, uint32_t, uint64_t */
+#include <stdint.h> /* uint32_t, uint64_t */
 #if defined(PAPI)
 #include <papi.h>
 #endif
@@ -269,9 +269,9 @@ void trace_capture(void) {
 
 	register tcd_t tmp;
 
-	uint64_t tot = 0;
-	uint64_t TCD_MEM_SZ;
-	uint32_t TCD_ENTRY_SZ;
+	unsigned long tot = 0;
+	unsigned long TCD_MEM_SZ;
+	unsigned int TCD_ENTRY_SZ;
 	int found;
 	struct timeval start, finish;
 
@@ -299,7 +299,7 @@ void trace_capture(void) {
 		fprintf(stderr, "Can't find TCD memory size in device tree.\n");
 		exit(1);
 	}
-	TCD_MEM_SZ = (1LLU<<mem_addr_width);
+	TCD_MEM_SZ = (1LU<<mem_addr_width);
 
 	struct {uint64_t len, addr;} reg;
 	found = dev_search(DEV_TREE, "axi_tcd", 1, "reg", &reg, sizeof(reg));

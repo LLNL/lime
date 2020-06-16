@@ -1,0 +1,67 @@
+FILE: cpu.h
+SC_MODULE(cpu)
+	void th_main() - call the application main (renamed _sub_main).
+
+FILE: cswitch.h
+SC_MODULE(csw_demux)
+	void ct_demux() - read from s_port, write to one of N s_ports.
+SC_MODULE(csw_mux)
+	void ct_mux() - read from one of N s_ports, write to s_port.
+SC_MODULE(cswitch) // Control-Path Switch, N to N
+SC_MODULE(ctree) // Control-Path Switch, 1 to N
+
+FILE: ctlreg.hSC_MODULE(ctlreg) // Control Port Register Access
+	void ct_command() - read from s_port, cond. write to signals, s_chan, or s_port.
+	void ct_response() - cond. read from s_chan or s_port, write to s_port.
+	void ms_reg_write() - write to register file based on control signals.
+	void mc_assign() - signal assign, expose internal register file to signal port.
+
+FILE: fifo_cc.hSC_MODULE(fifo_cc) // FIFO with Common Clock
+	void mc_proc() - combinatorial logic
+	void ms_proc() - sequential logic
+
+FILE: hsu.hSC_MODULE(hsu) // Hash Unit (HSU)
+	void mc_key_tap_in() - prepare short_hash key and tap data from s_port or s_chan+v_reg.
+	void mc_hash_out() - read from short_hash s_chan, write to s_port or s_chan+v_reg.
+
+FILE: indel.hSC_MODULE(indel) // Insert Delete Unit
+	void ct_indel_in() - read from two s_ports sequentially, write to s_port
+
+FILE: kvs.cppSC_MODULE(HMCController)
+SC_MODULE(HMCWrapper)
+int sc_main(int argc, char *argv[])
+
+FILE: kvs.h
+SC_MODULE(kvs) // Key-Value Store, Lookup Accelerator Design
+
+FILE: lsu.hSC_MODULE(lsuctl) // LSU Control
+	void ct_command() - read from s_port, write to signal and s_chan [repetitively].
+	void ct_response() - read from s_port, write to s_chan+v_reg
+SC_MODULE(mm2s) // Memory Map to Stream
+	void ct_command() - read from s_port (control), write transactions.
+	void ct_response() - read transactions, write s_port (data) [repetitively], write s_port (response).
+SC_MODULE(s2mm) // Stream to Memory Map
+	void ct_command() - read from s_port (control) and then another s_port (data) [repetitively], write transactions.
+	void ct_response() - read transactions, write to s_port (response).
+SC_MODULE(lsu) // Load-Store Unit (LSU)
+
+FILE: pulse.hSC_MODULE(pulse) // Produce a Pulse
+	void ms_pulse() - pulse state machine
+
+FILE: sfifo_cc.hSC_MODULE(sfifo_cc) // Stream FIFO with Common Clock
+	void mc_proc() - combinatorial logic
+	void ms_proc() - sequential logic
+
+FILE: shash.hSC_MODULE(short_hash) // Hash Function
+	void mc_mix() - handshake
+	void ms_mix() - mix bits to next stage in pipeline
+
+FILE: spsel.hSC_MODULE(spsel) // Split and Select Unit
+	void mc_ctl() - control path
+	void mc_dat() - data path
+
+FILE: sreg.h
+class sreg : public sc_module // Stream Register Slice
+	void mc_io() - BYPASS specialization
+	void mc_proc() - combinatorial logic
+	void ms_proc() - sequential logic

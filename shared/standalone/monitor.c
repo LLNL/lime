@@ -335,7 +335,7 @@ void trace_capture(void)
 	/* write buffer */
 	fr = f_write(&fdst, mem_beg, tot, &bw);
 	if (fr != FR_OK /*|| bw != blen*/) {
-		xil_printf("fr: %d = write(fd, buf, br: %d, bw: %d)\r\n", fr, tot, bw);
+		xil_printf("fr: %d = write(fd, buf, br: %ld, bw: %d)\r\n", fr, tot, bw);
 		goto tc;
 	}
 tc:

@@ -12,16 +12,19 @@ build = zup
 WORKSPACE_LOC ?= ../standalone/sdk
 HWP = $(WORKSPACE_LOC)/hw_platform_0
 XSDB := xsdb$(if $(findstring Linux,$(shell uname -s)),,.bat)
-APPS = mem strm 
+APPS = mem strm dre
 
 # External Dependencies:
 # $(WORKSPACE_LOC)/hw_platform_0/system_wrapper.bit
-# $(WORKSPACE_LOC)/standalone_bsp_a53
+# $(WORKSPACE_LOC)/standalone_bsp_aNN
 
 .PHONY: all run
 all run .DEFAULT:
+ifneq ($(findstring z,$(build)),)
 	$(MAKE) -C mem/$(build) $@
+endif
 	$(MAKE) -C strm/$(build) $@
+	$(MAKE) -C dre/$(build) $@
 
 .PHONY: help
 help:
@@ -41,10 +44,10 @@ help:
 	@echo "              e.g., make run"
 	@echo -e "\nbuild=<type>"
 	@echo "  arm_64 - ARM : Linux"
-	@echo "  x86_64 - x86 : Linux (default)"
-	@echo "  zup    - ARM : Zynq UltraScale+ : Standalone"
+	@echo "  x86_64 - x86 : Linux"
+	@echo "  zup    - ARM : Zynq UltraScale+ : Standalone (default)"
 	@echo "  zynq   - ARM : Zynq 7000        : Standalone"
-	@echo "  e.g., make build=x86_64"
+	@echo "  e.g., make build=zup"
 	@echo -e "\nD=DEF1[=VAL1],DEF2[=VAL2],..."
 	@echo "  -- LiME Configuration Options --"
 	@echo "  CLOCKS - enable clock scaling for emulation"
@@ -62,10 +65,10 @@ help:
 	@echo -e "\nPreconditions:"
 	@echo "  1) Xilinx tools in path"
 	@echo "     e.g., source /opt/Xilinx/Vivado/<version>/settings64.sh"
-	@echo "  2) Specify location of board support packages and hardware platform"
-	@echo "     e.g., export WORKSPACE_LOC=\$$HOME/<mywork>/lime/standalone/sdk"
+#	@echo "  2) Specify location of lime directory"
+#	@echo "     e.g., export LIME=\$$HOME/<mywork>/lime"
 
-run: fpga
+# run: fpga
 
 .PHONY: $(APPS)
 $(APPS):
@@ -74,9 +77,9 @@ $(APPS):
 .PHONY: fpga
 fpga:
 ifeq ($(build),zynq)
-	$(XSDB) misc/sdk/fpga_config_z7.tcl $(HWP)
+	$(XSDB) ../make/sdk/fpga_config_z7.tcl $(HWP)
 else ifeq ($(build),zup)
-	$(XSDB) misc/sdk/fpga_config_zu.tcl $(HWP)
+	$(XSDB) ../make/sdk/fpga_config_zu.tcl $(HWP)
 endif
 
 .PHONY: clean
@@ -86,3 +89,7 @@ clean:
 	$(MAKE) -C strm/x86_64 clean
 	$(MAKE) -C strm/zup clean
 	$(MAKE) -C strm/zynq clean
+	$(MAKE) -C dre/arm_64 clean
+	$(MAKE) -C dre/x86_64 clean
+	$(MAKE) -C dre/zup clean
+	$(MAKE) -C dre/zynq clean
