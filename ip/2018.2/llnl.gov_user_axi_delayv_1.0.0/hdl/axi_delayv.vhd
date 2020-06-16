@@ -209,7 +209,7 @@ architecture behavioral of axi_delayv is
 --******************************************************************************
 -- Constants
 --******************************************************************************
-constant NREG           : integer := 3;
+constant NREG           : integer := 5;
 constant REG_ADDR_WIDTH : integer := log2rp(NREG);
 constant WORD_LSB       : integer := log2rp(C_AXI_LITE_DATA_WIDTH/8);
 constant CAM_WIDTH      : integer := C_AXI_ID_WIDTH; -- maximum width of axi_id input. Requirement: CAMWIDTH <= 
@@ -891,7 +891,7 @@ i_ar: entity axi_delay_lib.chan_delay
     port map (
 	dclk    => s_axi_lite_aclk,
 	dresetn => s_axi_lite_aresetn,
-	delay   => slv_reg(2)(C_COUNTER_WIDTH-1 downto 0),
+	delay   => slv_reg(3)(C_COUNTER_WIDTH-1 downto 0),
 	aclk    => s_axi_aclk,
 	aresetn => s_axi_aresetn,
 	counter => counter,
