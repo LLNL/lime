@@ -1,10 +1,6 @@
 BEGIN {
 	FS = ","
-<<<<<<< HEAD
 	if (freq == 0) freq = 187.48125e6*20
-=======
-	if (freq == 0) freq = 300e6*20
->>>>>>> master
 	if (chans == 0) chans = 10
 	cname[0] = "CPU_Read"
 	cname[1] = "CPU_Write"
