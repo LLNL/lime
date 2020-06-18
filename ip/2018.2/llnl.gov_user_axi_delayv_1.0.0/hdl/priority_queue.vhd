@@ -251,7 +251,7 @@ srb_insert <= (axi_id_max_hi) when (found_axi_id = '1') and (axi_id_max_hi > del
 ----------------------------------------------------------------------------------------------
 -- Output assignments
 ----------------------------------------------------------------------------------------------
-din_ready_o <= '1';
+din_ready_o <= '1' when (valid_reg(PRIORITY_QUEUE_WIDTH-10) = '0') else '0';
 
 dout_o           <= m_shift_data(0)(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
 dout_valid_o     <= m_shift_valid(0);

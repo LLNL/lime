@@ -23,16 +23,17 @@ use axi_delay_lib.axi_delay_pkg.all;
 
 entity channel_delay_tb is
     generic (
-        CHANNEL_TYPE       : string := "R" ; -- valid values are:  AW, W, B, AR, R
+        CHANNEL_TYPE         : string := "R" ; -- valid values are:  AW, W, B, AR, R
+        PRIORITY_QUEUE_WIDTH : integer := 32;
          
         -- AXI-Full Bus Interface
-        C_AXI_ID_WIDTH    : integer := 16;
-        C_AXI_ADDR_WIDTH  : integer := 40;
-        C_AXI_DATA_WIDTH  : integer := 128;
+        C_AXI_ID_WIDTH       : integer := 16;
+        C_AXI_ADDR_WIDTH     : integer := 40;
+        C_AXI_DATA_WIDTH     : integer := 128;
      
-        CAM_DEPTH         : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
-        CAM_WIDTH         : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
-        NUM_MINI_BUFS     : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported
+        CAM_DEPTH            : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
+        CAM_WIDTH            : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
+        NUM_MINI_BUFS        : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported
     );    
     Port ( 
         dummy_o : out std_logic
@@ -170,6 +171,7 @@ axi_master_int : entity axi_delay_lib.axi_master
 channel_delay_inst : entity axi_delay_lib.chan_delay_variable
    generic map (
     CHANNEL_TYPE      => CHANNEL_TYPE,
+    PRIORITY_QUEUE_WIDTH =>  PRIORITY_QUEUE_WIDTH,
     C_AXI_ID_WIDTH    => C_AXI_ID_WIDTH,
     C_AXI_ADDR_WIDTH  => C_AXI_ADDR_WIDTH,
     C_AXI_DATA_WIDTH  => C_AXI_DATA_WIDTH,

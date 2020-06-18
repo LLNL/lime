@@ -3,7 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="38" Path="C:/Users/macaraeg1/Projects/comp/repositories/lime_axi_delayv/ip/2018.2_AR71791/llnl.gov_user_axi_delayv_1.0.0/tb/chan_delay_variable.xpr">
+<Project Version="7" Minor="38" Path="C:/Users/macaraeg1/Projects/comp/repositories/lime_axi_delayv/ip/2018.2/llnl.gov_user_axi_delayv_1.0.0/tb/chan_delay_variable.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="43c8a33ea0ae4223a6ec1466d71dc399"/>
@@ -32,7 +32,7 @@
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSAVendor" Val="xilinx"/>
     <Option Name="DSANumComputeUnits" Val="60"/>
-    <Option Name="WTXSimLaunchSim" Val="1157"/>
+    <Option Name="WTXSimLaunchSim" Val="1255"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>

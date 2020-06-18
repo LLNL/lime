@@ -58,12 +58,8 @@ if ($opt_l) {
 }
 
 # setup values depending on platform type (32-bit or 64-bit)
-<<<<<<< HEAD
 # 1/(20*clk_pl_1)
 $CPNS = ($opt_z) ? 4 : 3.749;
-=======
-$CPNS = ($opt_z) ? 4 : 6;
->>>>>>> master
 $THRESHOLD = ($opt_z) ? 0x40100000 : 0x1000100000;
 
 my @master = ("CPU", "ACC");

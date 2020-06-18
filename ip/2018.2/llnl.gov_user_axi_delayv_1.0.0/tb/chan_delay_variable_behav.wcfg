@@ -13,13 +13,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="9387678972fs"></ZoomStartTime>
-      <ZoomEndTime time="9848740896fs"></ZoomEndTime>
-      <Cursor1Time time="9608152000fs"></Cursor1Time>
+      <ZoomStartTime time="14269591141fs"></ZoomStartTime>
+      <ZoomEndTime time="15146081772fs"></ZoomEndTime>
+      <Cursor1Time time="15000000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="224"></NameColumnWidth>
-      <ValueColumnWidth column_width="247"></ValueColumnWidth>
+      <ValueColumnWidth column_width="219"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="22" />
    <wvobject fp_name="/channel_delay_tb/sys_clk" type="logic">
@@ -38,9 +38,14 @@
       <obj_property name="ElementShortName">transmission_en</obj_property>
       <obj_property name="ObjectShortName">transmission_en</obj_property>
    </wvobject>
+   <wvobject fp_name="/channel_delay_tb/axi_slave_inst/timer" type="array">
+      <obj_property name="ElementShortName">timer[31:0]</obj_property>
+      <obj_property name="ObjectShortName">timer[31:0]</obj_property>
+   </wvobject>
    <wvobject fp_name="group203" type="group">
       <obj_property name="label">axi_master</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/channel_delay_tb/axi_master_int/m_axi_aclk_i" type="logic">
          <obj_property name="ElementShortName">m_axi_aclk_i</obj_property>
          <obj_property name="ObjectShortName">m_axi_aclk_i</obj_property>
@@ -120,14 +125,19 @@
       <wvobject fp_name="/channel_delay_tb/axi_master_int/ieg_cnt" type="array">
          <obj_property name="ElementShortName">ieg_cnt[31:0]</obj_property>
          <obj_property name="ObjectShortName">ieg_cnt[31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/channel_delay_tb/axi_master_int/ieg_cyc" type="array">
+         <obj_property name="ElementShortName">ieg_cyc[31:0]</obj_property>
+         <obj_property name="ObjectShortName">ieg_cyc[31:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/axi_master_int/ieg_cnt_tc" type="logic">
          <obj_property name="ElementShortName">ieg_cnt_tc</obj_property>
          <obj_property name="ObjectShortName">ieg_cnt_tc</obj_property>
       </wvobject>
-      <wvobject fp_name="/channel_delay_tb/axi_master_int/ieg_cyc" type="array">
-         <obj_property name="ElementShortName">ieg_cyc[31:0]</obj_property>
-         <obj_property name="ObjectShortName">ieg_cyc[31:0]</obj_property>
+      <wvobject fp_name="/channel_delay_tb/axi_master_int/valid_l" type="logic">
+         <obj_property name="ElementShortName">valid_l</obj_property>
+         <obj_property name="ObjectShortName">valid_l</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/axi_master_int/axi_info_tmp" type="array">
          <obj_property name="ElementShortName">axi_info_tmp[265:0]</obj_property>
@@ -381,6 +391,7 @@
       <wvobject fp_name="group5475" type="group">
          <obj_property name="label">I/O</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_aclk" type="logic">
             <obj_property name="ElementShortName">s_axi_aclk</obj_property>
             <obj_property name="ObjectShortName">s_axi_aclk</obj_property>
@@ -760,6 +771,7 @@
       <wvobject fp_name="group5413" type="group">
          <obj_property name="label">axi_parser</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/channel_delay_tb/channel_delay_inst/axi_parser_inst/clk_i" type="logic">
             <obj_property name="ElementShortName">clk_i</obj_property>
             <obj_property name="ObjectShortName">clk_i</obj_property>
@@ -1037,6 +1049,431 @@
             <obj_property name="DisplayName">label</obj_property>
          </wvobject>
       </wvobject>
+      <wvobject fp_name="group3381" type="group">
+         <obj_property name="label">bypass_minicam</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_aclk" type="logic">
+            <obj_property name="ElementShortName">s_axi_aclk</obj_property>
+            <obj_property name="ObjectShortName">s_axi_aclk</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_aresetn" type="logic">
+            <obj_property name="ElementShortName">s_axi_aresetn</obj_property>
+            <obj_property name="ObjectShortName">s_axi_aresetn</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_id" type="array">
+            <obj_property name="ElementShortName">s_axi_id[15:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_id[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_addr" type="array">
+            <obj_property name="ElementShortName">s_axi_addr[39:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_addr[39:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_data" type="array">
+            <obj_property name="ElementShortName">s_axi_data[127:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_data[127:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_strb" type="array">
+            <obj_property name="ElementShortName">s_axi_strb[15:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_strb[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_len" type="array">
+            <obj_property name="ElementShortName">s_axi_len[7:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_len[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_size" type="array">
+            <obj_property name="ElementShortName">s_axi_size[2:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_size[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_burst" type="array">
+            <obj_property name="ElementShortName">s_axi_burst[1:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_burst[1:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_lock" type="array">
+            <obj_property name="ElementShortName">s_axi_lock[1:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_lock[1:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_cache" type="array">
+            <obj_property name="ElementShortName">s_axi_cache[3:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_cache[3:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_prot" type="array">
+            <obj_property name="ElementShortName">s_axi_prot[2:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_prot[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_qos" type="array">
+            <obj_property name="ElementShortName">s_axi_qos[3:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_qos[3:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_region" type="array">
+            <obj_property name="ElementShortName">s_axi_region[3:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_region[3:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_valid" type="logic">
+            <obj_property name="ElementShortName">s_axi_valid</obj_property>
+            <obj_property name="ObjectShortName">s_axi_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_ready" type="logic">
+            <obj_property name="ElementShortName">s_axi_ready</obj_property>
+            <obj_property name="ObjectShortName">s_axi_ready</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_last" type="logic">
+            <obj_property name="ElementShortName">s_axi_last</obj_property>
+            <obj_property name="ObjectShortName">s_axi_last</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_resp" type="array">
+            <obj_property name="ElementShortName">s_axi_resp[1:0]</obj_property>
+            <obj_property name="ObjectShortName">s_axi_resp[1:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_aclk" type="logic">
+            <obj_property name="ElementShortName">m_axi_aclk</obj_property>
+            <obj_property name="ObjectShortName">m_axi_aclk</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_aresetn" type="logic">
+            <obj_property name="ElementShortName">m_axi_aresetn</obj_property>
+            <obj_property name="ObjectShortName">m_axi_aresetn</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_id" type="array">
+            <obj_property name="ElementShortName">m_axi_id[15:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_id[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_addr" type="array">
+            <obj_property name="ElementShortName">m_axi_addr[39:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_addr[39:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_data" type="array">
+            <obj_property name="ElementShortName">m_axi_data[127:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_data[127:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_strb" type="array">
+            <obj_property name="ElementShortName">m_axi_strb[15:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_strb[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_len" type="array">
+            <obj_property name="ElementShortName">m_axi_len[7:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_len[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_size" type="array">
+            <obj_property name="ElementShortName">m_axi_size[2:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_size[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_burst" type="array">
+            <obj_property name="ElementShortName">m_axi_burst[1:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_burst[1:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_lock" type="array">
+            <obj_property name="ElementShortName">m_axi_lock[1:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_lock[1:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_cache" type="array">
+            <obj_property name="ElementShortName">m_axi_cache[3:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_cache[3:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_prot" type="array">
+            <obj_property name="ElementShortName">m_axi_prot[2:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_prot[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_qos" type="array">
+            <obj_property name="ElementShortName">m_axi_qos[3:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_qos[3:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_region" type="array">
+            <obj_property name="ElementShortName">m_axi_region[3:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_region[3:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_valid" type="logic">
+            <obj_property name="ElementShortName">m_axi_valid</obj_property>
+            <obj_property name="ObjectShortName">m_axi_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_ready" type="logic">
+            <obj_property name="ElementShortName">m_axi_ready</obj_property>
+            <obj_property name="ObjectShortName">m_axi_ready</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_last" type="logic">
+            <obj_property name="ElementShortName">m_axi_last</obj_property>
+            <obj_property name="ObjectShortName">m_axi_last</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_resp" type="array">
+            <obj_property name="ElementShortName">m_axi_resp[1:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axi_resp[1:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/dclk_i" type="logic">
+            <obj_property name="ElementShortName">dclk_i</obj_property>
+            <obj_property name="ObjectShortName">dclk_i</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/dresetn_i" type="logic">
+            <obj_property name="ElementShortName">dresetn_i</obj_property>
+            <obj_property name="ObjectShortName">dresetn_i</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/gdt_wren_i" type="array">
+            <obj_property name="ElementShortName">gdt_wren_i[0:0]</obj_property>
+            <obj_property name="ObjectShortName">gdt_wren_i[0:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/gdt_addr_i" type="array">
+            <obj_property name="ElementShortName">gdt_addr_i[15:0]</obj_property>
+            <obj_property name="ObjectShortName">gdt_addr_i[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/gdt_wdata_i" type="array">
+            <obj_property name="ElementShortName">gdt_wdata_i[23:0]</obj_property>
+            <obj_property name="ObjectShortName">gdt_wdata_i[23:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/gdt_rdata_o" type="array">
+            <obj_property name="ElementShortName">gdt_rdata_o[23:0]</obj_property>
+            <obj_property name="ObjectShortName">gdt_rdata_o[23:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/random_dly" type="array">
+            <obj_property name="ElementShortName">random_dly[23:0]</obj_property>
+            <obj_property name="ObjectShortName">random_dly[23:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/random_dly_req" type="logic">
+            <obj_property name="ElementShortName">random_dly_req</obj_property>
+            <obj_property name="ObjectShortName">random_dly_req</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_areset" type="logic">
+            <obj_property name="ElementShortName">s_axi_areset</obj_property>
+            <obj_property name="ObjectShortName">s_axi_areset</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/m_axi_areset" type="logic">
+            <obj_property name="ElementShortName">m_axi_areset</obj_property>
+            <obj_property name="ObjectShortName">m_axi_areset</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pktbuf_enb" type="logic">
+            <obj_property name="ElementShortName">pktbuf_enb</obj_property>
+            <obj_property name="ObjectShortName">pktbuf_enb</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pktbuf_addrb" type="array">
+            <obj_property name="ElementShortName">pktbuf_addrb[7:0]</obj_property>
+            <obj_property name="ObjectShortName">pktbuf_addrb[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pktbuf_dinb" type="array">
+            <obj_property name="ElementShortName">pktbuf_dinb[233:0]</obj_property>
+            <obj_property name="ObjectShortName">pktbuf_dinb[233:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pktbuf_doutb" type="array">
+            <obj_property name="ElementShortName">pktbuf_doutb[233:0]</obj_property>
+            <obj_property name="ObjectShortName">pktbuf_doutb[233:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/mc_valid" type="logic">
+            <obj_property name="ElementShortName">mc_valid</obj_property>
+            <obj_property name="ObjectShortName">mc_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/mc_axi_id" type="array">
+            <obj_property name="ElementShortName">mc_axi_id[15:0]</obj_property>
+            <obj_property name="ObjectShortName">mc_axi_id[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/mc_last" type="logic">
+            <obj_property name="ElementShortName">mc_last</obj_property>
+            <obj_property name="ObjectShortName">mc_last</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/mc_ctr_ptr" type="array">
+            <obj_property name="ElementShortName">mc_ctr_ptr[7:0]</obj_property>
+            <obj_property name="ObjectShortName">mc_ctr_ptr[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/mc_ctr_ptr_wr" type="logic">
+            <obj_property name="ElementShortName">mc_ctr_ptr_wr</obj_property>
+            <obj_property name="ObjectShortName">mc_ctr_ptr_wr</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/aidb_id" type="array">
+            <obj_property name="ElementShortName">aidb_id[15:0]</obj_property>
+            <obj_property name="ObjectShortName">aidb_id[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/aidb_id_zero" type="array">
+            <obj_property name="ElementShortName">aidb_id_zero[15:0]</obj_property>
+            <obj_property name="ObjectShortName">aidb_id_zero[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/aidb_cntr_ptr_base" type="array">
+            <obj_property name="ElementShortName">aidb_cntr_ptr_base[5:0]</obj_property>
+            <obj_property name="ObjectShortName">aidb_cntr_ptr_base[5:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/aidb_wr" type="array">
+            <obj_property name="ElementShortName">aidb_wr[0:0]</obj_property>
+            <obj_property name="ObjectShortName">aidb_wr[0:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/aidb_baddr" type="array">
+            <obj_property name="ElementShortName">aidb_baddr[5:0]</obj_property>
+            <obj_property name="ObjectShortName">aidb_baddr[5:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/aidb_bdata_zero" type="array">
+            <obj_property name="ElementShortName">aidb_bdata_zero[15:0]</obj_property>
+            <obj_property name="ObjectShortName">aidb_bdata_zero[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/aidb_bdata" type="array">
+            <obj_property name="ElementShortName">aidb_bdata[15:0]</obj_property>
+            <obj_property name="ObjectShortName">aidb_bdata[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pb_info_data" type="array">
+            <obj_property name="ElementShortName">pb_info_data[233:0]</obj_property>
+            <obj_property name="ObjectShortName">pb_info_data[233:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pb_cntr_ptr" type="array">
+            <obj_property name="ElementShortName">pb_cntr_ptr[7:0]</obj_property>
+            <obj_property name="ObjectShortName">pb_cntr_ptr[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pb_wr" type="array">
+            <obj_property name="ElementShortName">pb_wr[0:0]</obj_property>
+            <obj_property name="ObjectShortName">pb_wr[0:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/minibuf_fe" type="logic">
+            <obj_property name="ElementShortName">minibuf_fe</obj_property>
+            <obj_property name="ObjectShortName">minibuf_fe</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/free_ctrptr_wr" type="logic">
+            <obj_property name="ElementShortName">free_ctrptr_wr</obj_property>
+            <obj_property name="ObjectShortName">free_ctrptr_wr</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/free_ctrptr" type="array">
+            <obj_property name="ElementShortName">free_ctrptr[7:0]</obj_property>
+            <obj_property name="ObjectShortName">free_ctrptr[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/minicam_full" type="logic">
+            <obj_property name="ElementShortName">minicam_full</obj_property>
+            <obj_property name="ObjectShortName">minicam_full</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/available_ctrptr" type="logic">
+            <obj_property name="ElementShortName">available_ctrptr</obj_property>
+            <obj_property name="ObjectShortName">available_ctrptr</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/minicam_err" type="logic">
+            <obj_property name="ElementShortName">minicam_err</obj_property>
+            <obj_property name="ObjectShortName">minicam_err</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/scoreboard_wr" type="logic">
+            <obj_property name="ElementShortName">scoreboard_wr</obj_property>
+            <obj_property name="ObjectShortName">scoreboard_wr</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/scoreboard_wr_idx" type="other">
+            <obj_property name="ElementShortName">scoreboard_wr_idx</obj_property>
+            <obj_property name="ObjectShortName">scoreboard_wr_idx</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/scoreboard_valid" type="array">
+            <obj_property name="ElementShortName">scoreboard_valid[63:0]</obj_property>
+            <obj_property name="ObjectShortName">scoreboard_valid[63:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/scoreboard_rd_idx" type="other">
+            <obj_property name="ElementShortName">scoreboard_rd_idx</obj_property>
+            <obj_property name="ObjectShortName">scoreboard_rd_idx</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/scoreboard_rd_clr" type="logic">
+            <obj_property name="ElementShortName">scoreboard_rd_clr</obj_property>
+            <obj_property name="ObjectShortName">scoreboard_rd_clr</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/axi_info_valid" type="logic">
+            <obj_property name="ElementShortName">axi_info_valid</obj_property>
+            <obj_property name="ObjectShortName">axi_info_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/axi_info_data" type="array">
+            <obj_property name="ElementShortName">axi_info_data[233:0]</obj_property>
+            <obj_property name="ObjectShortName">axi_info_data[233:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pq_data" type="array">
+            <obj_property name="ElementShortName">pq_data[21:0]</obj_property>
+            <obj_property name="ObjectShortName">pq_data[21:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pq_data_complete" type="array">
+            <obj_property name="ElementShortName">pq_data_complete[45:0]</obj_property>
+            <obj_property name="ObjectShortName">pq_data_complete[45:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pq_en" type="logic">
+            <obj_property name="ElementShortName">pq_en</obj_property>
+            <obj_property name="ObjectShortName">pq_en</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pq_ready" type="logic">
+            <obj_property name="ElementShortName">pq_ready</obj_property>
+            <obj_property name="ObjectShortName">pq_ready</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pq_dout" type="array">
+            <obj_property name="ElementShortName">pq_dout[45:0]</obj_property>
+            <obj_property name="ObjectShortName">pq_dout[45:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pq_dout_valid" type="logic">
+            <obj_property name="ElementShortName">pq_dout_valid</obj_property>
+            <obj_property name="ObjectShortName">pq_dout_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pq_dout_ready" type="logic">
+            <obj_property name="ElementShortName">pq_dout_ready</obj_property>
+            <obj_property name="ObjectShortName">pq_dout_ready</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/pq_data_sr" type="array">
+            <obj_property name="ElementShortName">pq_data_sr[1471:0]</obj_property>
+            <obj_property name="ObjectShortName">pq_data_sr[1471:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/CHANNEL_TYPE" type="array">
+            <obj_property name="ElementShortName">CHANNEL_TYPE[1:1]</obj_property>
+            <obj_property name="ObjectShortName">CHANNEL_TYPE[1:1]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/PRIORITY_QUEUE_WIDTH" type="other">
+            <obj_property name="ElementShortName">PRIORITY_QUEUE_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">PRIORITY_QUEUE_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/DELAY_WIDTH" type="other">
+            <obj_property name="ElementShortName">DELAY_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">DELAY_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/BYPASS_MINICAM" type="other">
+            <obj_property name="ElementShortName">BYPASS_MINICAM</obj_property>
+            <obj_property name="ObjectShortName">BYPASS_MINICAM</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/C_AXI_ID_WIDTH" type="other">
+            <obj_property name="ElementShortName">C_AXI_ID_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">C_AXI_ID_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/C_AXI_ADDR_WIDTH" type="other">
+            <obj_property name="ElementShortName">C_AXI_ADDR_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">C_AXI_ADDR_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/C_AXI_DATA_WIDTH" type="other">
+            <obj_property name="ElementShortName">C_AXI_DATA_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">C_AXI_DATA_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/GDT_ADDR_BITS" type="other">
+            <obj_property name="ElementShortName">GDT_ADDR_BITS</obj_property>
+            <obj_property name="ObjectShortName">GDT_ADDR_BITS</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/GDT_DATA_BITS" type="other">
+            <obj_property name="ElementShortName">GDT_DATA_BITS</obj_property>
+            <obj_property name="ObjectShortName">GDT_DATA_BITS</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/CAM_DEPTH" type="other">
+            <obj_property name="ElementShortName">CAM_DEPTH</obj_property>
+            <obj_property name="ObjectShortName">CAM_DEPTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/CAM_WIDTH" type="other">
+            <obj_property name="ElementShortName">CAM_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">CAM_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/NUM_EVENTS_PER_MBUF" type="other">
+            <obj_property name="ElementShortName">NUM_EVENTS_PER_MBUF</obj_property>
+            <obj_property name="ObjectShortName">NUM_EVENTS_PER_MBUF</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/NUM_MINI_BUFS" type="other">
+            <obj_property name="ElementShortName">NUM_MINI_BUFS</obj_property>
+            <obj_property name="ObjectShortName">NUM_MINI_BUFS</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/C_DATA_LEN" type="other">
+            <obj_property name="ElementShortName">C_DATA_LEN</obj_property>
+            <obj_property name="ObjectShortName">C_DATA_LEN</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/MINIBUF_IDX_WIDTH" type="other">
+            <obj_property name="ElementShortName">MINIBUF_IDX_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">MINIBUF_IDX_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/CTR_PTR_WIDTH" type="other">
+            <obj_property name="ElementShortName">CTR_PTR_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">CTR_PTR_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/AXI_INFO_WIDTH" type="other">
+            <obj_property name="ElementShortName">AXI_INFO_WIDTH</obj_property>
+            <obj_property name="ObjectShortName">AXI_INFO_WIDTH</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/C_ZERO" type="array">
+            <obj_property name="ElementShortName">C_ZERO[1023:0]</obj_property>
+            <obj_property name="ObjectShortName">C_ZERO[1023:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/C_ZERO_16" type="array">
+            <obj_property name="ElementShortName">C_ZERO_16[15:0]</obj_property>
+            <obj_property name="ObjectShortName">C_ZERO_16[15:0]</obj_property>
+         </wvobject>
+      </wvobject>
       <wvobject fp_name="group6438" type="group">
          <obj_property name="label">minibuf_mgmt</obj_property>
          <obj_property name="DisplayName">label</obj_property>
@@ -1101,7 +1538,6 @@
       <wvobject fp_name="group6055" type="group">
          <obj_property name="label">random_delay</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="group12368" type="group">
             <obj_property name="label">gauss_delay_table</obj_property>
             <obj_property name="DisplayName">label</obj_property>
@@ -1224,8 +1660,8 @@
             <obj_property name="ObjectShortName">addrb[9:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/channel_delay_tb/channel_delay_inst/random_dly_inst/lfsr_tmp" type="array">
-            <obj_property name="ElementShortName">lfsr_tmp[15:0]</obj_property>
-            <obj_property name="ObjectShortName">lfsr_tmp[15:0]</obj_property>
+            <obj_property name="ElementShortName">lfsr_tmp[9:0]</obj_property>
+            <obj_property name="ObjectShortName">lfsr_tmp[9:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/channel_delay_tb/channel_delay_inst/random_dly_inst/rst_1q" type="logic">
             <obj_property name="ElementShortName">rst_1q</obj_property>
@@ -1248,8 +1684,8 @@
             <obj_property name="ObjectShortName">LFSR_BITS</obj_property>
          </wvobject>
          <wvobject fp_name="/channel_delay_tb/channel_delay_inst/random_dly_inst/polynome" type="array">
-            <obj_property name="ElementShortName">polynome[15:0]</obj_property>
-            <obj_property name="ObjectShortName">polynome[15:0]</obj_property>
+            <obj_property name="ElementShortName">polynome[9:0]</obj_property>
+            <obj_property name="ObjectShortName">polynome[9:0]</obj_property>
          </wvobject>
       </wvobject>
       <wvobject fp_name="group6006" type="group">
@@ -1601,56 +2037,56 @@
          <obj_property name="ObjectShortName">dout_ready_i</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/s_shift_data" type="array">
-         <obj_property name="ElementShortName">s_shift_data[0:15][45:0]</obj_property>
-         <obj_property name="ObjectShortName">s_shift_data[0:15][45:0]</obj_property>
+         <obj_property name="ElementShortName">s_shift_data[0:31][45:0]</obj_property>
+         <obj_property name="ObjectShortName">s_shift_data[0:31][45:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/m_shift_data" type="array">
-         <obj_property name="ElementShortName">m_shift_data[0:15][45:0]</obj_property>
-         <obj_property name="ObjectShortName">m_shift_data[0:15][45:0]</obj_property>
+         <obj_property name="ElementShortName">m_shift_data[0:31][45:0]</obj_property>
+         <obj_property name="ObjectShortName">m_shift_data[0:31][45:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/m_data" type="array">
-         <obj_property name="ElementShortName">m_data[0:15][45:0]</obj_property>
-         <obj_property name="ObjectShortName">m_data[0:15][45:0]</obj_property>
+         <obj_property name="ElementShortName">m_data[0:31][45:0]</obj_property>
+         <obj_property name="ObjectShortName">m_data[0:31][45:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/s_data" type="array">
-         <obj_property name="ElementShortName">s_data[0:15][45:0]</obj_property>
-         <obj_property name="ObjectShortName">s_data[0:15][45:0]</obj_property>
+         <obj_property name="ElementShortName">s_data[0:31][45:0]</obj_property>
+         <obj_property name="ObjectShortName">s_data[0:31][45:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/s_shift_valid" type="array">
-         <obj_property name="ElementShortName">s_shift_valid[0:15]</obj_property>
-         <obj_property name="ObjectShortName">s_shift_valid[0:15]</obj_property>
+         <obj_property name="ElementShortName">s_shift_valid[0:31]</obj_property>
+         <obj_property name="ObjectShortName">s_shift_valid[0:31]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/s_shift_ready" type="array">
-         <obj_property name="ElementShortName">s_shift_ready[0:15]</obj_property>
-         <obj_property name="ObjectShortName">s_shift_ready[0:15]</obj_property>
+         <obj_property name="ElementShortName">s_shift_ready[0:31]</obj_property>
+         <obj_property name="ObjectShortName">s_shift_ready[0:31]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/m_shift_valid" type="array">
-         <obj_property name="ElementShortName">m_shift_valid[0:15]</obj_property>
-         <obj_property name="ObjectShortName">m_shift_valid[0:15]</obj_property>
+         <obj_property name="ElementShortName">m_shift_valid[0:31]</obj_property>
+         <obj_property name="ObjectShortName">m_shift_valid[0:31]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/m_shift_ready" type="array">
-         <obj_property name="ElementShortName">m_shift_ready[0:15]</obj_property>
-         <obj_property name="ObjectShortName">m_shift_ready[0:15]</obj_property>
+         <obj_property name="ElementShortName">m_shift_ready[0:31]</obj_property>
+         <obj_property name="ObjectShortName">m_shift_ready[0:31]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/m_data_en" type="array">
-         <obj_property name="ElementShortName">m_data_en[0:15]</obj_property>
-         <obj_property name="ObjectShortName">m_data_en[0:15]</obj_property>
+         <obj_property name="ElementShortName">m_data_en[0:31]</obj_property>
+         <obj_property name="ObjectShortName">m_data_en[0:31]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/s_data_en" type="array">
-         <obj_property name="ElementShortName">s_data_en[0:15]</obj_property>
-         <obj_property name="ObjectShortName">s_data_en[0:15]</obj_property>
+         <obj_property name="ElementShortName">s_data_en[0:31]</obj_property>
+         <obj_property name="ObjectShortName">s_data_en[0:31]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/delay_reg" type="array">
-         <obj_property name="ElementShortName">delay_reg[0:15][23:0]</obj_property>
-         <obj_property name="ObjectShortName">delay_reg[0:15][23:0]</obj_property>
+         <obj_property name="ElementShortName">delay_reg[0:31][23:0]</obj_property>
+         <obj_property name="ObjectShortName">delay_reg[0:31][23:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/id_reg" type="array">
-         <obj_property name="ElementShortName">id_reg[0:15][15:0]</obj_property>
-         <obj_property name="ObjectShortName">id_reg[0:15][15:0]</obj_property>
+         <obj_property name="ElementShortName">id_reg[0:31][15:0]</obj_property>
+         <obj_property name="ObjectShortName">id_reg[0:31][15:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/valid_reg" type="array">
-         <obj_property name="ElementShortName">valid_reg[15:0]</obj_property>
-         <obj_property name="ObjectShortName">valid_reg[15:0]</obj_property>
+         <obj_property name="ElementShortName">valid_reg[31:0]</obj_property>
+         <obj_property name="ObjectShortName">valid_reg[31:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/delay_new" type="array">
          <obj_property name="ElementShortName">delay_new[23:0]</obj_property>
@@ -3078,134 +3514,6 @@
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(14)\/srb/C_AXI_DATA_WIDTH" type="other">
          <obj_property name="ElementShortName">C_AXI_DATA_WIDTH</obj_property>
          <obj_property name="ObjectShortName">C_AXI_DATA_WIDTH</obj_property>
-      </wvobject>
-   </wvobject>
-   <wvobject fp_name="group3381" type="group">
-      <obj_property name="label">bypass_minicam</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <wvobject fp_name="group4371" type="group">
-         <obj_property name="label">shift_reg_block(f)</obj_property>
-         <obj_property name="DisplayName">label</obj_property>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/clk_i" type="logic">
-            <obj_property name="ElementShortName">clk_i</obj_property>
-            <obj_property name="ObjectShortName">clk_i</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/nreset_i" type="logic">
-            <obj_property name="ElementShortName">nreset_i</obj_property>
-            <obj_property name="ObjectShortName">nreset_i</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/index_srb_i" type="array">
-            <obj_property name="ElementShortName">index_srb_i[31:0]</obj_property>
-            <obj_property name="ObjectShortName">index_srb_i[31:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/delay_reg_o" type="array">
-            <obj_property name="ElementShortName">delay_reg_o[23:0]</obj_property>
-            <obj_property name="ObjectShortName">delay_reg_o[23:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/valid_reg_o" type="logic">
-            <obj_property name="ElementShortName">valid_reg_o</obj_property>
-            <obj_property name="ObjectShortName">valid_reg_o</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/din_i" type="array">
-            <obj_property name="ElementShortName">din_i[45:0]</obj_property>
-            <obj_property name="ObjectShortName">din_i[45:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/din_en_i" type="logic">
-            <obj_property name="ElementShortName">din_en_i</obj_property>
-            <obj_property name="ObjectShortName">din_en_i</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/debug_shift" type="array">
-            <obj_property name="ElementShortName">debug_shift[2:0]</obj_property>
-            <obj_property name="ObjectShortName">debug_shift[2:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/s_data_i" type="array">
-            <obj_property name="ElementShortName">s_data_i[45:0]</obj_property>
-            <obj_property name="ObjectShortName">s_data_i[45:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/s_data_en_i" type="logic">
-            <obj_property name="ElementShortName">s_data_en_i</obj_property>
-            <obj_property name="ObjectShortName">s_data_en_i</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/m_data_o" type="array">
-            <obj_property name="ElementShortName">m_data_o[45:0]</obj_property>
-            <obj_property name="ObjectShortName">m_data_o[45:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/m_data_en_o" type="logic">
-            <obj_property name="ElementShortName">m_data_en_o</obj_property>
-            <obj_property name="ObjectShortName">m_data_en_o</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/s_shift_data_i" type="array">
-            <obj_property name="ElementShortName">s_shift_data_i[45:0]</obj_property>
-            <obj_property name="ObjectShortName">s_shift_data_i[45:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/s_shift_valid_i" type="logic">
-            <obj_property name="ElementShortName">s_shift_valid_i</obj_property>
-            <obj_property name="ObjectShortName">s_shift_valid_i</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/s_shift_ready_o" type="logic">
-            <obj_property name="ElementShortName">s_shift_ready_o</obj_property>
-            <obj_property name="ObjectShortName">s_shift_ready_o</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/m_shift_data_o" type="array">
-            <obj_property name="ElementShortName">m_shift_data_o[45:0]</obj_property>
-            <obj_property name="ObjectShortName">m_shift_data_o[45:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/m_shift_valid_o" type="logic">
-            <obj_property name="ElementShortName">m_shift_valid_o</obj_property>
-            <obj_property name="ObjectShortName">m_shift_valid_o</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/m_shift_ready_i" type="logic">
-            <obj_property name="ElementShortName">m_shift_ready_i</obj_property>
-            <obj_property name="ObjectShortName">m_shift_ready_i</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/delay_ip" type="array">
-            <obj_property name="ElementShortName">delay_ip[23:0]</obj_property>
-            <obj_property name="ObjectShortName">delay_ip[23:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/id_ip" type="array">
-            <obj_property name="ElementShortName">id_ip[15:0]</obj_property>
-            <obj_property name="ObjectShortName">id_ip[15:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/index_ip" type="array">
-            <obj_property name="ElementShortName">index_ip[5:0]</obj_property>
-            <obj_property name="ObjectShortName">index_ip[5:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/delay_reg" type="array">
-            <obj_property name="ElementShortName">delay_reg[23:0]</obj_property>
-            <obj_property name="ObjectShortName">delay_reg[23:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/id_reg" type="array">
-            <obj_property name="ElementShortName">id_reg[15:0]</obj_property>
-            <obj_property name="ObjectShortName">id_reg[15:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/index_reg" type="array">
-            <obj_property name="ElementShortName">index_reg[5:0]</obj_property>
-            <obj_property name="ObjectShortName">index_reg[5:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/valid_reg" type="logic">
-            <obj_property name="ElementShortName">valid_reg</obj_property>
-            <obj_property name="ObjectShortName">valid_reg</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/C_DELAY_WIDTH" type="other">
-            <obj_property name="ElementShortName">C_DELAY_WIDTH</obj_property>
-            <obj_property name="ObjectShortName">C_DELAY_WIDTH</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/C_INDEX_WIDTH" type="other">
-            <obj_property name="ElementShortName">C_INDEX_WIDTH</obj_property>
-            <obj_property name="ObjectShortName">C_INDEX_WIDTH</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/C_AXI_ID_WIDTH" type="other">
-            <obj_property name="ElementShortName">C_AXI_ID_WIDTH</obj_property>
-            <obj_property name="ObjectShortName">C_AXI_ID_WIDTH</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/C_AXI_ADDR_WIDTH" type="other">
-            <obj_property name="ElementShortName">C_AXI_ADDR_WIDTH</obj_property>
-            <obj_property name="ObjectShortName">C_AXI_ADDR_WIDTH</obj_property>
-         </wvobject>
-         <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(15)\/srb/C_AXI_DATA_WIDTH" type="other">
-            <obj_property name="ElementShortName">C_AXI_DATA_WIDTH</obj_property>
-            <obj_property name="ObjectShortName">C_AXI_DATA_WIDTH</obj_property>
-         </wvobject>
       </wvobject>
    </wvobject>
    <wvobject fp_name="group2655" type="group">
