@@ -26,7 +26,9 @@ generic (
 port (
     clk_i               : in  std_logic;
     rst_i               : in  std_logic;
-    
+
+    m_axi_ready_i       : in  std_logic;
+
     scoreboard_valid_i  : in  std_logic_vector(NUM_MINI_BUFS-1 downto 0);     -- read valid output
     scoreboard_rd_idx_o : out integer;                                        -- read index (for clear)
     scoreboard_rd_clr_o : out std_logic;                                      -- read clear
@@ -176,7 +178,7 @@ begin
             pbrd_cs          <= PBRDSM_WAIT;
 
         when PBRDSM_WAIT =>  -- look for gnt, then read from packet buffer 
-            if (gnt_or = '1') then
+            if (gnt_or = '1' and m_axi_ready_i = '1') then
                 pbrd_cs        <= PBRDSM_DLY;
             else
                 pbrd_cs        <= PBRDSM_WAIT;
@@ -240,7 +242,7 @@ random_dly_req_o <= random_dly_req;
 scoreboard_rd_idx_o <= scoreboard_rd_idx;
 scoreboard_rd_clr_o <= latch_sb_rd_idx;
 
-pq_dout_ready_o     <= '1' when (pbrd_ns = PBRDSM_WAIT) else '0'; 
+pq_dout_ready_o     <= '1' when (pbrd_ns = PBRDSM_WAIT and m_axi_ready_i = '1') else '0'; 
 
 ----------------------------------------------------------------------------------------------
 end behavioral;

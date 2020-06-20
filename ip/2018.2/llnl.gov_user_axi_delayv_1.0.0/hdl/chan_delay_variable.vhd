@@ -495,6 +495,8 @@ port map (
     clk_i               => m_axi_aclk,
     rst_i               => m_axi_areset,
     
+    m_axi_ready_i       => m_axi_ready,
+    
     scoreboard_valid_i  => scoreboard_valid,  -- scoreboard valid, indicating which minibuffers contain a complete packet ready for processing
     scoreboard_rd_idx_o => scoreboard_rd_idx, -- index to minibuffer that has been emptied
     scoreboard_rd_clr_o => scoreboard_rd_clr, -- clear bit, which clears the minbuffer indicated by index

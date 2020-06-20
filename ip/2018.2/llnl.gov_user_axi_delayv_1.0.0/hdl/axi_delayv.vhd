@@ -133,7 +133,7 @@ port (
 	s_axi_arvalid  : in  std_logic;
 	s_axi_arready  : out std_logic;
 
-	----- Slave Port:  Data -----
+	----- Slave Port: Read Data -----
 	s_axi_rid      : out std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
 	s_axi_rdata    : out std_logic_vector(C_AXI_DATA_WIDTH-1 downto 0); -- AXILITE
 	s_axi_rresp    : out std_logic_vector(1 downto 0); -- AXILITE
