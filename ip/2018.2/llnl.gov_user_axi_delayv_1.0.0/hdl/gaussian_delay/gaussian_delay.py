@@ -49,7 +49,7 @@ awidth = 10
 dwidth = 24
 
 ## Maximum time delay, in clock cycles
-delay_clocks = 25 ## max =(2**dwidth)-1
+delay_clocks = 100 ## max =(2**dwidth)-1
 
 ## address offset for "B" channel GDT
 bchan_offset = 0x00010000
@@ -61,7 +61,7 @@ rchan_offset = 0x00020000
 CHECK_PLOT = 1
 
 ## Fill GDT with constant
-FILL_WITH_CONSTANT = 1 ## When 1, the entire GDT is filed with GDT_CONSTANT
+FILL_WITH_CONSTANT = 0 ## When 1, the entire GDT is filed with GDT_CONSTANT
 GDT_CONSTANT       = 0
 
 #------------------------------------------------------------------

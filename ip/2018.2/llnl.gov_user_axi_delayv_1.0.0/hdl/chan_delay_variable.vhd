@@ -20,6 +20,8 @@ use axi_delay_lib.axi_delay_pkg.all;
 
 entity chan_delay_variable is
 generic (
+    SIMULATION           : std_logic := '0';
+    GDT_FILENAME         : string := "bram_del_table.mem";
     CHANNEL_TYPE         : string  := "AW" ; -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH : integer := 16;
     DELAY_WIDTH          : integer := 24;
@@ -429,6 +431,8 @@ PORT MAP (
 ---------------------------------------
 random_dly_inst : entity axi_delay_lib.random_dly
 generic map (
+    SIMULATION       => SIMULATION,
+    GDT_FILENAME     => GDT_FILENAME,
     GDT_ADDR_BITS    => GDT_ADDR_BITS,
     GDT_DATA_BITS    => GDT_DATA_BITS,
     LFSR_BITS        => GDT_ADDR_BITS
