@@ -15,9 +15,16 @@ library axi_delay_lib;
 use axi_delay_lib.all;
 use axi_delay_lib.axi_delay_pkg.all;
 
+
+use IEEE.std_logic_arith.all;
+use IEEE.std_logic_textio.all;
+use std.textio.all;
+
 entity random_dly is
 
 generic(
+    SIMULATION       : std_logic := '0';
+    GDT_FILENAME     : string := "bram_del_table.mem";
     GDT_ADDR_BITS    : integer := 10;
     GDT_DATA_BITS    : integer := 24;
     LFSR_BITS        : integer := 10
@@ -49,6 +56,7 @@ constant polynome : std_logic_vector (LFSR_BITS-1 downto 0) := "1101100000";
 --******************************************************************************
 --Signal Definitions
 --******************************************************************************
+
 signal dreset       : std_logic;
 signal lfsr_tmp     : std_logic_vector (LFSR_BITS-1 downto 0):= (0=>'1',others=>'0');
 signal rst_1q       : std_logic;
@@ -69,13 +77,13 @@ signal gdt_wren     : std_logic_vector(0 downto 0);
 begin
 
 dreset <= not dresetn_i;
-    
+
 gauss_delay_table : entity axi_delay_lib.dpram_true
 GENERIC MAP (
     ADDR_WIDTH       => GDT_ADDR_BITS,
     DATA_WIDTH       => GDT_DATA_BITS,
     CLOCKING_MODE    => "independent_clock",
-    MEMORY_INIT_FILE => "bram_del_table.mem"
+    MEMORY_INIT_FILE => GDT_FILENAME
 )
 PORT MAP (
     clka  => dclk_i,

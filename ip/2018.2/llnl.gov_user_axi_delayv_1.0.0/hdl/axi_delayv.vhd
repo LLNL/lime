@@ -21,6 +21,8 @@ use xpm.vcomponents.all;
 entity axi_delayv is
 
 generic (
+        SIMULATION            : std_logic := '0';
+        GDT_FILENAME          : string := "bram_del_table.mem";
 	C_FAMILY              : string := "rtl";
 	C_AXI_PROTOCOL        : integer := P_AXI4;
 	C_MEM_ADDR_WIDTH      : integer := 30;
@@ -785,6 +787,8 @@ i_w: entity axi_delay_lib.chan_delay
 
 i_b : entity axi_delay_lib.chan_delay_variable
 generic map (
+    SIMULATION           => SIMULATION,
+    GDT_FILENAME         => GDT_FILENAME,
     CHANNEL_TYPE         => "B", -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
@@ -968,6 +972,8 @@ i_ar: entity axi_delay_lib.chan_delay
 
 i_r : entity axi_delay_lib.chan_delay_variable
 generic map (
+    SIMULATION           => SIMULATION,
+    GDT_FILENAME         => GDT_FILENAME,
     CHANNEL_TYPE         => "R", -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
