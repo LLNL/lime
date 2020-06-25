@@ -23,6 +23,8 @@ use axi_delay_lib.axi_delay_pkg.all;
 
 entity channel_delay_tb is
     generic (
+        SIMULATION           : std_logic := '1';
+        GDT_FILENAME         : string := "../../../../data_in/bram_del_table.mem";
         CHANNEL_TYPE         : string := "R" ; -- valid values are:  AW, W, B, AR, R
         PRIORITY_QUEUE_WIDTH : integer := 32;
          
@@ -170,6 +172,8 @@ axi_master_int : entity axi_delay_lib.axi_master
 
 channel_delay_inst : entity axi_delay_lib.chan_delay_variable
    generic map (
+    SIMULATION        => SIMULATION,
+    GDT_FILENAME      => GDT_FILENAME,
     CHANNEL_TYPE      => CHANNEL_TYPE,
     PRIORITY_QUEUE_WIDTH =>  PRIORITY_QUEUE_WIDTH,
     C_AXI_ID_WIDTH    => C_AXI_ID_WIDTH,

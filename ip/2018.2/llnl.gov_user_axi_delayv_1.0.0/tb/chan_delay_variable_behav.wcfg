@@ -13,13 +13,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="5942275042fs"></ZoomStartTime>
-      <ZoomEndTime time="8022071308fs"></ZoomEndTime>
-      <Cursor1Time time="50000000000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="521000000001fs"></ZoomEndTime>
+      <Cursor1Time time="521000000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="224"></NameColumnWidth>
-      <ValueColumnWidth column_width="215"></ValueColumnWidth>
+      <ValueColumnWidth column_width="211"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="22" />
    <wvobject fp_name="/channel_delay_tb/sys_clk" type="logic">
@@ -38,14 +38,13 @@
       <obj_property name="ElementShortName">transmission_en</obj_property>
       <obj_property name="ObjectShortName">transmission_en</obj_property>
    </wvobject>
-   <wvobject fp_name="/channel_delay_tb/axi_slave_inst/timer" type="array">
-      <obj_property name="ElementShortName">timer[31:0]</obj_property>
-      <obj_property name="ObjectShortName">timer[31:0]</obj_property>
+   <wvobject fp_name="/channel_delay_tb/axi_slave_inst/timer" type="other">
+      <obj_property name="ElementShortName">timer</obj_property>
+      <obj_property name="ObjectShortName">timer</obj_property>
    </wvobject>
    <wvobject fp_name="group203" type="group">
       <obj_property name="label">axi_master</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/channel_delay_tb/axi_master_int/m_axi_aclk_i" type="logic">
          <obj_property name="ElementShortName">m_axi_aclk_i</obj_property>
          <obj_property name="ObjectShortName">m_axi_aclk_i</obj_property>
@@ -263,9 +262,9 @@
          <obj_property name="ElementShortName">data_xfer_in_prog</obj_property>
          <obj_property name="ObjectShortName">data_xfer_in_prog</obj_property>
       </wvobject>
-      <wvobject fp_name="/channel_delay_tb/axi_slave_inst/timer" type="array">
-         <obj_property name="ElementShortName">timer[31:0]</obj_property>
-         <obj_property name="ObjectShortName">timer[31:0]</obj_property>
+      <wvobject fp_name="/channel_delay_tb/axi_slave_inst/timer" type="other">
+         <obj_property name="ElementShortName">timer</obj_property>
+         <obj_property name="ObjectShortName">timer</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/axi_slave_inst/addr_resp_flag" type="logic">
          <obj_property name="ElementShortName">addr_resp_flag</obj_property>
@@ -391,6 +390,7 @@
       <wvobject fp_name="group5475" type="group">
          <obj_property name="label">I/O</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/channel_delay_tb/channel_delay_inst/s_axi_aclk" type="logic">
             <obj_property name="ElementShortName">s_axi_aclk</obj_property>
             <obj_property name="ObjectShortName">s_axi_aclk</obj_property>
@@ -1688,7 +1688,6 @@
       <wvobject fp_name="group6006" type="group">
          <obj_property name="label">priority_controller</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_controller_inst/clk_i" type="logic">
             <obj_property name="ElementShortName">clk_i</obj_property>
             <obj_property name="ObjectShortName">clk_i</obj_property>

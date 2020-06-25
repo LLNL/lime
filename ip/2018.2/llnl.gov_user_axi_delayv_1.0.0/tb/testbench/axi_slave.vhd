@@ -53,7 +53,8 @@ file maxi_out : TEXT open write_mode is "../../../../data_out/maxi_out.txt";
 signal s_axi_ready       : std_logic;
 
 signal data_xfer_in_prog : std_logic;
-signal timer             : std_logic_vector(31 downto 0);
+signal timer             : integer := 0;
+--signal timer             : std_logic_vector(31 downto 0);
 
 signal addr_resp_flag    : std_logic; -- asserted for either address cycle or response cycle
 signal first_data_flag   : std_logic; -- asserted for first event of data sequence
@@ -158,7 +159,8 @@ arbitration_pr : process(s_axi_aclk_i) begin
             s_axi_last   <= '0';
             s_axi_resp   <= (others => '0');
             
-            timer        <= (others => '0');
+            timer        <= 0;
+--            timer        <= (others => '0');
         else
             s_axi_resp   <= s_axi_resp_i;
             s_axi_id     <= s_axi_id_i;
@@ -177,7 +179,8 @@ arbitration_pr : process(s_axi_aclk_i) begin
             s_axi_last   <= s_axi_last_i;
             s_axi_resp   <= s_axi_resp_i;
             
-            timer        <= timer + '1';
+            timer        <= timer + 1;
+--            timer        <= timer + '1';
         end if;		        	      
     end if;		   
 end process;		      
@@ -203,7 +206,8 @@ begin
                 write      (line_out, string'(","));
                 hwrite     (line_out, s_axi_id);
                 write      (line_out, string'(","));
-                hwrite     (line_out, timer);
+                write      (line_out, timer);
+--                hwrite     (line_out, timer);
                 writeline  (maxi_out, line_out);
             end if;
 	    
@@ -227,7 +231,8 @@ begin
                 write      (line_out, string'(","));
                 hwrite     (line_out, s_axi_id);
                 write      (line_out, string'(","));
-                hwrite     (line_out, timer);
+                write     (line_out, timer);
+--                hwrite     (line_out, timer);
                 writeline  (maxi_out, line_out);
             end if;
 

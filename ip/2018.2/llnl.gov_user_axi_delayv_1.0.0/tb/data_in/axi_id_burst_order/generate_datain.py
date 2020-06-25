@@ -61,7 +61,7 @@ if os.path.exists(opfile_name):
 # s_axi_addr[39:0] => Hex address. HOWEVER, when s_axi_addr = 0xFFFFFFFFFF, axi_master treats this as a dummy cycle for the purpose of delaying the first event
 #-------------------------------------------------------------------------------
 ##                ieg  resp  id      addr          data                                strb    len   size   burst lock  cache   prot   qos     region  valid last
-parse(opfile_name, 50, 0b00, 0x0001, 0xFFFFFFFFFF, 0x123456789abcdef0123456789abcdef0, 0xffff, 0x04, 0b110, 0b01, 0b00, 0b0010, 0b010, 0b0000, 0b0001, 0b1,  0b0) ##Dummy cycle
+##parse(opfile_name, 50, 0b00, 0x0001, 0xFFFFFFFFFF, 0x123456789abcdef0123456789abcdef0, 0xffff, 0x04, 0b110, 0b01, 0b00, 0b0010, 0b010, 0b0000, 0b0001, 0b1,  0b1) ##Dummy cycle
 
 parse(opfile_name,  2, 0b00, 0x0001, 0x0000000001, 0x123456789abcdef0123456789abcdef0, 0xffff, 0x04, 0b110, 0b01, 0b00, 0b0010, 0b010, 0b0000, 0b0001, 0b1,  0b0)
 parse(opfile_name,  2, 0b00, 0x0001, 0x0000000001, 0xdeadbeefdeadbeefdeadbeefdeadbeef, 0xffff, 0x04, 0b110, 0b01, 0b00, 0b0010, 0b010, 0b0000, 0b0010, 0b1,  0b0)
