@@ -68,6 +68,7 @@ signal axi_id_new      : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0) := (others 
 signal axi_id_max_hi   : integer := 0; -- highest SRB with matching axi_id
 signal srb_insert      : integer := 0;
 signal found_axi_id    : std_logic := '0';
+signal din_ready       : std_logic := '0';
 
 type bit_signal is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic;
 signal s_shift_valid   : bit_signal;
@@ -108,6 +109,29 @@ signal dout_ready      : std_logic;
 --attribute mark_debug of s_shift_valid   : signal is "true";
 --attribute mark_debug of s_shift_ready   : signal is "true";
 
+----------------------------------------------------------------------------------------------
+-- FOR DEBUG (CHIPSCOPE) ONLY
+----------------------------------------------------------------------------------------------
+signal CS_delay_reg  : std_logic_vector(DELAY_WIDTH-1 downto 0) := (others => '0');  
+signal CS_id_reg     : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0) := (others => '0');  
+signal CS_valid_reg  : std_logic_vector(PRIORITY_QUEUE_WIDTH-1 downto 0);
+signal CS_srb_insert : integer := 0;
+signal CS_din_ready  : std_logic;
+signal CS_dout       : std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+signal CS_dout_valid : std_logic;
+signal CS_din        : std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+signal CS_din_en     : std_logic;
+
+attribute mark_debug : string;
+attribute mark_debug of CS_delay_reg  : signal is "true"; 
+attribute mark_debug of CS_id_reg     : signal is "true"; 
+attribute mark_debug of CS_valid_reg  : signal is "true"; 
+attribute mark_debug of CS_srb_insert : signal is "true"; 
+attribute mark_debug of CS_din_ready  : signal is "true"; 
+attribute mark_debug of CS_dout       : signal is "true"; 
+attribute mark_debug of CS_dout_valid : signal is "true"; 
+attribute mark_debug of CS_din        : signal is "true";
+attribute mark_debug of CS_din_en     : signal is "true";
 
 --******************************************************************************
 -- Connectivity and Logic
@@ -248,10 +272,13 @@ end process;
 --srb_insert <= axi_id_max_hi when (axi_id_max_hi > delay_srb_low) else delay_srb_low;
 srb_insert <= (axi_id_max_hi) when (found_axi_id = '1') and (axi_id_max_hi > delay_srb_low) else delay_srb_low;
 
+din_ready  <= '1' when (valid_reg(PRIORITY_QUEUE_WIDTH-5) = '0') else '0';
+
 ----------------------------------------------------------------------------------------------
 -- Output assignments
 ----------------------------------------------------------------------------------------------
-din_ready_o <= '1' when (valid_reg(PRIORITY_QUEUE_WIDTH-10) = '0') else '0';
+din_ready_o <= din_ready;
+--din_ready_o <= '1' when (valid_reg(PRIORITY_QUEUE_WIDTH-5) = '0') else '0';
 
 dout_o           <= m_shift_data(0)(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
 dout_valid_o     <= m_shift_valid(0);
@@ -263,6 +290,37 @@ SIM_clk           <= clk_i;
 SIM_nreset        <= nreset_i;
 SIM_random_dly    <= din_i(DELAY_WIDTH+C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+INDEX_WIDTH);
 SIM_random_dly_en <= din_en_i;
+
+----------------------------------------------------------------------------------------------
+-- FOR DEBUG (CHIPSCOPE) ONLY
+----------------------------------------------------------------------------------------------
+CHIPSCOPE_proc : process (clk_i, nreset_i) begin
+    if (nreset_i = '0') then
+      CS_delay_reg  <= (others => '0');
+      CS_id_reg     <= (others => '0');
+      CS_valid_reg  <= (others => '0');
+      CS_srb_insert <= 0;
+      CS_din_ready  <= '0';
+      CS_dout       <= (others => '0');
+      CS_dout_valid <= '0';
+      
+      CS_din         <= (others => '0');
+      CS_din_en      <= '0';
+
+    elsif rising_edge(clk_i) then
+      CS_delay_reg  <= delay_reg(0);
+      CS_id_reg     <= id_reg(0);
+      CS_valid_reg  <= valid_reg;
+      CS_srb_insert <= srb_insert;
+      CS_din_ready  <= din_ready;
+      CS_dout       <= m_shift_data(0)(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+      CS_dout_valid <= m_shift_valid(0);
+      
+      CS_din         <= din_i;
+      CS_din_en      <= din_en_i;
+
+    end if;
+end process;
 
 ----------------------------------------------------------------------------------------------
 end behavioral;
