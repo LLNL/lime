@@ -46,7 +46,7 @@ generic (
     DELAY_WIDTH           : integer := 24;
 
     GDT_FILENAME          : string := "bram_del_table.mem";
-    GDT_ADDR_BITS         : integer := 8;
+    GDT_ADDR_BITS         : integer := 10;
     GDT_DATA_BITS         : integer := 24;
 
     BYPASS_MINICAM        : integer := 1;
