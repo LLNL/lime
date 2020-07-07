@@ -79,34 +79,6 @@ signal delay_ip_ne_zero      : std_logic;
 
 signal debug_shift   : std_logic_vector(2 downto 0); -- for tracking "state" during simulation
 
---------------------------------------------------------------------------------
---attribute mark_debug : string;
---
---attribute mark_debug of delay_ip     : signal is "true";
---attribute mark_debug of id_ip        : signal is "true";
---attribute mark_debug of index_ip     : signal is "true";
---
---attribute mark_debug of delay_ip_lt_delay_reg : signal is "true";
---attribute mark_debug of delay_ip_ne_zero      : signal is "true";
---
---attribute mark_debug of id_reg        : signal is "true";
---attribute mark_debug of index_reg     : signal is "true";
---attribute mark_debug of delay_reg     : signal is "true";
---attribute mark_debug of valid_reg     : signal is "true";
---attribute mark_debug of debug_shift     : signal is "true";
---
---attribute mark_debug of s_shift_ready_o : signal is "true";
---attribute mark_debug of srb_insert_i    : signal is "true";
---attribute mark_debug of index_srb_i     : signal is "true";
---
---attribute mark_debug of m_data_o        : signal is "true";
---attribute mark_debug of m_data_en_o    	: signal is "true";
---attribute mark_debug of m_shift_data_o 	: signal is "true";
---attribute mark_debug of m_shift_valid_o	: signal is "true";
---attribute mark_debug of delay_reg_o 	: signal is "true";
---attribute mark_debug of id_reg_o    	: signal is "true";
---attribute mark_debug of valid_reg_o 	: signal is "true";
-
 --******************************************************************************
 -- Connectivity and Logic
 --******************************************************************************

@@ -197,10 +197,10 @@ proc cr_bd_main {parentCell} {
 		CONFIG.PSU__USE__S_AXI_GP2 {1} \
 		CONFIG.PSU__USE__S_AXI_GP3 {1} \
 		CONFIG.PSU__MAXIGP1__DATA_WIDTH {32} \
-		CONFIG.PSU__CRL_APB__PL0_REF_CTRL__FREQMHZ {200} \
+		CONFIG.PSU__CRL_APB__PL0_REF_CTRL__FREQMHZ {250} \
 		CONFIG.PSU__FPGA_PL1_ENABLE {1} \
 		CONFIG.PSU__CRL_APB__PL1_REF_CTRL__SRCSEL {IOPLL} \
-		CONFIG.PSU__CRL_APB__PL1_REF_CTRL__FREQMHZ {200} \
+		CONFIG.PSU__CRL_APB__PL1_REF_CTRL__FREQMHZ {300} \
 		CONFIG.PSU__NUM_FABRIC_RESETS {2} \
 		CONFIG.PSU__HIGH_ADDRESS__ENABLE {1} \
 		CONFIG.PSU__CRF_APB__ACPU_CTRL__FREQMHZ {1100} \
@@ -500,6 +500,17 @@ add_files -fileset [current_fileset -constrset] "$cpath/system.xdc"
 set_property TARGET_CONSTRS_FILE "$cpath/system.xdc" [current_fileset -constrset]
 set_property USED_IN_SYNTHESIS 0 [get_files "$cpath/system.xdc"]
 puts "########## create system.xdc end ##########"
+
+set_property STEPS.SYNTH_DESIGN.ARGS.FLATTEN_HIERARCHY rebuilt [get_runs synth_1]
+set_property STEPS.SYNTH_DESIGN.ARGS.FANOUT_LIMIT 100 [get_runs synth_1]
+set_property STEPS.SYNTH_DESIGN.ARGS.DIRECTIVE AlternateRoutability [get_runs synth_1]
+
+set_property STEPS.OPT_DESIGN.ARGS.IS_ENABLED true [get_runs impl_1]
+set_property STEPS.OPT_DESIGN.ARGS.DIRECTIVE Default [get_runs impl_1]
+set_property STEPS.PLACE_DESIGN.ARGS.DIRECTIVE ExtraTimingOpt [get_runs impl_1]
+set_property STEPS.PHYS_OPT_DESIGN.ARGS.IS_ENABLED true [get_runs impl_1]
+set_property STEPS.PHYS_OPT_DESIGN.ARGS.DIRECTIVE Explore [get_runs impl_1]
+set_property STEPS.ROUTE_DESIGN.ARGS.DIRECTIVE NoTimingRelaxation [get_runs impl_1]
 
 puts "INFO: Project created: ${proj_name}"
 close_project

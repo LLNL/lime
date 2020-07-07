@@ -3,7 +3,7 @@
 -- 20191119 CM Initial creation 
 -- random_dly.vhd: This module uses a 16-bit lfsr (from http://emmanuel.pouly.free.fr/fibo.html) to create a 
 --                 random delay funtion. The taps for the 10-bit version is from 
---                 courses.cse.tamu.edu/walker/cscd680/lfsr_table.pdf
+--                 courses.cse.tamu.edu/walker/csce680/lfsr_table.pdf
 --**********************************************************************************************************
 
 library ieee;
@@ -50,8 +50,11 @@ architecture behavioral of random_dly is
 --******************************************************************************
 -- Constants
 --******************************************************************************
---constant polynome : std_logic_vector (15 downto 0)          := "1011010000000000"; -- 16-bit polynomial
-constant polynome : std_logic_vector (LFSR_BITS-1 downto 0) := "1101100000";
+constant polynome16 : std_logic_vector (15 downto 0)  := "1011010000000000"; -- 16-bit polynomial
+constant polynome12 : std_logic_vector (11 downto 0)  := "110010100000"; -- 12-bit polynomial
+constant polynome10 : std_logic_vector (9 downto 0)   := "1101100000";
+constant polynome9  : std_logic_vector (8 downto 0)   := "110110000";
+constant polynome8  : std_logic_vector (7 downto 0)   := "10111000";
 
 --******************************************************************************
 --Signal Definitions
@@ -66,6 +69,8 @@ signal random_dly   : std_logic_vector(23 downto 0);
 signal addrb        : std_logic_vector(GDT_ADDR_BITS-1 downto 0);
 
 signal gdt_wren     : std_logic_vector(0 downto 0);
+signal polynome     : std_logic_vector(LFSR_BITS-1 downto 0);
+
 --******************************************************************************
 --Component Definitions
 --******************************************************************************
@@ -103,8 +108,32 @@ PORT MAP (
     doutb => random_dly
 );
 
---addrb <= lfsr_tmp(GDT_ADDR_BITS+2-1 downto 2);
---addrb <= lfsr_tmp(GDT_ADDR_BITS-1 downto 0);
+----------------------------------------------------------------------------------------------
+-- Generate polynome --
+----------------------------------------------------------------------------------------------
+
+gen_16bit : if (LFSR_BITS = 16) generate
+    polynome <= polynome16;
+end generate gen_16bit; 
+
+gen_12bit : if (LFSR_BITS = 12) generate
+    polynome <= polynome12;
+end generate gen_12bit; 
+
+gen_10bit : if (LFSR_BITS = 10) generate
+    polynome <= polynome10;
+end generate gen_10bit; 
+
+gen_9bit : if (LFSR_BITS = 9) generate
+    polynome <= polynome9;
+end generate gen_9bit; 
+
+gen_8bit : if (LFSR_BITS = 8) generate
+    polynome <= polynome8;
+end generate gen_8bit; 
+
+----------------------------------------------------------------------------------------------
+
 addrb <= lfsr_tmp(LFSR_BITS-1 downto LFSR_BITS-GDT_ADDR_BITS);
 
 process (clk_i, rst_i) 
@@ -137,8 +166,10 @@ end process;
 ----------------------------------------------------------------------------------------------
 -- Output assignments
 ----------------------------------------------------------------------------------------------
-SIM_lfsr_out <= lfsr_tmp;
-SIM_addrb    <= addrb;
+gen_SIMout: if (SIMULATION = '1') generate
+    SIM_lfsr_out <= lfsr_tmp;
+    SIM_addrb    <= addrb;
+end generate gen_SIMout;
 
 ----------------------------------------------------------------------------------------------
 -- Output assignments

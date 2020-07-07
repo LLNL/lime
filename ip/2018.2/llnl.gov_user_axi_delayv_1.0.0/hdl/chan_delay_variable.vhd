@@ -21,19 +21,21 @@ use axi_delay_lib.axi_delay_pkg.all;
 entity chan_delay_variable is
 generic (
     SIMULATION           : std_logic := '0';
-    GDT_FILENAME         : string := "bram_del_table.mem";
     CHANNEL_TYPE         : string  := "AW" ; -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH : integer := 16;
     DELAY_WIDTH          : integer := 24;
-    BYPASS_MINICAM       : integer := 1;
+
     -- AXI-Full Bus Interface
     C_AXI_ID_WIDTH       : integer := 16;
     C_AXI_ADDR_WIDTH     : integer := 40;
     C_AXI_DATA_WIDTH     : integer := 128;
     
-    GDT_ADDR_BITS        : integer := 10;
+    GDT_FILENAME         : string := "bram_del_table.mem";
+    GDT_ADDR_BITS        : integer := 8;
     GDT_DATA_BITS        : integer := 24;
-    -- minicam generics
+
+    -- minicam and packet buffer generics
+    BYPASS_MINICAM       : integer := 1;
     CAM_DEPTH            : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
     CAM_WIDTH            : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
     NUM_EVENTS_PER_MBUF  : integer := 8;  -- maximum number of events each minibuffer can hold
@@ -175,20 +177,6 @@ signal pq_dout            : std_logic_vector(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_
 signal pq_dout_valid      : std_logic;
 signal pq_dout_ready      : std_logic;
 signal pq_data_sr         : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
-
---------------------------------------------------------------------------------
---For Chipscope
---attribute mark_debug : string;
---attribute mark_debug of pb_wr        : signal is "true";
---attribute mark_debug of pb_cntr_ptr  : signal is "true";
---attribute mark_debug of pb_info_data : signal is "true";
---attribute mark_debug of pktbuf_enb   : signal is "true";
---attribute mark_debug of pktbuf_addrb : signal is "true";
---attribute mark_debug of pktbuf_doutb : signal is "true";
-
---attribute mark_debug of pq_data_complete : signal is "true";
---attribute mark_debug of random_dly       : signal is "true";
---attribute mark_debug of pq_data          : signal is "true";
 
 --******************************************************************************
 --Component Definitions
@@ -459,6 +447,7 @@ pq_data_complete <= random_dly & pq_data;
 
 priority_queue_inst : entity axi_delay_lib.priority_queue
 generic map (
+    SIMULATION           => SIMULATION,
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
     INDEX_WIDTH          => MINIBUF_IDX_WIDTH,

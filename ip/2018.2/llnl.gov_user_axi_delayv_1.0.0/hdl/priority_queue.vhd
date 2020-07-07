@@ -16,6 +16,7 @@ use axi_delay_lib.shift_reg_block;
 
 entity priority_queue is
 generic (
+    SIMULATION           : std_logic := '0';
     PRIORITY_QUEUE_WIDTH : integer := 32;
     DELAY_WIDTH          : integer := 32;
     INDEX_WIDTH          : integer := 32;
@@ -80,35 +81,6 @@ signal s_data_en       : bit_signal;
 
 signal dout_ready      : std_logic;
 
---------------------------------------------------------------------------------
---attribute mark_debug : string;
-
---attribute mark_debug of din_i           : signal is "true";
---attribute mark_debug of din_en_i        : signal is "true";
---attribute mark_debug of din_ready_o     : signal is "true";
-
---attribute mark_debug of dout_o          : signal is "true";
---attribute mark_debug of dout_valid_o    : signal is "true";
---attribute mark_debug of dout_ready_i    : signal is "true";
---attribute mark_debug of axi_id_ins_err_o: signal is "true";
-
---attribute mark_debug of delay_reg       : signal is "true";
---attribute mark_debug of id_reg          : signal is "true";
---attribute mark_debug of valid_reg       : signal is "true";
---attribute mark_debug of srb_insert      : signal is "true";
---attribute mark_debug of delay_srb_low   : signal is "true";
---attribute mark_debug of axi_id_max_hi   : signal is "true";
---attribute mark_debug of delay_new       : signal is "true";
---attribute mark_debug of axi_id_new      : signal is "true";
-
---attribute mark_debug of m_data_en       : signal is "true";
---attribute mark_debug of s_data_en       : signal is "true";
-
---attribute mark_debug of m_shift_valid   : signal is "true";
---attribute mark_debug of m_shift_ready   : signal is "true";
---attribute mark_debug of s_shift_valid   : signal is "true";
---attribute mark_debug of s_shift_ready   : signal is "true";
-
 ----------------------------------------------------------------------------------------------
 -- FOR DEBUG (CHIPSCOPE) ONLY
 ----------------------------------------------------------------------------------------------
@@ -122,16 +94,16 @@ signal CS_dout_valid : std_logic;
 signal CS_din        : std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
 signal CS_din_en     : std_logic;
 
-attribute mark_debug : string;
-attribute mark_debug of CS_delay_reg  : signal is "true"; 
-attribute mark_debug of CS_id_reg     : signal is "true"; 
-attribute mark_debug of CS_valid_reg  : signal is "true"; 
-attribute mark_debug of CS_srb_insert : signal is "true"; 
-attribute mark_debug of CS_din_ready  : signal is "true"; 
-attribute mark_debug of CS_dout       : signal is "true"; 
-attribute mark_debug of CS_dout_valid : signal is "true"; 
-attribute mark_debug of CS_din        : signal is "true";
-attribute mark_debug of CS_din_en     : signal is "true";
+--attribute mark_debug : string;
+--attribute mark_debug of CS_delay_reg  : signal is "true"; 
+--attribute mark_debug of CS_id_reg     : signal is "true"; 
+--attribute mark_debug of CS_valid_reg  : signal is "true"; 
+--attribute mark_debug of CS_srb_insert : signal is "true"; 
+--attribute mark_debug of CS_din_ready  : signal is "true"; 
+--attribute mark_debug of CS_dout       : signal is "true"; 
+--attribute mark_debug of CS_dout_valid : signal is "true"; 
+--attribute mark_debug of CS_din        : signal is "true";
+--attribute mark_debug of CS_din_en     : signal is "true";
 
 --******************************************************************************
 -- Connectivity and Logic
@@ -286,10 +258,12 @@ dout_valid_o     <= m_shift_valid(0);
 ----------------------------------------------------------------------------------------------
 -- Global signals for Guassian Delay Table Analysis
 ----------------------------------------------------------------------------------------------
-SIM_clk           <= clk_i;
-SIM_nreset        <= nreset_i;
-SIM_random_dly    <= din_i(DELAY_WIDTH+C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+INDEX_WIDTH);
-SIM_random_dly_en <= din_en_i;
+gen_SIMout: if (SIMULATION = '1') generate
+    SIM_clk           <= clk_i;
+    SIM_nreset        <= nreset_i;
+    SIM_random_dly    <= din_i(DELAY_WIDTH+C_AXI_ID_WIDTH+INDEX_WIDTH-1 downto C_AXI_ID_WIDTH+INDEX_WIDTH);
+    SIM_random_dly_en <= din_en_i;
+end generate gen_SIMout;
 
 ----------------------------------------------------------------------------------------------
 -- FOR DEBUG (CHIPSCOPE) ONLY

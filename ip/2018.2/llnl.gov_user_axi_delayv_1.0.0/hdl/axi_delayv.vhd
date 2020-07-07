@@ -21,17 +21,16 @@ use xpm.vcomponents.all;
 entity axi_delayv is
 
 generic (
-        SIMULATION            : std_logic := '0';
-        GDT_FILENAME          : string := "bram_del_table.mem";
+    SIMULATION            : std_logic := '0';
 	C_FAMILY              : string := "rtl";
 	C_AXI_PROTOCOL        : integer := P_AXI4;
 	C_MEM_ADDR_WIDTH      : integer := 30;
 	C_COUNTER_WIDTH       : integer := 20;
 	C_FIFO_DEPTH_AW       : integer := 0;
 	C_FIFO_DEPTH_W        : integer := 0;
-	C_FIFO_DEPTH_B        : integer := 0;
+--	C_FIFO_DEPTH_B        : integer := 0;
 	C_FIFO_DEPTH_AR       : integer := 0;
-	C_FIFO_DEPTH_R        : integer := 0;
+--	C_FIFO_DEPTH_R        : integer := 0;
 
 	-- AXI-Lite Bus Interface
 	C_AXI_LITE_ADDR_WIDTH : integer := 18;
@@ -41,19 +40,19 @@ generic (
 	C_AXI_ID_WIDTH        : integer := 16;
 	C_AXI_ADDR_WIDTH      : integer := 40;
 	C_AXI_DATA_WIDTH      : integer := 128;
---	C_AXI_AWUSER_WIDTH    : integer := 1; -- AXI4
---	C_AXI_ARUSER_WIDTH    : integer := 1; -- AXI4
---	C_AXI_WUSER_WIDTH     : integer := 1; -- AXI4
---	C_AXI_RUSER_WIDTH     : integer := 1; -- AXI4
---	C_AXI_BUSER_WIDTH     : integer := 1 -- AXI4
 
         -- chan_delay_variable generics
-        PRIORITY_QUEUE_WIDTH  : integer := 16;
-        DELAY_WIDTH           : integer := 24;
-        BYPASS_MINICAM        : integer := 1;
-        CAM_DEPTH             : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
---        CAM_WIDTH             : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
-        NUM_MINI_BUFS         : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported    
+    PRIORITY_QUEUE_WIDTH  : integer := 16;
+    DELAY_WIDTH           : integer := 24;
+
+    GDT_FILENAME          : string := "bram_del_table.mem";
+    GDT_ADDR_BITS         : integer := 8;
+    GDT_DATA_BITS         : integer := 24;
+
+    BYPASS_MINICAM        : integer := 1;
+    CAM_DEPTH             : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
+    NUM_EVENTS_PER_MBUF   : integer := 8;  -- maximum number of events each minibuffer can hold
+    NUM_MINI_BUFS         : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported    
 );
 
 port (
@@ -214,7 +213,7 @@ architecture behavioral of axi_delayv is
 constant NREG           : integer := 5;
 constant REG_ADDR_WIDTH : integer := log2rp(NREG);
 constant WORD_LSB       : integer := log2rp(C_AXI_LITE_DATA_WIDTH/8);
-constant CAM_WIDTH      : integer := C_AXI_ID_WIDTH; -- maximum width of axi_id input. Requirement: CAMWIDTH <= 
+constant CAM_WIDTH      : integer := C_AXI_ID_WIDTH; -- maximum width of axi_id input.
 
 --******************************************************************************
 --Signal Definitions
@@ -283,80 +282,53 @@ signal gdt_r_rdata     : std_logic_vector(23 downto 0);
 signal gdt_r_addr      : std_logic_vector(15 downto 0);
 
 --------------------------------------------------------------------------------
-attribute mark_debug : string;
+--attribute mark_debug : string;
 
---attribute mark_debug of s_axi_lite_aresetn : signal is "true";
---attribute mark_debug of s_axi_lite_araddr  : signal is "true";
---attribute mark_debug of s_axi_lite_arvalid : signal is "true";
---attribute mark_debug of s_axi_lite_arready : signal is "true";
---
---attribute mark_debug of s_axi_lite_awaddr  : signal is "true";
---attribute mark_debug of s_axi_lite_awvalid : signal is "true";
---attribute mark_debug of s_axi_lite_awready : signal is "true";
---
---attribute mark_debug of s_axi_lite_wvalid  : signal is "true";
---attribute mark_debug of s_axi_lite_wready  : signal is "true";
---
---attribute mark_debug of s_axi_lite_bvalid  : signal is "true";
---attribute mark_debug of s_axi_lite_bready  : signal is "true";
---
---attribute mark_debug of s_axi_lite_rvalid  : signal is "true";
---attribute mark_debug of s_axi_lite_rready  : signal is "true";
+--attribute mark_debug of s_axi_aresetn      : signal is "true";
+--attribute mark_debug of s_axi_arid         : signal is "true";
+--attribute mark_debug of s_axi_arvalid      : signal is "true";
+--attribute mark_debug of s_axi_arready      : signal is "true";
 
-attribute mark_debug of s_axi_aresetn      : signal is "true";
-attribute mark_debug of s_axi_arid         : signal is "true";
-attribute mark_debug of s_axi_arvalid      : signal is "true";
-attribute mark_debug of s_axi_arready      : signal is "true";
+--attribute mark_debug of s_axi_rid          : signal is "true";
+--attribute mark_debug of s_axi_rlast        : signal is "true";
+--attribute mark_debug of s_axi_rvalid       : signal is "true";
+--attribute mark_debug of s_axi_rready       : signal is "true";
 
-attribute mark_debug of s_axi_rid          : signal is "true";
-attribute mark_debug of s_axi_rlast        : signal is "true";
-attribute mark_debug of s_axi_rvalid       : signal is "true";
-attribute mark_debug of s_axi_rready       : signal is "true";
+--attribute mark_debug of s_axi_awid         : signal is "true";
+--attribute mark_debug of s_axi_awvalid      : signal is "true";
+--attribute mark_debug of s_axi_awready      : signal is "true";
 
-attribute mark_debug of s_axi_awid         : signal is "true";
-attribute mark_debug of s_axi_awvalid      : signal is "true";
-attribute mark_debug of s_axi_awready      : signal is "true";
+--attribute mark_debug of s_axi_wid          : signal is "true";
+--attribute mark_debug of s_axi_wlast        : signal is "true";
+--attribute mark_debug of s_axi_wvalid       : signal is "true";
+--attribute mark_debug of s_axi_wready       : signal is "true";
 
-attribute mark_debug of s_axi_wid          : signal is "true";
-attribute mark_debug of s_axi_wlast        : signal is "true";
-attribute mark_debug of s_axi_wvalid       : signal is "true";
-attribute mark_debug of s_axi_wready       : signal is "true";
+--attribute mark_debug of s_axi_bid          : signal is "true";
+--attribute mark_debug of s_axi_bvalid       : signal is "true";
+--attribute mark_debug of s_axi_bready       : signal is "true";
 
-attribute mark_debug of s_axi_bid          : signal is "true";
-attribute mark_debug of s_axi_bvalid       : signal is "true";
-attribute mark_debug of s_axi_bready       : signal is "true";
+--attribute mark_debug of m_axi_aresetn  : signal is "true";
+--attribute mark_debug of m_axi_arid     : signal is "true";
+--attribute mark_debug of m_axi_arvalid  : signal is "true";
+--attribute mark_debug of m_axi_arready  : signal is "true";
 
-attribute mark_debug of m_axi_aresetn  : signal is "true";
-attribute mark_debug of m_axi_arid     : signal is "true";
-attribute mark_debug of m_axi_arvalid  : signal is "true";
-attribute mark_debug of m_axi_arready  : signal is "true";
+--attribute mark_debug of m_axi_rid      : signal is "true";
+--attribute mark_debug of m_axi_rlast    : signal is "true";
+--attribute mark_debug of m_axi_rvalid   : signal is "true";
+--attribute mark_debug of m_axi_rready   : signal is "true";
 
-attribute mark_debug of m_axi_rid      : signal is "true";
-attribute mark_debug of m_axi_rlast    : signal is "true";
-attribute mark_debug of m_axi_rvalid   : signal is "true";
-attribute mark_debug of m_axi_rready   : signal is "true";
+--attribute mark_debug of m_axi_awid     : signal is "true";
+--attribute mark_debug of m_axi_awvalid  : signal is "true";
+--attribute mark_debug of m_axi_awready  : signal is "true";
 
-attribute mark_debug of m_axi_awid     : signal is "true";
-attribute mark_debug of m_axi_awvalid  : signal is "true";
-attribute mark_debug of m_axi_awready  : signal is "true";
+--attribute mark_debug of m_axi_wid      : signal is "true";
+--attribute mark_debug of m_axi_wlast    : signal is "true";
+--attribute mark_debug of m_axi_wvalid   : signal is "true";
+--attribute mark_debug of m_axi_wready   : signal is "true";
 
-attribute mark_debug of m_axi_wid      : signal is "true";
-attribute mark_debug of m_axi_wlast    : signal is "true";
-attribute mark_debug of m_axi_wvalid   : signal is "true";
-attribute mark_debug of m_axi_wready   : signal is "true";
-
-attribute mark_debug of m_axi_bid      : signal is "true";
-attribute mark_debug of m_axi_bvalid   : signal is "true";
-attribute mark_debug of m_axi_bready   : signal is "true";
-
---attribute mark_debug of w_chipsel      : signal is "true";
---attribute mark_debug of r_chipsel      : signal is "true";
---
---attribute mark_debug of gdt_b_wren     : signal is "true";
---attribute mark_debug of gdt_b_addr     : signal is "true";
---
---attribute mark_debug of gdt_r_wren     : signal is "true";
---attribute mark_debug of gdt_r_addr     : signal is "true";
+--attribute mark_debug of m_axi_bid      : signal is "true";
+--attribute mark_debug of m_axi_bvalid   : signal is "true";
+--attribute mark_debug of m_axi_bready   : signal is "true";
 
 --------------------------------------------------------------------------------
 
@@ -786,7 +758,6 @@ i_w: entity axi_delay_lib.chan_delay
 i_b : entity axi_delay_lib.chan_delay_variable
 generic map (
     SIMULATION           => SIMULATION,
-    GDT_FILENAME         => GDT_FILENAME,
     CHANNEL_TYPE         => "B", -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
@@ -795,9 +766,14 @@ generic map (
     C_AXI_ADDR_WIDTH     => C_AXI_ADDR_WIDTH,
     C_AXI_DATA_WIDTH     => C_AXI_DATA_WIDTH,
     
+    GDT_FILENAME         => GDT_FILENAME,
+    GDT_ADDR_BITS        => GDT_ADDR_BITS,
+    GDT_DATA_BITS        => GDT_DATA_BITS,
+
     BYPASS_MINICAM       => BYPASS_MINICAM,
     CAM_DEPTH            => CAM_DEPTH,
     CAM_WIDTH            => CAM_WIDTH,
+    NUM_EVENTS_PER_MBUF  => NUM_EVENTS_PER_MBUF,
     NUM_MINI_BUFS        => NUM_MINI_BUFS
 )
 port map (
@@ -971,7 +947,6 @@ i_ar: entity axi_delay_lib.chan_delay
 i_r : entity axi_delay_lib.chan_delay_variable
 generic map (
     SIMULATION           => SIMULATION,
-    GDT_FILENAME         => GDT_FILENAME,
     CHANNEL_TYPE         => "R", -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
@@ -979,10 +954,15 @@ generic map (
     C_AXI_ID_WIDTH       => C_AXI_ID_WIDTH,
     C_AXI_ADDR_WIDTH     => C_AXI_ADDR_WIDTH,
     C_AXI_DATA_WIDTH     => C_AXI_DATA_WIDTH,
-    
+
+    GDT_FILENAME         => GDT_FILENAME,
+    GDT_ADDR_BITS        => GDT_ADDR_BITS,
+    GDT_DATA_BITS        => GDT_DATA_BITS,
+
     BYPASS_MINICAM       => BYPASS_MINICAM,
     CAM_DEPTH            => CAM_DEPTH,
     CAM_WIDTH            => CAM_WIDTH,
+    NUM_EVENTS_PER_MBUF  => NUM_EVENTS_PER_MBUF,
     NUM_MINI_BUFS        => NUM_MINI_BUFS
 )
 port map (
