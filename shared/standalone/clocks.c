@@ -9,6 +9,7 @@
 
 #include <stdio.h> /* printf */
 #include "clocks.h"
+#include "gdt.h"
 
 #if defined(ZYNQ) && ZYNQ == _Z7_
 /* Zynq-7000 Device */
@@ -65,20 +66,24 @@ void clocks_emulate(void)
 	}
 
 #if defined(XPAR_DELAY_0_AXI_DELAY_0_BASEADDR)
-	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
-	volatile unsigned int *delay1 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR; /* slot 0, CPU DRAM W, R */
-	delay0[2] = 4*(T_SRAM_W+T_TRANS)           - 44; delay0[4] = 4*(T_SRAM_R+T_TRANS)           - 39; /* .25 ns per count */
-	delay1[2] = 4*(T_DRAM_W+T_QUEUE_W+T_TRANS) - 45; delay1[4] = 4*(T_DRAM_R+T_QUEUE_R+T_TRANS) - 44;
-	printf("Slot 0 - CPU_SRAM_B:%u CPU_SRAM_R:%u CPU_DRAM_B:%u CPU_DRAM_R:%u\n", delay0[2], delay0[4], delay1[2], delay1[4]);
+	/* --- Configure the Gaussian Delay Tables (GTD) --- */
+	config_gdt();
+	printf("Gaussian Delay Tables Initialized\n");
+
+//	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
+//	volatile unsigned int *delay1 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR; /* slot 0, CPU DRAM W, R */
+//	delay0[2] = 4*(T_SRAM_W+T_TRANS)           - 44; delay0[4] = 4*(T_SRAM_R+T_TRANS)           - 39; /* .25 ns per count */
+//	delay1[2] = 4*(T_DRAM_W+T_QUEUE_W+T_TRANS) - 45; delay1[4] = 4*(T_DRAM_R+T_QUEUE_R+T_TRANS) - 44;
+//	printf("Slot 0 - CPU_SRAM_B:%u CPU_SRAM_R:%u CPU_DRAM_B:%u CPU_DRAM_R:%u\n", delay0[2], delay0[4], delay1[2], delay1[4]);
 #endif
 
-#if defined(XPAR_DELAY_1_AXI_DELAY_0_BASEADDR)
-	volatile unsigned int *delay2 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR; /* slot 1, ACC SRAM W, R */
-	volatile unsigned int *delay3 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR; /* slot 1, ACC DRAM W, R */
-	delay2[2] = 4*(T_SRAM_W)                   - 21; delay2[4] = 4*(T_SRAM_R)                   - 36;
-	delay3[2] = 4*(T_DRAM_W+T_QUEUE_W)         - 21; delay3[4] = 4*(T_DRAM_R+T_QUEUE_R)         - 37;
-	printf("Slot 1 - ACC_SRAM_B:%u ACC_SRAM_R:%u ACC_DRAM_B:%u ACC_DRAM_R:%u\n", delay2[2], delay2[4], delay3[2], delay3[4]);
-#endif
+//#if defined(XPAR_DELAY_1_AXI_DELAY_0_BASEADDR)
+//	volatile unsigned int *delay2 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR; /* slot 1, ACC SRAM W, R */
+//	volatile unsigned int *delay3 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR; /* slot 1, ACC DRAM W, R */
+//	delay2[2] = 4*(T_SRAM_W)                   - 21; delay2[4] = 4*(T_SRAM_R)                   - 36;
+//	delay3[2] = 4*(T_DRAM_W+T_QUEUE_W)         - 21; delay3[4] = 4*(T_DRAM_R+T_QUEUE_R)         - 37;
+//	printf("Slot 1 - ACC_SRAM_B:%u ACC_SRAM_R:%u ACC_DRAM_B:%u ACC_DRAM_R:%u\n", delay2[2], delay2[4], delay3[2], delay3[4]);
+//#endif
 }
 
 void clocks_normal(void)
@@ -93,16 +98,26 @@ void clocks_normal(void)
 		printf(" -- error: clocks_normal: clock configuration not set\n");
 		return;
 	}
+
+	/* --- Configure the Gaussian Delay Tables (GTD) --- */
+	clear_gdt();
+	printf("Gaussian Delay Tables have been cleared\n");
+
 #if defined(XPAR_DELAY_0_AXI_DELAY_0_BASEADDR)
-	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
-	volatile unsigned int *delay1 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR; /* slot 0, CPU DRAM W, R */
-	delay0[2] = 0; delay0[4] = 0; delay1[2] = 0; delay1[4] = 0;
+	/* --- Configure the Gaussian Delay Tables (GTD) --- */
+	clear_gdt();
+	printf("Gaussian Delay Tables have been cleared\n");
+
+//	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
+//	volatile unsigned int *delay1 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR; /* slot 0, CPU DRAM W, R */
+//	delay0[2] = 0; delay0[4] = 0; delay1[2] = 0; delay1[4] = 0;
 #endif
-#if defined(XPAR_DELAY_1_AXI_DELAY_0_BASEADDR)
-	volatile unsigned int *delay2 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR; /* slot 1, ACC SRAM W, R */
-	volatile unsigned int *delay3 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR; /* slot 1, ACC DRAM W, R */
-	delay2[2] = 0; delay2[4] = 0; delay3[2] = 0; delay3[4] = 0;
-#endif
+
+//#if defined(XPAR_DELAY_1_AXI_DELAY_0_BASEADDR)
+//	volatile unsigned int *delay2 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR; /* slot 1, ACC SRAM W, R */
+//	volatile unsigned int *delay3 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR; /* slot 1, ACC DRAM W, R */
+//	delay2[2] = 0; delay2[4] = 0; delay3[2] = 0; delay3[4] = 0;
+//#endif
 }
 
 #elif defined(ZYNQ) && ZYNQ == _ZU_
@@ -127,7 +142,7 @@ void clocks_normal(void)
 #define IOPLL_CHK  0x00015A00 /*             NA,    PS_REF_CLK,       1,         90,        0,       0 */
 #define PL0_REF_CTRL    0x0C0 /* 24 CLKACT, 21:16 DIVISOR1, 13:8 DIVISOR0, 2:0 SRCSEL */
 #define PL0_EMUL   0x01011800 /*         1,              1,            24,      IOPLL */
-#define PL0_NORM   0x01010800 /*         1,              1,             8,      IOPLL */
+#define PL0_NORM   0x01010600 /*         1,              1,             6,      IOPLL */
 #define PL1_REF_CTRL    0x0C4 /* 24 CLKACT, 21:16 DIVISOR1, 13:8 DIVISOR0, 2:0 SRCSEL */
 
 void clocks_emulate(void)
@@ -165,20 +180,24 @@ void clocks_emulate(void)
 	/* The values here likely apply to only one of the boards, */
 	/* since the DDR memories run at different frequencies. */
 #if defined(XPAR_DELAY_0_AXI_DELAY_0_BASEADDR)
-	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
-	volatile unsigned int *delay1 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR; /* slot 0, CPU DRAM W, R */
-	delay0[2] = 6*(T_SRAM_W+T_TRANS)           - 52; delay0[4] = 6*(T_SRAM_R+T_TRANS)           - 69; /* .16 ns per count */
-	delay1[2] = 6*(T_DRAM_W+T_QUEUE_W+T_TRANS) - 52; delay1[4] = 6*(T_DRAM_R+T_QUEUE_R+T_TRANS) - 69;
-	printf("Slot 0 - CPU_SRAM_B:%u CPU_SRAM_R:%u CPU_DRAM_B:%u CPU_DRAM_R:%u\n", delay0[2], delay0[4], delay1[2], delay1[4]);
+	/* --- Configure the Gaussian Delay Tables (GTD) --- */
+	config_gdt();
+	printf("Gaussian Delay Tables Initialized\n");
+
+//	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
+//	volatile unsigned int *delay1 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR; /* slot 0, CPU DRAM W, R */
+//	delay0[2] = 6*(T_SRAM_W+T_TRANS)           - 52; delay0[4] = 6*(T_SRAM_R+T_TRANS)           - 69; /* .16 ns per count */
+//	delay1[2] = 6*(T_DRAM_W+T_QUEUE_W+T_TRANS) - 52; delay1[4] = 6*(T_DRAM_R+T_QUEUE_R+T_TRANS) - 69;
+//	printf("Slot 0 - CPU_SRAM_B:%u CPU_SRAM_R:%u CPU_DRAM_B:%u CPU_DRAM_R:%u\n", delay0[2], delay0[4], delay1[2], delay1[4]);
 #endif
 
-#if defined(XPAR_DELAY_1_AXI_DELAY_0_BASEADDR)
-	volatile unsigned int *delay2 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR; /* slot 1, ACC SRAM W, R */
-	volatile unsigned int *delay3 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR; /* slot 1, ACC DRAM W, R */
-	delay2[2] = 6*(T_SRAM_W)                   - 48; delay2[4] = 6*(T_SRAM_R)                   - 66;
-	delay3[2] = 6*(T_DRAM_W+T_QUEUE_W)         - 48; delay3[4] = 6*(T_DRAM_R+T_QUEUE_R)         - 66;
-	printf("Slot 1 - ACC_SRAM_B:%u ACC_SRAM_R:%u ACC_DRAM_B:%u ACC_DRAM_R:%u\n", delay2[2], delay2[4], delay3[2], delay3[4]);
-#endif
+//#if defined(XPAR_DELAY_1_AXI_DELAY_0_BASEADDR)
+//	volatile unsigned int *delay2 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR; /* slot 1, ACC SRAM W, R */
+//	volatile unsigned int *delay3 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR; /* slot 1, ACC DRAM W, R */
+//	delay2[2] = 6*(T_SRAM_W)                   - 48; delay2[4] = 6*(T_SRAM_R)                   - 66;
+//	delay3[2] = 6*(T_DRAM_W+T_QUEUE_W)         - 48; delay3[4] = 6*(T_DRAM_R+T_QUEUE_R)         - 66;
+//	printf("Slot 1 - ACC_SRAM_B:%u ACC_SRAM_R:%u ACC_DRAM_B:%u ACC_DRAM_R:%u\n", delay2[2], delay2[4], delay3[2], delay3[4]);
+//#endif
 }
 
 void clocks_normal(void)
@@ -193,18 +212,23 @@ void clocks_normal(void)
 		printf(" -- error: clocks_normal: clock configuration not set\n");
 		return;
 	}
+
 #if defined(XPAR_DELAY_0_AXI_DELAY_0_BASEADDR)
-	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
-	volatile unsigned int *delay1 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR; /* slot 0, CPU DRAM W, R */
-	delay0[2] = 0; delay0[4] = 0; delay1[2] = 0; delay1[4] = 0;
-#endif
-#if defined(XPAR_DELAY_1_AXI_DELAY_0_BASEADDR)
-	volatile unsigned int *delay2 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR; /* slot 1, ACC SRAM W, R */
-	volatile unsigned int *delay3 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR; /* slot 1, ACC DRAM W, R */
-	delay2[2] = 0; delay2[4] = 0; delay3[2] = 0; delay3[4] = 0;
+	/* --- Configure the Gaussian Delay Tables (GTD) --- */
+	clear_gdt();
+	printf("Gaussian Delay Tables have been cleared\n");
+
+//	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
+//	volatile unsigned int *delay1 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR; /* slot 0, CPU DRAM W, R */
+//	delay0[2] = 0; delay0[4] = 0; delay1[2] = 0; delay1[4] = 0;
+//#endif
+//#if defined(XPAR_DELAY_1_AXI_DELAY_0_BASEADDR)
+//	volatile unsigned int *delay2 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR; /* slot 1, ACC SRAM W, R */
+//	volatile unsigned int *delay3 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR; /* slot 1, ACC DRAM W, R */
+//	delay2[2] = 0; delay2[4] = 0; delay3[2] = 0; delay3[4] = 0;
 #endif
 }
 
-#endif /* end ZYNQ */
+#endif /* ZYNQ */
 
-#endif /* end CLOCKS */
+#endif /* CLOCKS */

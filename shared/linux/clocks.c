@@ -34,7 +34,7 @@
 #define IOPLL_CHK  0x00015A00 /*             NA,    PS_REF_CLK,       1,         90,        0,       0 */
 #define PL0_REF_CTRL    0x0C0 /* 24 CLKACT, 21:16 DIVISOR1, 13:8 DIVISOR0, 2:0 SRCSEL */
 #define PL0_EMUL   0x01011800 /*         1,              1,            24,      IOPLL */
-#define PL0_NORM   0x01010800 /*         1,              1,             8,      IOPLL */
+#define PL0_NORM   0x01010600 /*         1,              1,             6,      IOPLL */
 #define PL1_REF_CTRL    0x0C4 /* 24 CLKACT, 21:16 DIVISOR1, 13:8 DIVISOR0, 2:0 SRCSEL */
 
 /* TODO: make clocks_init() and clocks_finish() functions (like monitor_ln.c) */
@@ -108,6 +108,11 @@ void clocks_emulate(void)
 	if (delay2 != MAP_FAILED) dev_munmap((void *)delay2);
 	if (delay3 != MAP_FAILED) dev_munmap((void *)delay3);
 
+#if defined(XPAR_DELAY_0_AXI_DELAY_0_BASEADDR)
+	/* --- Configure the Gaussian Delay Tables (GTD) --- */
+	config_gdt();
+	printf("Gaussian Delay Tables Initialized\n");
+
 ce_return:
 	if (fpd_slcr != MAP_FAILED) dev_munmap(fpd_slcr);
 	if (crf_apb  != MAP_FAILED) dev_munmap(crf_apb);
@@ -150,6 +155,11 @@ void clocks_normal(void)
 	}
 	if (delay2 != MAP_FAILED) dev_munmap((void *)delay2);
 	if (delay3 != MAP_FAILED) dev_munmap((void *)delay3);
+
+#if defined(XPAR_DELAY_0_AXI_DELAY_0_BASEADDR)
+	/* --- Configure the Gaussian Delay Tables (GTD) --- */
+	clear_gdt();
+	printf("Gaussian Delay Tables have been cleared\n");
 
 cn_return:
 	if (fpd_slcr != MAP_FAILED) dev_munmap(fpd_slcr);
