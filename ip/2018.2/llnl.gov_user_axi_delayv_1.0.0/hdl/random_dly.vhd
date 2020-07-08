@@ -55,6 +55,7 @@ constant polynome12 : std_logic_vector (11 downto 0)  := "110010100000"; -- 12-b
 constant polynome10 : std_logic_vector (9 downto 0)   := "1101100000";
 constant polynome9  : std_logic_vector (8 downto 0)   := "110110000";
 constant polynome8  : std_logic_vector (7 downto 0)   := "10111000";
+constant polynome6  : std_logic_vector (5 downto 0)   := "110110";
 
 --******************************************************************************
 --Signal Definitions
@@ -131,6 +132,10 @@ end generate gen_9bit;
 gen_8bit : if (LFSR_BITS = 8) generate
     polynome <= polynome8;
 end generate gen_8bit; 
+
+gen_6bit : if (LFSR_BITS = 6) generate
+    polynome <= polynome6;
+end generate gen_6bit; 
 
 ----------------------------------------------------------------------------------------------
 

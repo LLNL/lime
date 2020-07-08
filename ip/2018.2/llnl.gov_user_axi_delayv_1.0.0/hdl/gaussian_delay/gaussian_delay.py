@@ -61,7 +61,7 @@ rchan_offset = 0x00020000
 CHECK_PLOT = 1
 
 ## Fill GDT with constant
-FILL_WITH_CONSTANT = 0 ## When 1, the entire GDT is filed with GDT_CONSTANT
+FILL_WITH_CONSTANT = 1 ## When 1, the entire GDT is filed with GDT_CONSTANT
 GDT_CONSTANT       = 0
 
 #------------------------------------------------------------------
