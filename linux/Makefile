@@ -133,7 +133,7 @@ linux-xlnx/arch/arm64/boot/Image: linux-xlnx/Makefile $(if $(filter kernel,$(MAK
 	export ARCH=arm64 &&\
 	$(MAKE) xilinx_zynqmp_defconfig &&\
 	echo $(MAKE) menuconfig &&\
-	$(MAKE)
+	$(MAKE) -j `getconf _NPROCESSORS_ONLN`
 FORCE: ;
 
 .PHONY: kernel

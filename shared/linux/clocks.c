@@ -13,6 +13,15 @@
 
 #include "clocks.h"
 #include "devtree.h"
+#if defined VAR_DELAY && VAR_DELAY==_GDT_
+#include <stdbool.h>
+#include "gdt.h"
+#define NUM_GDTS 4
+#define NUM_TX_TYPES 2 //Read and Write
+#define NUM_REGS_PER_BLOCK B_OFFSET //NUM_GDTS x REG_BLOCK_SIZE is the total number of registers available for GDT
+#else
+#define NUM_REGS_PER_BLOCK 4096
+#endif
 
 #define DEV_TREE "/sys/firmware/devicetree/base/amba_pl@0"
 
@@ -40,12 +49,41 @@
 /* TODO: make clocks_init() and clocks_finish() functions (like monitor_ln.c) */
 
 
-static void *dev_smmap(const char *name, int inst)
+static void *dev_smmap(const char *name, int inst, int pgidx)
 {
 	struct {uint64_t len, addr;} reg;
+        unsigned long offset = pgidx * NUM_REGS_PER_BLOCK;
 	int found = dev_search(DEV_TREE, name, inst, "reg", &reg, sizeof(reg));
-	return (found == inst) ? dev_mmap(reg.addr) : MAP_FAILED;
+	if(found == inst){ 
+          if(offset < reg.len){
+            return dev_mmap(reg.addr + offset);
+          }
+        }else{
+          printf("Couldn't find device tree record for %s,inst %d, page index %d\n",name, inst, pgidx);
+        }
+        return MAP_FAILED;
 }
+#if defined VAR_DELAY && VAR_DELAY==_GDT_
+void operate_gdt(bool fill){
+        int i,p;
+        for(i = 1;i <= NUM_GDTS; i++){
+          for(p = 1; p <= NUM_TX_TYPES; p++){
+            volatile unsigned int *delay = (unsigned int *)dev_smmap("axi_delayv",i,p);
+            if(delay != MAP_FAILED){
+              if(fill){
+                config_gdt(delay);
+              }else{
+                clear_gdt(delay);
+              }
+              dev_munmap((void *)delay);
+            }else{
+              printf("Failed mapping delay table address region\n");
+              exit(-1);
+            }
+          }
+        }
+}
+#endif
 
 void clocks_emulate(void)
 {
@@ -83,23 +121,27 @@ void clocks_emulate(void)
 		printf(" -- error: clocks_emulate: clock configuration not set\n");
 		goto ce_return;
 	}
-
+#if defined VAR_DELAY && VAR_DELAY==_GDT_
+	/* --- Configure the Gaussian Delay Tables (GTD) --- */
+        #pragma message "Compiling " __FILE__ "with VAR_DELAY"
+        operate_gdt(true);
+#else
 	/* TODO: Make two sets of delay calibration values, */
 	/* one for the zcu102 and the other for the sidewinder */
 	/* The values here likely apply to only one of the boards, */
 	/* since the DDR memories run at different frequencies. */
-	volatile unsigned int *delay0 = (unsigned int *)dev_smmap("axi_delay",1); /* slot 0, CPU SRAM W, R */
-	volatile unsigned int *delay1 = (unsigned int *)dev_smmap("axi_delay",2); /* slot 0, CPU DRAM W, R */
+	volatile unsigned int *delay0 = (unsigned int *)dev_smmap("axi_delayv",1, 0); /* slot 0, CPU SRAM W, R */
+	volatile unsigned int *delay1 = (unsigned int *)dev_smmap("axi_delayv",2, 0); /* slot 0, CPU DRAM W, R */
 	if (delay0 != MAP_FAILED && delay1 != MAP_FAILED) {
 		delay0[2] = 6*(T_SRAM_W+T_TRANS)           - 52; delay0[4] = 6*(T_SRAM_R+T_TRANS)           - 69; /* .16 ns per count */
 		delay1[2] = 6*(T_DRAM_W+T_QUEUE_W+T_TRANS) - 52; delay1[4] = 6*(T_DRAM_R+T_QUEUE_R+T_TRANS) - 69;
 		printf("Slot 0 - CPU_SRAM_B:%u CPU_SRAM_R:%u CPU_DRAM_B:%u CPU_DRAM_R:%u\n", delay0[2], delay0[4], delay1[2], delay1[4]);
 	}
+
 	if (delay0 != MAP_FAILED) dev_munmap((void *)delay0);
 	if (delay1 != MAP_FAILED) dev_munmap((void *)delay1);
-
-	volatile unsigned int *delay2 = (unsigned int *)dev_smmap("axi_delay",3); /* slot 1, ACC SRAM W, R */
-	volatile unsigned int *delay3 = (unsigned int *)dev_smmap("axi_delay",4); /* slot 1, ACC DRAM W, R */
+	volatile unsigned int *delay2 = (unsigned int *)dev_smmap("axi_delayv",3, 0); /* slot 1, ACC SRAM W, R */
+	volatile unsigned int *delay3 = (unsigned int *)dev_smmap("axi_delayv",4, 0); /* slot 1, ACC DRAM W, R */
 	if (delay2 != MAP_FAILED && delay3 != MAP_FAILED) {
 		delay2[2] = 6*(T_SRAM_W)                   - 48; delay2[4] = 6*(T_SRAM_R)                   - 66;
 		delay3[2] = 6*(T_DRAM_W+T_QUEUE_W)         - 48; delay3[4] = 6*(T_DRAM_R+T_QUEUE_R)         - 66;
@@ -107,12 +149,7 @@ void clocks_emulate(void)
 	}
 	if (delay2 != MAP_FAILED) dev_munmap((void *)delay2);
 	if (delay3 != MAP_FAILED) dev_munmap((void *)delay3);
-
-#if defined(XPAR_DELAY_0_AXI_DELAY_0_BASEADDR)
-	/* --- Configure the Gaussian Delay Tables (GTD) --- */
-	config_gdt();
-	printf("Gaussian Delay Tables Initialized\n");
-
+#endif
 ce_return:
 	if (fpd_slcr != MAP_FAILED) dev_munmap(fpd_slcr);
 	if (crf_apb  != MAP_FAILED) dev_munmap(crf_apb);
@@ -139,28 +176,27 @@ void clocks_normal(void)
 		printf(" -- error: clocks_normal: clock configuration not set\n");
 		goto cn_return;
 	}
-
-	volatile unsigned int *delay0 = (unsigned int *)dev_smmap("axi_delay",1); /* slot 0, CPU SRAM W, R */
-	volatile unsigned int *delay1 = (unsigned int *)dev_smmap("axi_delay",2); /* slot 0, CPU DRAM W, R */
+#if defined VAR_DELAY && VAR_DELAY==_GDT_
+	/* --- Configure the Gaussian Delay Tables (GTD) --- */
+        operate_gdt(false);
+#else
+	volatile unsigned int *delay0 = (unsigned int *)dev_smmap("axi_delayv",1,0); /* slot 0, CPU SRAM W, R */
+	volatile unsigned int *delay1 = (unsigned int *)dev_smmap("axi_delayv",2,0); /* slot 0, CPU DRAM W, R */
 	if (delay0 != MAP_FAILED && delay1 != MAP_FAILED) {
 		delay0[2] = 0; delay0[4] = 0; delay1[2] = 0; delay1[4] = 0;
 	}
 	if (delay0 != MAP_FAILED) dev_munmap((void *)delay0);
 	if (delay1 != MAP_FAILED) dev_munmap((void *)delay1);
 
-	volatile unsigned int *delay2 = (unsigned int *)dev_smmap("axi_delay",3); /* slot 1, ACC SRAM W, R */
-	volatile unsigned int *delay3 = (unsigned int *)dev_smmap("axi_delay",4); /* slot 1, ACC DRAM W, R */
+	volatile unsigned int *delay2 = (unsigned int *)dev_smmap("axi_delayv",3,0); /* slot 1, ACC SRAM W, R */
+	volatile unsigned int *delay3 = (unsigned int *)dev_smmap("axi_delayv",4,0); /* slot 1, ACC DRAM W, R */
 	if (delay2 != MAP_FAILED && delay3 != MAP_FAILED) {
 		delay2[2] = 0; delay2[4] = 0; delay3[2] = 0; delay3[4] = 0;
 	}
 	if (delay2 != MAP_FAILED) dev_munmap((void *)delay2);
 	if (delay3 != MAP_FAILED) dev_munmap((void *)delay3);
 
-#if defined(XPAR_DELAY_0_AXI_DELAY_0_BASEADDR)
-	/* --- Configure the Gaussian Delay Tables (GTD) --- */
-	clear_gdt();
-	printf("Gaussian Delay Tables have been cleared\n");
-
+#endif
 cn_return:
 	if (fpd_slcr != MAP_FAILED) dev_munmap(fpd_slcr);
 	if (crf_apb  != MAP_FAILED) dev_munmap(crf_apb);

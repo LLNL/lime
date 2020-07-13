@@ -166,10 +166,8 @@ inline void cache_invalidate(const void *ptr, size_t size) {}
 
 } // namespace host
 #else // not __cplusplus
-
 static inline void cache_flush(void) {Xil_DCacheFlush();}
 static inline void cache_flush_invalidate(void) {Xil_DCacheFlush();}
-
 #endif // end __cplusplus
 
 #endif /* end CACHE_H_ */

@@ -2,11 +2,10 @@
  * gdt.c
  *
  *  Created on: May 5, 2020
- *      Author: macaraeg1
+ *      Author: sarkar6
  */
 #include <stdio.h>
 #include "gdt.h"
-#include "xparameters.h"
 
 // NOTE: files with nxx suffix contain gaussians; files with const_xx suffix contain constants
 int gdt_data_n0[1024] = {
@@ -121,81 +120,45 @@ int gdt_data_const_10000[1024] = {
 #include "gdt_data_const_10000.txt"
 };
 
-void config_gdt()
+void config_gdt(volatile void *base)
 {
-	int num_elements;
-	int iii;
+    int num_elements;
+     int iii;
 
-    int *avd_0_0_b = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + B_OFFSET);
-    int *avd_0_0_r = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + R_OFFSET);
-    int *avd_0_1_b = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + B_OFFSET);
-    int *avd_0_1_r = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + R_OFFSET);
-    int *avd_1_0_b = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + B_OFFSET);
-    int *avd_1_0_r = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + R_OFFSET);
-    int *avd_1_1_b = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + B_OFFSET);
-    int *avd_1_1_r = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + R_OFFSET);
+    volatile int *avd = (int *) (base);
 
     num_elements = sizeof(gdt_data)/sizeof(gdt_data[0]);
     printf("The size of Gaussian Delay Table in bytes is %lu\n", sizeof(gdt_data));
     printf("The number of entries in the Gaussian Delay Table is %d\n", num_elements);
-
+       
     for (iii = 0; iii < num_elements; ++iii){
-
-        *avd_0_0_b = gdt_data_n500[iii];  // CPU SRAM write response
-        *avd_0_0_r = gdt_data_n500[iii];  // CPU SRAM read response
-        *avd_0_1_b = gdt_data_n500[iii];  // CPU DRAM write response
-        *avd_0_1_r = gdt_data_n500[iii];  // CPU DRAM read response
-        *avd_1_0_b = gdt_data_n500[iii];  // Accererator SRAM write response
-        *avd_1_0_r = gdt_data_n500[iii];  // Accererator SRAM read response
-        *avd_1_1_b = gdt_data_n500[iii];  // Accererator DRAM write response
-        *avd_1_1_r = gdt_data_n500[iii];  // Accererator DRAM read response
-
-        avd_0_0_b++;
-        avd_0_0_r++;
-        avd_0_1_b++;
-        avd_0_1_r++;
-        avd_1_0_b++;
-        avd_1_0_r++;
-        avd_1_1_b++;
-        avd_1_1_r++;
-	}
+        *avd = gdt_data_n1000[iii];
+        avd++;
+    }
 }
 
-void clear_gdt()
+void clear_gdt(volatile void *base)
 {
-	int num_elements;
-	int iii;
+    int num_elements;
+    int iii;
 
-    int *avd_0_0_b = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + B_OFFSET);
-    int *avd_0_0_r = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + R_OFFSET);
-    int *avd_0_1_b = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + B_OFFSET);
-    int *avd_0_1_r = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + R_OFFSET);
-    int *avd_1_0_b = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + B_OFFSET);
-    int *avd_1_0_r = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + R_OFFSET);
-    int *avd_1_1_b = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + B_OFFSET);
-    int *avd_1_1_r = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + R_OFFSET);
+    volatile int *avd = (int *) (base);
 
     printf("Clearing the GDT to set up for the next test...\n");
     num_elements = sizeof(gdt_data)/sizeof(gdt_data[0]);
-
+    
+    //Read and see what were the values to start with
+    avd = (int *)base;
     for (iii = 0; iii < num_elements; ++iii){
+        int val = *avd;
+        if(val != gdt_data_n1000[iii])
+          printf("%p: avd = %d and gdt_data = %d\n", avd, val, gdt_data_n1000[iii]);
+        avd++;
+    }
 
-        *avd_0_0_b = gdt_data_n0[iii];  // CPU SRAM write response
-        *avd_0_0_r = gdt_data_n0[iii];  // CPU SRAM read response
-        *avd_0_1_b = gdt_data_n0[iii];  // CPU DRAM write response
-        *avd_0_1_r = gdt_data_n0[iii];  // CPU DRAM read response
-        *avd_1_0_b = gdt_data_n0[iii];  // Accererator SRAM write response
-        *avd_1_0_r = gdt_data_n0[iii];  // Accererator SRAM read response
-        *avd_1_1_b = gdt_data_n0[iii];  // Accererator DRAM write response
-        *avd_1_1_r = gdt_data_n0[iii];  // Accererator DRAM read response
-
-        avd_0_0_b++;
-        avd_0_0_r++;
-        avd_0_1_b++;
-        avd_0_1_r++;
-        avd_1_0_b++;
-        avd_1_0_r++;
-        avd_1_1_b++;
-        avd_1_1_r++;
-	}
+    avd = (int *)(base);
+    for (iii = 0; iii < num_elements; ++iii){
+        *avd = gdt_data_n0[iii];  // CPU SRAM write response
+        avd++;
+    }
 }
