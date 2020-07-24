@@ -94,10 +94,10 @@ signal CS_dout_valid : std_logic;
 signal CS_din        : std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
 signal CS_din_en     : std_logic;
 
---attribute mark_debug : string;
+attribute mark_debug : string;
 --attribute mark_debug of CS_delay_reg  : signal is "true"; 
 --attribute mark_debug of CS_id_reg     : signal is "true"; 
---attribute mark_debug of CS_valid_reg  : signal is "true"; 
+attribute mark_debug of CS_valid_reg  : signal is "true"; 
 --attribute mark_debug of CS_srb_insert : signal is "true"; 
 --attribute mark_debug of CS_din_ready  : signal is "true"; 
 --attribute mark_debug of CS_dout       : signal is "true"; 
@@ -244,7 +244,7 @@ end process;
 --srb_insert <= axi_id_max_hi when (axi_id_max_hi > delay_srb_low) else delay_srb_low;
 srb_insert <= (axi_id_max_hi) when (found_axi_id = '1') and (axi_id_max_hi > delay_srb_low) else delay_srb_low;
 
-din_ready  <= '1' when (valid_reg(PRIORITY_QUEUE_WIDTH-5) = '0') else '0';
+din_ready  <= '1' when (valid_reg(PRIORITY_QUEUE_WIDTH-2) = '0') else '0';
 
 ----------------------------------------------------------------------------------------------
 -- Output assignments
