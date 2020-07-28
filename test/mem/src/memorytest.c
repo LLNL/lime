@@ -256,14 +256,9 @@ void test_alias(void)
 #endif
 }
 
-void config_gdt();
-
 int main()
 {
 	int i;
-
-	/* --- Configure the Gaussian Delay Tables (GTD) --- */
-	config_gdt();
 
 	//init_pagetable(); /* done in translation_table.S */
 #if !defined(USE_CACHE)

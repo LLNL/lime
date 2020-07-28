@@ -48,15 +48,12 @@ static double	bytes[4] = {
   3 * sizeof(STREAM_TYPE) * STREAM_ARRAY_SIZE
 };
 
-void config_gdt();
 
 int MAIN(int argc, char *argv[])
 {
   int BytesPerWord = sizeof(STREAM_TYPE);
   int sum;
   int j, k;
-  /* --- Configure the Gaussian Delay Tables (GTD) --- */
-  config_gdt();
 
   /* --- SETUP --- determine precision and check timing --- */
 
