@@ -99,10 +99,6 @@ void clocks_normal(void)
 		return;
 	}
 
-	/* --- Configure the Gaussian Delay Tables (GTD) --- */
-	clear_gdt();
-	printf("Gaussian Delay Tables have been cleared\n");
-
 #if defined(XPAR_DELAY_0_AXI_DELAY_0_BASEADDR)
 	/* --- Configure the Gaussian Delay Tables (GTD) --- */
 	clear_gdt();
@@ -181,7 +177,9 @@ void clocks_emulate(void)
 	/* since the DDR memories run at different frequencies. */
 #if defined(XPAR_DELAY_0_AXI_DELAY_0_BASEADDR)
 	/* --- Configure the Gaussian Delay Tables (GTD) --- */
+	sleep(1);
 	config_gdt();
+	sleep(1);
 	printf("Gaussian Delay Tables Initialized\n");
 
 //	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
@@ -215,7 +213,9 @@ void clocks_normal(void)
 
 #if defined(XPAR_DELAY_0_AXI_DELAY_0_BASEADDR)
 	/* --- Configure the Gaussian Delay Tables (GTD) --- */
+	sleep(1);
 	clear_gdt();
+	sleep(1);
 	printf("Gaussian Delay Tables have been cleared\n");
 
 //	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
