@@ -473,9 +473,7 @@ axi_delayv_int : entity axi_delay_lib.axi_delayv
         C_COUNTER_WIDTH       => C_COUNTER_WIDTH, 
         C_FIFO_DEPTH_AW       => C_FIFO_DEPTH_AW, 
         C_FIFO_DEPTH_W        => C_FIFO_DEPTH_W,  
-        C_FIFO_DEPTH_B        => C_FIFO_DEPTH_B,  
         C_FIFO_DEPTH_AR       => C_FIFO_DEPTH_AR, 
-        C_FIFO_DEPTH_R        => C_FIFO_DEPTH_R,  
         
         -- AXI-Lite Bus Interface
         C_AXI_LITE_ADDR_WIDTH => C_AXI_LITE_ADDR_WIDTH,

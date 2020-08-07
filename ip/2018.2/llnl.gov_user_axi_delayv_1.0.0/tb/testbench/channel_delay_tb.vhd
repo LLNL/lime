@@ -24,17 +24,23 @@ use axi_delay_lib.axi_delay_pkg.all;
 entity channel_delay_tb is
     generic (
         SIMULATION           : std_logic := '1';
-        GDT_FILENAME         : string := "../../../../data_in/bram_del_table.mem";
         CHANNEL_TYPE         : string := "R" ; -- valid values are:  AW, W, B, AR, R
         PRIORITY_QUEUE_WIDTH : integer := 32;
-         
+        DELAY_WIDTH          : integer := 24;
+
         -- AXI-Full Bus Interface
         C_AXI_ID_WIDTH       : integer := 16;
         C_AXI_ADDR_WIDTH     : integer := 40;
         C_AXI_DATA_WIDTH     : integer := 128;
      
+        GDT_FILENAME         : string := "../../../../data_in/bram_del_table.mem";
+        GDT_ADDR_BITS        : integer := 10;
+        GDT_DATA_BITS        : integer := 24;
+
+        BYPASS_MINICAM       : integer := 1;
         CAM_DEPTH            : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
         CAM_WIDTH            : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
+        NUM_EVENTS_PER_MBUF  : integer := 8;  -- maximum number of events each minibuffer can hold
         NUM_MINI_BUFS        : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported
     );    
     Port ( 
@@ -172,16 +178,24 @@ axi_master_int : entity axi_delay_lib.axi_master
 
 channel_delay_inst : entity axi_delay_lib.chan_delay_variable
    generic map (
-    SIMULATION        => SIMULATION,
-    GDT_FILENAME      => GDT_FILENAME,
-    CHANNEL_TYPE      => CHANNEL_TYPE,
-    PRIORITY_QUEUE_WIDTH =>  PRIORITY_QUEUE_WIDTH,
-    C_AXI_ID_WIDTH    => C_AXI_ID_WIDTH,
-    C_AXI_ADDR_WIDTH  => C_AXI_ADDR_WIDTH,
-    C_AXI_DATA_WIDTH  => C_AXI_DATA_WIDTH,
-    CAM_DEPTH         => CAM_DEPTH,
-    CAM_WIDTH         => CAM_WIDTH,
-    NUM_MINI_BUFS     => NUM_MINI_BUFS
+    SIMULATION           => SIMULATION,
+    CHANNEL_TYPE         => CHANNEL_TYPE,
+    PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
+    DELAY_WIDTH          => DELAY_WIDTH,
+
+    C_AXI_ID_WIDTH      => C_AXI_ID_WIDTH,
+    C_AXI_ADDR_WIDTH    => C_AXI_ADDR_WIDTH,
+    C_AXI_DATA_WIDTH    => C_AXI_DATA_WIDTH,
+
+    GDT_FILENAME        => GDT_FILENAME,
+    GDT_ADDR_BITS       => GDT_ADDR_BITS,
+    GDT_DATA_BITS       => GDT_DATA_BITS,
+
+    BYPASS_MINICAM      => BYPASS_MINICAM,
+    CAM_DEPTH           => CAM_DEPTH,
+    CAM_WIDTH           => CAM_WIDTH,
+    NUM_EVENTS_PER_MBUF => NUM_EVENTS_PER_MBUF,
+    NUM_MINI_BUFS       => NUM_MINI_BUFS
 )
     port map (
         --------------------------------------------

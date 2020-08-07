@@ -244,7 +244,7 @@ end process;
 --srb_insert <= axi_id_max_hi when (axi_id_max_hi > delay_srb_low) else delay_srb_low;
 srb_insert <= (axi_id_max_hi) when (found_axi_id = '1') and (axi_id_max_hi > delay_srb_low) else delay_srb_low;
 
-din_ready  <= '1' when (valid_reg(PRIORITY_QUEUE_WIDTH-2) = '0') else '0';
+din_ready  <= '1' when (valid_reg(PRIORITY_QUEUE_WIDTH-3) = '0') else '0';
 
 ----------------------------------------------------------------------------------------------
 -- Output assignments
