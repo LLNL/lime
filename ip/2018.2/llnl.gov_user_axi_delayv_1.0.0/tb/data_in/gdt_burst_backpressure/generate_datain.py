@@ -136,4 +136,3 @@ for x in range (NUM_LOOPS):
             DEL  = DELZ
             LAST = 0
         parse(opfile_name, DEL, 0b00, AXI_ID_5, x, y, 0xffff, 0x04, 0b110, 0b01, 0b00, 0b0010, 0b010, 0b0000, 0b0001, 0b1, LAST)
-

@@ -120,7 +120,7 @@ for i in 0 to PRIORITY_QUEUE_WIDTH-1 generate
     srb : entity axi_delay_lib.shift_reg_block
         generic map(
         C_DELAY_WIDTH     => DELAY_WIDTH,
-        C_INDEX_WIDTH     => INDEX_WIDTH,
+        C_INDEX_WIDTH     => MINIBUF_IDX_WIDTH, --INDEX_WIDTH,
         C_AXI_ID_WIDTH    => C_AXI_ID_WIDTH,
         C_AXI_ADDR_WIDTH  => C_AXI_ADDR_WIDTH,
         C_AXI_DATA_WIDTH  => C_AXI_DATA_WIDTH
@@ -135,8 +135,8 @@ for i in 0 to PRIORITY_QUEUE_WIDTH-1 generate
 
         -- input from Priority controller (deletion, or pop, towards Priority Controller)
         index_srb_i       => std_logic_vector(to_unsigned(i, 32)),
-        din_i             => din_sr_i((i+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto i*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)),
---        din_i             => din_i,
+--        din_i             => din_sr_i((i+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto i*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)),
+        din_i             => din_i,
         din_en_i          => din_en_i,
 
         -- Top Channel from previous device

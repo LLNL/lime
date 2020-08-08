@@ -27,6 +27,7 @@ entity axi_parser is
         C_AXI_ADDR_WIDTH   : integer := 40;
         C_AXI_DATA_WIDTH   : integer := 128;
         AXI_INFO_WIDTH     : integer := 192;
+        AXI_INFO_DEPTH     : integer := 32;
         DELAY_WIDTH        : integer := 16;
         AIDBUF_ADDR_WIDTH  : integer := 6
     );
@@ -37,6 +38,8 @@ entity axi_parser is
         minibuf_fe_i       : in  std_logic;
         minicam_full_i     : in  std_logic;
         available_ctrptr_i : in  std_logic;
+        random_dly_i       : in  std_logic_vector(DELAY_WIDTH-1 downto 0);
+        random_dly_o       : out std_logic_vector(DELAY_WIDTH-1 downto 0);
 
 	    ----- Slave AXI Interface -----
         s_axi_id_i       : in  std_logic_vector(C_AXI_ID_WIDTH-1 downto 0) := (others => '0');
@@ -76,11 +79,7 @@ entity axi_parser is
         pb_cntr_ptr_o        : out std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
         pb_wr_o              : out std_logic;
 
-        ----- scoreboard interface -----
-        sb_wr_o              : out std_logic; -- s_axi_last_i detected, assert corresonding valid bit
-        sb_index_o           : out integer;   -- index of scoreboard valid bit
-
-        random_dly_i         : in  std_logic_vector(DELAY_WIDTH-1 downto 0);
+        ----- priority_queue interface -----
         pq_data_sr_o         : out std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
         pq_data_o            : out std_logic_vector(C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH-1 downto 0);
         pq_en_o              : out std_logic;
@@ -114,15 +113,18 @@ signal axi_info_wdata_q : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
 signal axi_info_wr      : std_logic;
 signal axi_info_af      : std_logic;
 --signal axi_info_full    : std_logic;
+signal axi_info_empty   : std_logic;
 signal axi_info_valid   : std_logic;
 signal axi_info_rdata   : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
 signal axi_info_rd      : std_logic;
+
+signal misc_fifo_din    : std_logic_vector(CTR_PTR_WIDTH + DELAY_WIDTH - 1 downto 0);
+signal misc_fifo_dout   : std_logic_vector(CTR_PTR_WIDTH + DELAY_WIDTH - 1 downto 0);
 
 -- misc. logic
 signal s_axi_ready      : std_logic;
 signal s_axi_last       : std_logic;
 signal sb_index         : std_logic_vector(MINIBUF_IDX_WIDTH-1 downto 0);
-signal sb_index_int     : integer;
 signal mc_ctr_ptr_wr_q  : std_logic;
 signal mc_ctr_ptr_q     : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
 signal pq_data_sr       : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
@@ -155,7 +157,8 @@ begin
 -- Generate write enable for axi_info_fifo based on "bus cycle type" flags. These flags are based on the flags 
 -- generated in axi_perf_mon_v5_0_10_flags_gen.v
 --------------------------------------------------------------------------------
-s_axi_last <= s_axi_last_i when (CHANNEL_TYPE = "R" or CHANNEL_TYPE = "W") else '1';
+s_axi_last  <= s_axi_last_i when (CHANNEL_TYPE = "R" or CHANNEL_TYPE = "W") else '1';
+s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i) and (pq_ready_i);
 
 first_data_flag  <= s_axi_valid_i and s_axi_ready and (not acc_going_on);
 mid_data_flag    <= s_axi_valid_i and s_axi_ready and acc_going_on and (not s_axi_last);
@@ -179,14 +182,14 @@ end process;
 
 -- generate fifo write enable for write address, read address, or write response
 addr_flag_gen : if (CHANNEL_TYPE = "AW" or CHANNEL_TYPE = "AR" or CHANNEL_TYPE = "B") generate
-    axi_info_wr <= rwaddr_resp_flag;  
+--    axi_info_wr <= rwaddr_resp_flag;  
     mc_valid_o  <= rwaddr_resp_flag;  
     mc_axi_id_o <= s_axi_id_i;
 end generate; 
 
 -- generate fifo write enable for read or write data
 data_flag_gen : if (CHANNEL_TYPE = "W" or CHANNEL_TYPE = "R") generate
-    axi_info_wr <= first_data_flag or mid_data_flag or last_data_flag; 
+--    axi_info_wr <= first_data_flag or mid_data_flag or last_data_flag; 
     mc_valid_o  <= first_data_flag or mid_data_flag or last_data_flag; 
     mc_axi_id_o <= s_axi_id_i;
 end generate;
@@ -196,74 +199,142 @@ end generate;
 --------------------------------------------------------------------------------
 
 -- concatenate all axi input signals (outputs are not concatenated)
-axi_info_wdata <= s_axi_resp_i & s_axi_id_i & s_axi_addr_i & s_axi_data_i & s_axi_strb_i & s_axi_len_i & s_axi_size_i & s_axi_burst_i & 
-                   s_axi_lock_i  & s_axi_cache_i & s_axi_prot_i & s_axi_qos_i & s_axi_region_i & s_axi_valid_i & s_axi_last;
+--axi_info_wdata <= s_axi_resp_i & s_axi_id_i & s_axi_addr_i & s_axi_data_i & s_axi_strb_i & s_axi_len_i & s_axi_size_i & s_axi_burst_i & 
+--                   s_axi_lock_i  & s_axi_cache_i & s_axi_prot_i & s_axi_qos_i & s_axi_region_i & s_axi_valid_i & s_axi_last;
 
--- shallow FIFO for buffering AXI events                    
---axi_info_fifo : entity fifo_sync
---    GENERIC MAP (
---        C_DEPTH      => 16,
---        C_DIN_WIDTH  => AXI_INFO_WIDTH,
---        C_DOUT_WIDTH => AXI_INFO_WIDTH,
---        C_THRESH     => 4
---    ) 
---PORT MAP (
---        wr_clk      => clk_i,
---        rst         => rst_i,
---
---        din         => axi_info_wdata,
---        prog_full   => axi_info_af,
---        full        => axi_info_full,
---        wr_en       => axi_info_wr,
---
---        dout        => axi_info_rdata,
---        prog_empty  => OPEN,
---        empty       => OPEN,
---        valid       => axi_info_valid,
---        rd_en       => axi_info_rd
---  );
-
-axi_info_proc : process (clk_i, rst_i) begin
+wdata_proc : process (clk_i, rst_i) begin
     if (rst_i = '1') then
-        axi_info_af         <= '0';
-        axi_info_valid      <= '0';
-        axi_info_wdata_q    <= (others => '0');
-        axi_info_rdata      <= (others => '0');
-        pq_data_sr          <= (others => '0');
+        axi_info_wr       <= '0';  
+        axi_info_wdata    <= (others => '0');
     elsif rising_edge(clk_i) then
-        axi_info_af      <= '0';
-        axi_info_valid   <= axi_info_rd;
-        axi_info_wdata_q <= axi_info_wdata;
-        axi_info_rdata   <= axi_info_wdata_q;
-
-        pq_data_sr_loop :
-            for j in 0 to PRIORITY_QUEUE_WIDTH-1 loop
-              pq_data_sr((j+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto j*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)) <= 
-                  random_dly_i & axi_info_wdata_q(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH) & mc_ctr_ptr_i(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
-        end loop pq_data_sr_loop;            
-
+        axi_info_wr       <= first_data_flag or mid_data_flag or last_data_flag; 
+        axi_info_wdata    <= s_axi_resp_i & s_axi_id_i & s_axi_addr_i & s_axi_data_i & s_axi_strb_i & s_axi_len_i & s_axi_size_i & s_axi_burst_i & 
+                             s_axi_lock_i  & s_axi_cache_i & s_axi_prot_i & s_axi_qos_i & s_axi_region_i & s_axi_valid_i & s_axi_last;
     end if;
 end process;
 
-s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i) and (pq_ready_i);
 
 --------------------------------------------------------------------------------
--- Pipeline registers
+-- AXI Input Buffer:
+-- This section contains the shallow FIFO implementation for buffering AXI events                    
 --------------------------------------------------------------------------------
-pipeline_proc : process (clk_i, rst_i) begin
-    if (rst_i = '1') then
-        axi_info_rd     <= '0';
-        mc_ctr_ptr_wr_q <= '0';
-        mc_ctr_ptr_q    <= (others => '0');
-    elsif rising_edge(clk_i) then
-        axi_info_rd     <= axi_info_wr;
-        mc_ctr_ptr_wr_q <= mc_ctr_ptr_wr_i;
-        mc_ctr_ptr_q    <= mc_ctr_ptr_i;
-    end if;
+axi_info_rd <= (pq_ready_i) and (not axi_info_empty);
+
+axi_info_fifo : entity fifo_sync
+    GENERIC MAP (
+        C_DEPTH      => AXI_INFO_DEPTH,
+        C_DIN_WIDTH  => AXI_INFO_WIDTH,
+        C_DOUT_WIDTH => AXI_INFO_WIDTH,
+        C_THRESH     => 4
+    ) 
+PORT MAP (
+        wr_clk      => clk_i,
+        rst         => rst_i,
+
+        din         => axi_info_wdata,
+        prog_full   => axi_info_af,
+        full        => OPEN,
+        wr_en       => axi_info_wr,
+
+        dout        => axi_info_rdata,
+        prog_empty  => OPEN,
+        empty       => axi_info_empty,
+        valid       => axi_info_valid,
+        rd_en       => axi_info_rd
+  );
+
+pq_data_repl_proc : process(random_dly_i, axi_info_rdata, mc_ctr_ptr_i) begin   
+    pq_data_sr_loop :
+        for j in 0 to PRIORITY_QUEUE_WIDTH-1 loop
+          pq_data_sr((j+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto j*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)) <= 
+              random_dly_i & axi_info_rdata(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH) & mc_ctr_ptr_i(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
+    end loop pq_data_sr_loop;            
 end process;
+
+--------------------------------------------------------------------------------
+-- This will buffer addition information that has to be synchronized with the AXI packet information.
+-- The timing of dout has to be synced with axi_info_fifo's dout.
+--------------------------------------------------------------------------------
+
+misc_fifo_din <= mc_ctr_ptr_i & random_dly_i;
+ 
+misc_info_fifo : entity fifo_sync
+    GENERIC MAP (
+        C_DEPTH      => AXI_INFO_DEPTH,
+        C_DIN_WIDTH  => CTR_PTR_WIDTH + DELAY_WIDTH,
+        C_DOUT_WIDTH => CTR_PTR_WIDTH + DELAY_WIDTH,
+        C_THRESH     => 4
+    ) 
+PORT MAP (
+        wr_clk      => clk_i,
+        rst         => rst_i,
+
+        din         => misc_fifo_din,
+        prog_full   => OPEN ,
+        full        => OPEN,
+        wr_en       => mc_ctr_ptr_wr_i,
+
+        dout        => misc_fifo_dout, --mc_ctr_ptr_q,
+        prog_empty  => OPEN,
+        empty       => OPEN,
+        valid       => mc_ctr_ptr_wr_q,
+        rd_en       => axi_info_rd
+  );
+  
+mc_ctr_ptr_q <= misc_fifo_dout(CTR_PTR_WIDTH + DELAY_WIDTH - 1 downto DELAY_WIDTH);
+random_dly_o <= misc_fifo_dout(DELAY_WIDTH - 1 downto 0);
+  
+--pipeline_proc : process (clk_i, rst_i) begin
+--    if (rst_i = '1') then
+--        mc_ctr_ptr_wr_q <= '0';
+--        mc_ctr_ptr_q    <= (others => '0');
+--    elsif rising_edge(clk_i) then
+--        mc_ctr_ptr_wr_q <= mc_ctr_ptr_wr_i;
+--        mc_ctr_ptr_q    <= mc_ctr_ptr_i;
+--    end if;
+--end process;
 
 sb_index     <= mc_ctr_ptr_q(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
-sb_index_int <= to_integer(unsigned(sb_index));
+
+--------------------------------------------------------------------------------
+-- AXI Input Buffer:
+-- This section contains the register implementation
+--------------------------------------------------------------------------------
+-----  axi_info_proc : process (clk_i, rst_i) begin
+-----      if (rst_i = '1') then
+-----          axi_info_rd      <= '0';
+-----          axi_info_af      <= '0';
+-----          axi_info_valid   <= '0';
+-----          axi_info_wdata_q <= (others => '0');
+-----          axi_info_rdata   <= (others => '0');
+-----          pq_data_sr       <= (others => '0');
+-----      elsif rising_edge(clk_i) then
+-----          axi_info_rd      <= axi_info_wr;
+-----          axi_info_af      <= '0';
+-----          axi_info_valid   <= axi_info_rd;
+-----          axi_info_wdata_q <= axi_info_wdata;
+-----          axi_info_rdata   <= axi_info_wdata_q;
+-----  
+-----          pq_data_sr_loop :
+-----              for j in 0 to PRIORITY_QUEUE_WIDTH-1 loop
+-----                pq_data_sr((j+1)*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto j*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)) <= 
+-----                    random_dly_i & axi_info_wdata_q(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH) & mc_ctr_ptr_i(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
+-----          end loop pq_data_sr_loop;            
+-----  
+-----      end if;
+-----  end process;
+-----  
+-----  pipeline_proc : process (clk_i, rst_i) begin
+-----      if (rst_i = '1') then
+-----          mc_ctr_ptr_wr_q <= '0';
+-----          mc_ctr_ptr_q    <= (others => '0');
+-----      elsif rising_edge(clk_i) then
+-----          mc_ctr_ptr_wr_q <= mc_ctr_ptr_wr_i;
+-----          mc_ctr_ptr_q    <= mc_ctr_ptr_i;
+-----      end if;
+-----  end process;
+-----  
+-----  sb_index     <= mc_ctr_ptr_q(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
 
 ----------------------------------------------------------------------------------------------
 -- Output assignments
@@ -280,10 +351,6 @@ pb_wr_o          <= axi_info_valid;
 aidb_id_o            <= axi_info_rdata(AXI_INFO_WIDTH-2-1 downto AXI_INFO_WIDTH-2-C_AXI_ID_WIDTH);
 aidb_cntr_ptr_base_o <= sb_index;
 aidb_wr_o            <= mc_ctr_ptr_wr_q;
-
------ scoreboard interface -----
-sb_index_o <= sb_index_int;
-sb_wr_o    <= mc_ctr_ptr_wr_q and axi_info_rdata(0); -- Assert scoreboard valid bit if last_data_flag = 1
 
 ----- priority_controller interface -----
 -- pq_data_o contains (axi_id & sb_index), width = C_AXI_ID_WIDTH + MINIBUF_IDX_WIDTH

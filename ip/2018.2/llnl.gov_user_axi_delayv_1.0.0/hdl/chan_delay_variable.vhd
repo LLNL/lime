@@ -122,6 +122,7 @@ constant C_ZERO_16 : std_logic_vector(15 downto 0) := (others => '0');
 --Signal Definitions
 --******************************************************************************
 signal random_dly     : std_logic_vector(DELAY_WIDTH-1 downto 0);
+signal random_dly_buf : std_logic_vector(DELAY_WIDTH-1 downto 0);
 signal random_dly_req : std_logic;
 
 signal s_axi_areset   : std_logic;
@@ -149,7 +150,6 @@ signal aidb_bdata         : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
 
 signal pb_info_data       : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
 signal pb_cntr_ptr        : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
---signal pb_dina            : std_logic_vector(1023 downto 0);
 signal pb_wr              : std_logic_vector(0 downto 0);
 
 signal minibuf_fe         : std_logic;
@@ -159,12 +159,6 @@ signal free_ctrptr        : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
 signal minicam_full       : std_logic;
 signal available_ctrptr   : std_logic;
 signal minicam_err        : std_logic;
-
-signal scoreboard_wr      : std_logic;
-signal scoreboard_wr_idx  : integer;
-signal scoreboard_valid   : std_logic_vector(NUM_MINI_BUFS-1 downto 0);
-signal scoreboard_rd_idx  : integer;
-signal scoreboard_rd_clr  : std_logic;
 
 signal axi_info_valid     : std_logic;
 signal axi_info_data      : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
@@ -213,6 +207,8 @@ port map (
     minibuf_fe_i         => minibuf_fe,
     minicam_full_i       => minicam_full,
     available_ctrptr_i   => available_ctrptr,
+    random_dly_i         => random_dly,
+    random_dly_o         => random_dly_buf,
 
     ----- Slave AXI Interface -----
     s_axi_id_i           => s_axi_id,    
@@ -252,12 +248,7 @@ port map (
     pb_cntr_ptr_o        => pb_cntr_ptr,
     pb_wr_o              => pb_wr(0),
     
-    ----- scoreboard interface -----
-    sb_wr_o              => scoreboard_wr,
-    sb_index_o           => scoreboard_wr_idx,
-
     ----- priority_queue interface -----
-    random_dly_i         => random_dly,
     pq_data_sr_o         => pq_data_sr,
     pq_data_o            => pq_data, --(axi_id & sb_index)
     pq_en_o              => pq_en,
@@ -326,8 +317,6 @@ skip_minicam : if (BYPASS_MINICAM = 1) generate
     );
 end generate skip_minicam;
 
---pb_dina <= C_ZERO(1023 downto AXI_INFO_WIDTH) & pb_info_data;
-
 ---------------------------------------
 -- Packet Buffer
 ---------------------------------------
@@ -344,7 +333,7 @@ PORT MAP (
     ena   => '1',
     wea   => pb_wr,
     addra => pb_cntr_ptr,
-    dina  => pb_info_data, --pb_dina, 
+    dina  => pb_info_data, 
     douta => OPEN,
     
     clkb  => m_axi_aclk,
@@ -359,10 +348,6 @@ PORT MAP (
 ---------------------------------------
 -- AXI ID Buffer
 ---------------------------------------
-
---aidb_id_zero <= aidb_id when (C_AXI_ID_WIDTH = 16) else
---                (C_ZERO_16(15 downto C_AXI_ID_WIDTH) & aidb_id);
-
 
 axi_id_buffer : entity dpram_true
 GENERIC MAP (
@@ -390,29 +375,6 @@ PORT MAP (
 );
 
 ---------------------------------------
--- ScoreBoard
----------------------------------------
-scoreboard_inst : entity axi_delay_lib.scoreboard
-GENERIC MAP (
-    NUM_MINI_BUFS     => NUM_MINI_BUFS,
-    MINIBUF_IDX_WIDTH => MINIBUF_IDX_WIDTH
-)
-PORT MAP (
-    s_clk_i             => s_axi_aclk,
-    s_rst_i             => s_axi_areset,
-    
-    m_clk_i             => m_axi_aclk,
-    m_rst_i             => m_axi_areset,
-    
-    scoreboard_wr_i     => scoreboard_wr,
-    scoreboard_wr_idx_i => scoreboard_wr_idx,
-    
-    scoreboard_valid_o  => scoreboard_valid,
-    scoreboard_rd_idx_i => scoreboard_rd_idx,
-    scoreboard_rd_clr_i => scoreboard_rd_clr
-);
-
----------------------------------------
 -- Random Delay Generator
 -- random_dly_gen will take the raw output of a random number generator, calculate the appropriate delay, and output
 -- that delay to the priority_ctlr. A new random delay will be available on every clock cycle.
@@ -436,14 +398,14 @@ port map (
     gdt_wdata_i      => gdt_wdata_i,
     gdt_rdata_o      => gdt_rdata_o,
     
-    random_dly_req_i => pq_en,
+    random_dly_req_i => mc_valid, --pq_en,
     random_dly_o     => random_dly
 );
 
 ---------------------------------------
 -- Priority Queue
 ---------------------------------------
-pq_data_complete <= random_dly & pq_data;
+pq_data_complete <= random_dly_buf & pq_data;
 
 priority_queue_inst : entity axi_delay_lib.priority_queue
 generic map (
@@ -490,10 +452,6 @@ port map (
     
     m_axi_ready_i       => m_axi_ready,
     
-    scoreboard_valid_i  => scoreboard_valid,  -- scoreboard valid, indicating which minibuffers contain a complete packet ready for processing
-    scoreboard_rd_idx_o => scoreboard_rd_idx, -- index to minibuffer that has been emptied
-    scoreboard_rd_clr_o => scoreboard_rd_clr, -- clear bit, which clears the minbuffer indicated by index
-
     pq_dout_i           => pq_dout,
     pq_dout_valid_i     => pq_dout_valid,
     pq_dout_ready_o     => pq_dout_ready,
@@ -505,9 +463,6 @@ port map (
     
     aidb_baddr_o        => aidb_baddr,
     aidb_bdata_i        => aidb_bdata,
-    
-    random_dly_i        => random_dly, 
-    random_dly_req_o    => random_dly_req,
     
     free_ctrptr_wr_o    => free_ctrptr_wr, -- write to minibuf_fifo after packet has been read out of packet_buffer
     free_ctrptr_o       => free_ctrptr,     -- write to minibuf_fifo after packet has been read out of packet_buffer
