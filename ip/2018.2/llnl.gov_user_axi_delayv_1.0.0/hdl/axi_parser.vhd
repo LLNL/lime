@@ -182,14 +182,12 @@ end process;
 
 -- generate fifo write enable for write address, read address, or write response
 addr_flag_gen : if (CHANNEL_TYPE = "AW" or CHANNEL_TYPE = "AR" or CHANNEL_TYPE = "B") generate
---    axi_info_wr <= rwaddr_resp_flag;  
     mc_valid_o  <= rwaddr_resp_flag;  
     mc_axi_id_o <= s_axi_id_i;
 end generate; 
 
 -- generate fifo write enable for read or write data
 data_flag_gen : if (CHANNEL_TYPE = "W" or CHANNEL_TYPE = "R") generate
---    axi_info_wr <= first_data_flag or mid_data_flag or last_data_flag; 
     mc_valid_o  <= first_data_flag or mid_data_flag or last_data_flag; 
     mc_axi_id_o <= s_axi_id_i;
 end generate;
@@ -199,8 +197,6 @@ end generate;
 --------------------------------------------------------------------------------
 
 -- concatenate all axi input signals (outputs are not concatenated)
---axi_info_wdata <= s_axi_resp_i & s_axi_id_i & s_axi_addr_i & s_axi_data_i & s_axi_strb_i & s_axi_len_i & s_axi_size_i & s_axi_burst_i & 
---                   s_axi_lock_i  & s_axi_cache_i & s_axi_prot_i & s_axi_qos_i & s_axi_region_i & s_axi_valid_i & s_axi_last;
 
 wdata_proc : process (clk_i, rst_i) begin
     if (rst_i = '1') then
@@ -284,16 +280,6 @@ PORT MAP (
 mc_ctr_ptr_q <= misc_fifo_dout(CTR_PTR_WIDTH + DELAY_WIDTH - 1 downto DELAY_WIDTH);
 random_dly_o <= misc_fifo_dout(DELAY_WIDTH - 1 downto 0);
   
---pipeline_proc : process (clk_i, rst_i) begin
---    if (rst_i = '1') then
---        mc_ctr_ptr_wr_q <= '0';
---        mc_ctr_ptr_q    <= (others => '0');
---    elsif rising_edge(clk_i) then
---        mc_ctr_ptr_wr_q <= mc_ctr_ptr_wr_i;
---        mc_ctr_ptr_q    <= mc_ctr_ptr_i;
---    end if;
---end process;
-
 sb_index     <= mc_ctr_ptr_q(CTR_PTR_WIDTH-1 downto (CTR_PTR_WIDTH-MINIBUF_IDX_WIDTH));
 
 --------------------------------------------------------------------------------

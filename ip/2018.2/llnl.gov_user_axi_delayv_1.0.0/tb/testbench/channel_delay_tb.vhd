@@ -7,6 +7,8 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all;
+
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -54,8 +56,11 @@ architecture channel_delay_tb of channel_delay_tb is
 -- Constants
 --******************************************************************************
 -- Note: Copied from channel_delay.vhd
-signal AXI_INFO_WIDTH  : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_ADDR_WIDTH + C_AXI_DATA_WIDTH/8 + 
+-- Note: assuming maximum width defined by C_AXI_ID_WIDTH = 16 and C_AXI_DATA_WIDTH = 128 (C_AXI_DATA_WIDTH/8 = 16) and misc (32) = 192
+constant AXI_INFO_WIDTH    : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_ADDR_WIDTH + C_AXI_DATA_WIDTH/8 + 
                                     8 + 3 + 2 + 2 + 4 + 3 + 4 + 4 + 1 + 1 + 2;
+constant AXI_INFO_DEPTH    : integer := 64;
+
 --******************************************************************************
 --Signal Definitions
 --******************************************************************************
@@ -63,10 +68,11 @@ signal AXI_INFO_WIDTH  : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_AD
 -------------------------
 -- Slave AXI Interface --
 -------------------------
-signal sys_clk       : std_logic := '0';
-signal sys_rst       : std_logic := '1';
-signal sys_rst_n     : std_logic := '0';
+signal sys_clk         : std_logic := '0';
+signal sys_rst         : std_logic := '1';
+signal sys_rst_n       : std_logic := '0';
 signal transmission_en : std_logic := '0';
+signal counter         : std_logic_vector(DELAY_WIDTH-1 downto 0);
 
 signal s_axi_lite_aclk    : std_logic := '0';
 signal s_axi_lite_aresetn : std_logic := '0';
@@ -136,6 +142,18 @@ transmission_en <= '1' after  2 us;
 s_axi_lite_aclk    <= not s_axi_lite_aclk after 10 ns;
 s_axi_lite_aresetn <= '1' after 1 us;  
 
+s_counter: process(sys_clk)
+begin
+    if (rising_edge(sys_clk)) then
+        if (sys_rst_n = '0') then
+            counter <= (others => '0');
+        else
+            counter <= std_logic_vector(unsigned(counter) + 1);
+        end if;
+    end if;
+end process;
+
+
 ---------------------------------------
 -- AXI source (master)
 ---------------------------------------
@@ -182,10 +200,14 @@ channel_delay_inst : entity axi_delay_lib.chan_delay_variable
     CHANNEL_TYPE         => CHANNEL_TYPE,
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
+    C_COUNTER_WIDTH      => DELAY_WIDTH,
 
     C_AXI_ID_WIDTH      => C_AXI_ID_WIDTH,
     C_AXI_ADDR_WIDTH    => C_AXI_ADDR_WIDTH,
     C_AXI_DATA_WIDTH    => C_AXI_DATA_WIDTH,
+
+    AXI_INFO_WIDTH       => AXI_INFO_WIDTH,
+    AXI_INFO_DEPTH       => AXI_INFO_DEPTH,
 
     GDT_FILENAME        => GDT_FILENAME,
     GDT_ADDR_BITS       => GDT_ADDR_BITS,
@@ -203,6 +225,7 @@ channel_delay_inst : entity axi_delay_lib.chan_delay_variable
         --------------------------------------------
         s_axi_aclk    => sys_clk,
         s_axi_aresetn => sys_rst_n,
+        counter       => counter,
         
         -- Slave AXI Interface --
         s_axi_id      => s_axi_id,    

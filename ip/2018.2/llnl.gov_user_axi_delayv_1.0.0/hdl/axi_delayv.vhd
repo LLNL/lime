@@ -22,37 +22,37 @@ entity axi_delayv is
 
 generic (
     SIMULATION            : std_logic := '0';
-	C_FAMILY              : string := "rtl";
-	C_AXI_PROTOCOL        : integer := P_AXI4;
-	C_MEM_ADDR_WIDTH      : integer := 30;
-	C_COUNTER_WIDTH       : integer := 20;
-	C_FIFO_DEPTH_AW       : integer := 0;
-	C_FIFO_DEPTH_W        : integer := 0;
+        C_FAMILY              : string := "rtl";
+        C_AXI_PROTOCOL        : integer := P_AXI4;
+        C_MEM_ADDR_WIDTH      : integer := 30;
+        C_COUNTER_WIDTH       : integer := 24; -- must match DELAY_WIDTH and GDT_DATA_BITS
+        C_FIFO_DEPTH_AW       : integer := 0;
+        C_FIFO_DEPTH_W        : integer := 0;
 --	C_FIFO_DEPTH_B        : integer := 0;
-	C_FIFO_DEPTH_AR       : integer := 0;
+        C_FIFO_DEPTH_AR       : integer := 0;
 --	C_FIFO_DEPTH_R        : integer := 0;
-
-	-- AXI-Lite Bus Interface
-	C_AXI_LITE_ADDR_WIDTH : integer := 18;
-	C_AXI_LITE_DATA_WIDTH : integer := 32;
-
-	-- AXI-Full Bus Interface
-	C_AXI_ID_WIDTH        : integer := 16;
-	C_AXI_ADDR_WIDTH      : integer := 40;
-	C_AXI_DATA_WIDTH      : integer := 128;
+        
+        -- AXI-Lite Bus Interface
+        C_AXI_LITE_ADDR_WIDTH : integer := 18;
+        C_AXI_LITE_DATA_WIDTH : integer := 32;
+        
+        -- AXI-Full Bus Interface
+        C_AXI_ID_WIDTH        : integer := 16;
+        C_AXI_ADDR_WIDTH      : integer := 40;
+        C_AXI_DATA_WIDTH      : integer := 128;
 
         -- chan_delay_variable generics
-    PRIORITY_QUEUE_WIDTH  : integer := 16;
-    DELAY_WIDTH           : integer := 24;
-
-    GDT_FILENAME          : string := "bram_del_table.mem";
-    GDT_ADDR_BITS         : integer := 10;
-    GDT_DATA_BITS         : integer := 24;
-
-    BYPASS_MINICAM        : integer := 1;
-    CAM_DEPTH             : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
-    NUM_EVENTS_PER_MBUF   : integer := 8;  -- maximum number of events each minibuffer can hold
-    NUM_MINI_BUFS         : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported    
+        PRIORITY_QUEUE_WIDTH  : integer := 16;
+        DELAY_WIDTH           : integer := 24; -- must match C_COUNTER_WIDTH and GDT_DATA_BITS
+        
+        GDT_FILENAME          : string := "bram_del_table.mem";
+        GDT_ADDR_BITS         : integer := 10;
+        GDT_DATA_BITS         : integer := 24; -- must match C_COUNTER_WIDTH and DELAY_WIDTH
+        
+        BYPASS_MINICAM        : integer := 1;
+        CAM_DEPTH             : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
+        NUM_EVENTS_PER_MBUF   : integer := 8;  -- maximum number of events each minibuffer can hold
+        NUM_MINI_BUFS         : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported    
 );
 
 port (
@@ -214,6 +214,11 @@ constant NREG           : integer := 5;
 constant REG_ADDR_WIDTH : integer := log2rp(NREG);
 constant WORD_LSB       : integer := log2rp(C_AXI_LITE_DATA_WIDTH/8);
 constant CAM_WIDTH      : integer := C_AXI_ID_WIDTH; -- maximum width of axi_id input.
+
+-- Note: assuming maximum width defined by C_AXI_ID_WIDTH = 16 and C_AXI_DATA_WIDTH = 128 (C_AXI_DATA_WIDTH/8 = 16) and misc (32) = 192
+constant AXI_INFO_WIDTH    : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_ADDR_WIDTH + C_AXI_DATA_WIDTH/8 + 
+                                    8 + 3 + 2 + 2 + 4 + 3 + 4 + 4 + 1 + 1 + 2;
+constant AXI_INFO_DEPTH    : integer := 64;
 
 --******************************************************************************
 --Signal Definitions
@@ -761,11 +766,15 @@ generic map (
     CHANNEL_TYPE         => "B", -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
+    C_COUNTER_WIDTH      => C_COUNTER_WIDTH,
 
     C_AXI_ID_WIDTH       => C_AXI_ID_WIDTH,
     C_AXI_ADDR_WIDTH     => C_AXI_ADDR_WIDTH,
     C_AXI_DATA_WIDTH     => C_AXI_DATA_WIDTH,
     
+    AXI_INFO_WIDTH       => AXI_INFO_WIDTH,
+    AXI_INFO_DEPTH       => AXI_INFO_DEPTH,
+
     GDT_FILENAME         => GDT_FILENAME,
     GDT_ADDR_BITS        => GDT_ADDR_BITS,
     GDT_DATA_BITS        => GDT_DATA_BITS,
@@ -782,6 +791,7 @@ port map (
     --------------------------------------------
     s_axi_aclk    => s_axi_aclk,
     s_axi_aresetn => s_axi_aresetn,
+    counter       => counter,
 								
     s_axi_id      => m_axi_bid,     			
     s_axi_addr    => (others => '0'),   		
@@ -950,10 +960,14 @@ generic map (
     CHANNEL_TYPE         => "R", -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
+    C_COUNTER_WIDTH      => C_COUNTER_WIDTH,
 
     C_AXI_ID_WIDTH       => C_AXI_ID_WIDTH,
     C_AXI_ADDR_WIDTH     => C_AXI_ADDR_WIDTH,
     C_AXI_DATA_WIDTH     => C_AXI_DATA_WIDTH,
+
+    AXI_INFO_WIDTH       => AXI_INFO_WIDTH,
+    AXI_INFO_DEPTH       => AXI_INFO_DEPTH,
 
     GDT_FILENAME         => GDT_FILENAME,
     GDT_ADDR_BITS        => GDT_ADDR_BITS,
@@ -971,6 +985,7 @@ port map (
     --------------------------------------------
     s_axi_aclk    => s_axi_aclk,
     s_axi_aresetn => s_axi_aresetn,
+    counter       => counter,
 								
     s_axi_id      => m_axi_rid,     				
     s_axi_addr    => (others => '0'),   				

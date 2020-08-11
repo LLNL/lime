@@ -28,7 +28,8 @@ generic (
 port (
     clk_i         : in  std_logic;
     nreset_i      : in  std_logic;
-
+    counter_i     : in   std_logic_vector(DELAY_WIDTH-1 downto 0);
+    
     -- (delay & axi_id & sb_index) of the transaction (from axi_parser)
     din_sr_i      : in  std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
     din_i         : in  std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
@@ -59,8 +60,18 @@ signal m_data          : dat;
 signal s_data          : dat;
 type delay_array is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(DELAY_WIDTH-1 downto 0);
 signal delay_reg       : delay_array  := (others => (others => '0'));
+signal ddiff           : delay_array  := (others => (others => '0'));
 type id_array is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
 signal id_reg          : id_array  := (others => (others => '0'));
+--signal ddiff           : std_logic_vector(DELAY_WIDTH-1 downto 0); -- delay diff, compare incoming timestamp (delay) with timestamp in each register
+--signal ddiff_hi        : std_logic;
+signal tdiff           : std_logic_vector(DELAY_WIDTH-1 downto 0); -- time diff, compare counter with timestamp in output SRB
+
+signal ddiff_0           : std_logic_vector(DELAY_WIDTH-1 downto 0); -- delay diff, compare incoming timestamp (delay) with timestamp in each register
+signal ddiff_1           : std_logic_vector(DELAY_WIDTH-1 downto 0); -- delay diff, compare incoming timestamp (delay) with timestamp in each register
+signal ddiff_2           : std_logic_vector(DELAY_WIDTH-1 downto 0); -- delay diff, compare incoming timestamp (delay) with timestamp in each register
+signal ddiff_3           : std_logic_vector(DELAY_WIDTH-1 downto 0); -- delay diff, compare incoming timestamp (delay) with timestamp in each register
+
 
 signal valid_reg       : std_logic_vector(PRIORITY_QUEUE_WIDTH-1 downto 0);
 signal delay_new       : std_logic_vector(DELAY_WIDTH-1 downto 0) := (others => '0');   
@@ -111,8 +122,12 @@ attribute mark_debug of CS_valid_reg  : signal is "true";
 
 begin
 
-dout_ready    <= '1' when (dout_ready_i = '1' and din_en_i = '0' and (delay_reg(0) = x"000000")) else
-                 '0';
+tdiff         <= std_logic_vector(unsigned(delay_reg(0)) - unsigned(counter_i));
+
+dout_ready    <= dout_ready_i and not din_en_i and (tdiff(tdiff'high));
+
+--dout_ready    <= '1' when (dout_ready_i = '1' and din_en_i = '0' and (delay_reg(0) = x"000000")) else
+--                 '0';
 
 GEN_shift_reg_blocks :
 for i in 0 to PRIORITY_QUEUE_WIDTH-1 generate
@@ -232,16 +247,26 @@ end process;
 
 axi_id_ins_err_o <= '1' when (axi_id_max_hi = (PRIORITY_QUEUE_WIDTH-1)) else '0';
 
-ins_chk_loop_proc : process (din_en_i, delay_new, delay_reg) begin
-    insert_check_loop: for jj in 0 to (PRIORITY_QUEUE_WIDTH-1) loop
-        if (din_en_i = '1') and (delay_new <  delay_reg(jj)) then
+gen_diff_array_proc : process (din_en_i, delay_new, delay_reg) begin
+    gen_diff_loop : for ii in 0 to (PRIORITY_QUEUE_WIDTH-1) loop
+        ddiff(ii)     <= std_logic_vector(unsigned(delay_reg(ii)) - unsigned(delay_new));
+    end loop;   
+end process;
+
+ddiff_0 <= std_logic_vector(unsigned(delay_reg(0)) - unsigned(delay_new)); 
+ddiff_1 <= std_logic_vector(unsigned(delay_reg(1)) - unsigned(delay_new)); 
+ddiff_2 <= std_logic_vector(unsigned(delay_reg(2)) - unsigned(delay_new)); 
+ddiff_3 <= std_logic_vector(unsigned(delay_reg(3)) - unsigned(delay_new)); 
+
+ins_chk_loop_proc : process (din_en_i, delay_new, delay_reg, ddiff) begin
+    insert_check_loop: for jj in 0 to (PRIORITY_QUEUE_WIDTH-1) loop        
+        if (din_en_i = '1') and (delay_reg(jj)(DELAY_WIDTH-1) = '0') then
             delay_srb_low <= jj;
-            exit insert_check_loop when (delay_new <  delay_reg(jj)); -- same as if condition
+            exit insert_check_loop when (ddiff(jj)(DELAY_WIDTH-1) = '0'); -- same as if condition
         end if;
     end loop;   
 end process;
 
---srb_insert <= axi_id_max_hi when (axi_id_max_hi > delay_srb_low) else delay_srb_low;
 srb_insert <= (axi_id_max_hi) when (found_axi_id = '1') and (axi_id_max_hi > delay_srb_low) else delay_srb_low;
 
 din_ready  <= '1' when (valid_reg(PRIORITY_QUEUE_WIDTH-3) = '0') else '0';
@@ -250,7 +275,6 @@ din_ready  <= '1' when (valid_reg(PRIORITY_QUEUE_WIDTH-3) = '0') else '0';
 -- Output assignments
 ----------------------------------------------------------------------------------------------
 din_ready_o <= din_ready;
---din_ready_o <= '1' when (valid_reg(PRIORITY_QUEUE_WIDTH-5) = '0') else '0';
 
 dout_o           <= m_shift_data(0)(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
 dout_valid_o     <= m_shift_valid(0);

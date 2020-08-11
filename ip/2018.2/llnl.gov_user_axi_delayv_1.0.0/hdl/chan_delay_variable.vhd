@@ -24,11 +24,16 @@ generic (
     CHANNEL_TYPE         : string  := "AW" ; -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH : integer := 16;
     DELAY_WIDTH          : integer := 24;
+    C_COUNTER_WIDTH      : integer := 20;
 
     -- AXI-Full Bus Interface
     C_AXI_ID_WIDTH       : integer := 16;
     C_AXI_ADDR_WIDTH     : integer := 40;
     C_AXI_DATA_WIDTH     : integer := 128;
+    
+    -- AXI Information FIFO
+    AXI_INFO_WIDTH       : integer := 192;
+    AXI_INFO_DEPTH       : integer := 32;
     
     GDT_FILENAME         : string := "bram_del_table.mem";
     GDT_ADDR_BITS        : integer := 8;
@@ -47,6 +52,7 @@ port (
     --------------------------------------------
     s_axi_aclk    : in  std_logic;
     s_axi_aresetn : in  std_logic;
+    counter       : in  std_logic_vector(C_COUNTER_WIDTH-1 downto 0);
     
     -- Slave AXI Interface --
     s_axi_id      : in  std_logic_vector(C_AXI_ID_WIDTH-1 downto 0) := (others => '0');
@@ -112,8 +118,8 @@ constant MINIBUF_IDX_WIDTH : integer := log2rp(NUM_MINI_BUFS);
 constant CTR_PTR_WIDTH     : integer := MINIBUF_IDX_WIDTH + 2; -- indexes into (i.e. addresses) the packet buffer. Minimum depth of Packet Buffer DPRAM = 2^(CTR_PTR_WIDTH)
 
 -- Note: assuming maximum width defined by C_AXI_ID_WIDTH = 16 and C_AXI_DATA_WIDTH = 128 (C_AXI_DATA_WIDTH/8 = 16) and misc (32) = 192
-constant AXI_INFO_WIDTH    : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_ADDR_WIDTH + C_AXI_DATA_WIDTH/8 + 
-                                    8 + 3 + 2 + 2 + 4 + 3 + 4 + 4 + 1 + 1 + 2;
+--constant AXI_INFO_WIDTH    : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_ADDR_WIDTH + C_AXI_DATA_WIDTH/8 + 
+--                                    8 + 3 + 2 + 2 + 4 + 3 + 4 + 4 + 1 + 1 + 2;
 
 constant C_ZERO    : std_logic_vector(1023 downto 0) := (others => '0');
 constant C_ZERO_16 : std_logic_vector(15 downto 0) := (others => '0');
@@ -124,6 +130,7 @@ constant C_ZERO_16 : std_logic_vector(15 downto 0) := (others => '0');
 signal random_dly     : std_logic_vector(DELAY_WIDTH-1 downto 0);
 signal random_dly_buf : std_logic_vector(DELAY_WIDTH-1 downto 0);
 signal random_dly_req : std_logic;
+signal s_time         : std_logic_vector(C_COUNTER_WIDTH-1 downto 0);
 
 signal s_axi_areset   : std_logic;
 signal m_axi_areset   : std_logic;
@@ -198,6 +205,7 @@ generic map (
     C_AXI_DATA_WIDTH     => C_AXI_DATA_WIDTH,
     C_AXI_ADDR_WIDTH     => C_AXI_ADDR_WIDTH,
     AXI_INFO_WIDTH       => AXI_INFO_WIDTH,
+    AXI_INFO_DEPTH       => AXI_INFO_DEPTH,
     DELAY_WIDTH          => DELAY_WIDTH
 )
 port map (
@@ -207,7 +215,7 @@ port map (
     minibuf_fe_i         => minibuf_fe,
     minicam_full_i       => minicam_full,
     available_ctrptr_i   => available_ctrptr,
-    random_dly_i         => random_dly,
+    random_dly_i         => s_time, --random_dly, -- replaced by s_time for conversion to timestamp operation (from delay operation)
     random_dly_o         => random_dly_buf,
 
     ----- Slave AXI Interface -----
@@ -421,17 +429,18 @@ generic map (
 port map (
     clk_i                => m_axi_aclk,
     nreset_i             => m_axi_aresetn,
+    counter_i            => counter,
   
     -- (delay & axi_id & sb_index) of the transaction (from axi_parser)
-    din_sr_i      => pq_data_sr,
-    din_i         => pq_data_complete,
-    din_en_i      => pq_en,
-    din_ready_o   => pq_ready,
+    din_sr_i             => pq_data_sr,
+    din_i                => pq_data_complete,
+    din_en_i             => pq_en,
+    din_ready_o          => pq_ready,
   
     -- (delay & axi_id & sb_index) of the transaction (to priority controller)
-    dout_o        => pq_dout,
-    dout_valid_o  => pq_dout_valid,
-    dout_ready_i  => pq_dout_ready
+    dout_o               => pq_dout,
+    dout_valid_o         => pq_dout_valid,
+    dout_ready_i         => pq_dout_ready
   );
   
 ---------------------------------------
@@ -470,6 +479,12 @@ port map (
     axi_info_valid_o    => axi_info_valid,
     axi_info_data_o     => axi_info_data 
 );
+
+---------------------------------------
+-- Counter logic
+---------------------------------------
+
+s_time     <= std_logic_vector(unsigned(counter) + unsigned(random_dly));
 
 ----------------------------------------------------------------------------------------------
 -- Output assignments
