@@ -232,7 +232,7 @@ type reg_file is array(reg_rng) of std_logic_vector(C_AXI_LITE_DATA_WIDTH-1 down
 -- clock domain crossing for registers is done in chan_delay
 signal slv_reg : reg_file;
 
-signal counter : std_logic_vector(C_COUNTER_WIDTH-1 downto 0);
+signal counter : std_logic_vector(DELAY_WIDTH-1 downto 0);
 
 -- AXI-Lite Slave Bus Interface S_AXI_LITE
 
@@ -622,7 +622,7 @@ end process;
 i_aw: entity axi_delay_lib.chan_delay
     generic map (
 	C_FAMILY        => C_FAMILY,
-	C_COUNTER_WIDTH => C_COUNTER_WIDTH,
+	C_COUNTER_WIDTH => DELAY_WIDTH,
 	C_FIFO_DEPTH    => C_FIFO_DEPTH_AW,
 	C_00_USE        => ite(C_AXI_PROTOCOL /= P_AXILITE,1,0), -- awid
 	C_01_USE        => 1,                                    -- awaddr -- AXILITE
@@ -650,7 +650,7 @@ i_aw: entity axi_delay_lib.chan_delay
     port map (
 	dclk    => s_axi_lite_aclk,
 	dresetn => s_axi_lite_aresetn,
-	delay   => slv_reg(0)(C_COUNTER_WIDTH-1 downto 0), 
+	delay   => slv_reg(0)(DELAY_WIDTH-1 downto 0), 
 	aclk    => s_axi_aclk,
 	aresetn => s_axi_aresetn,
 	counter => counter, 
@@ -689,7 +689,7 @@ i_aw: entity axi_delay_lib.chan_delay
 i_w: entity axi_delay_lib.chan_delay
     generic map (
 	C_FAMILY        => C_FAMILY,
-	C_COUNTER_WIDTH => C_COUNTER_WIDTH,
+	C_COUNTER_WIDTH => DELAY_WIDTH,
 	C_FIFO_DEPTH    => C_FIFO_DEPTH_W,
 	C_00_USE        => ite(C_AXI_PROTOCOL = P_AXI3,1,0),     -- wid -- AXI3
 	C_01_USE        => 1,                                    -- wdata -- AXILITE
@@ -705,7 +705,7 @@ i_w: entity axi_delay_lib.chan_delay
     port map (
 	dclk    => s_axi_lite_aclk,
 	dresetn => s_axi_lite_aresetn,
-	delay   => slv_reg(1)(C_COUNTER_WIDTH-1 downto 0), 
+	delay   => slv_reg(1)(DELAY_WIDTH-1 downto 0), 
 	aclk    => s_axi_aclk,
 	aresetn => s_axi_aresetn,
 	counter => counter, 
@@ -732,7 +732,7 @@ i_w: entity axi_delay_lib.chan_delay
 -----     i_b: entity chan_delay_fixed
 -----         generic map (
 -----     	C_FAMILY        => C_FAMILY,
------     	C_COUNTER_WIDTH => C_COUNTER_WIDTH,
+-----     	C_COUNTER_WIDTH => DELAY_WIDTH,
 -----     	C_FIFO_DEPTH    => C_FIFO_DEPTH_B,
 -----     	C_00_USE        => ite(C_AXI_PROTOCOL /= P_AXILITE,1,0), -- bid
 -----     	C_01_USE        => 1,                                    -- bresp -- AXILITE
@@ -744,7 +744,7 @@ i_w: entity axi_delay_lib.chan_delay
 -----     	port map (
 -----     	dclk    => s_axi_lite_aclk,
 -----     	dresetn => s_axi_lite_aresetn,
------     	delay   => b_doutb_i(C_COUNTER_WIDTH-1 downto 0),
+-----     	delay   => b_doutb_i(DELAY_WIDTH-1 downto 0),
 -----     	aclk    => m_axi_aclk,
 -----     	aresetn => m_axi_aresetn,
 -----     	counter => counter,
@@ -766,7 +766,7 @@ generic map (
     CHANNEL_TYPE         => "B", -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
-    C_COUNTER_WIDTH      => C_COUNTER_WIDTH,
+    C_COUNTER_WIDTH      => DELAY_WIDTH,
 
     C_AXI_ID_WIDTH       => C_AXI_ID_WIDTH,
     C_AXI_ADDR_WIDTH     => C_AXI_ADDR_WIDTH,
@@ -851,7 +851,7 @@ port map (
 i_ar: entity axi_delay_lib.chan_delay
     generic map (
 	C_FAMILY        => C_FAMILY,
-	C_COUNTER_WIDTH => C_COUNTER_WIDTH,
+	C_COUNTER_WIDTH => DELAY_WIDTH,
 	C_FIFO_DEPTH    => C_FIFO_DEPTH_AR,
 	C_00_USE        => ite(C_AXI_PROTOCOL /= P_AXILITE,1,0), -- arid
 	C_01_USE        => 1,                                    -- araddr -- AXILITE
@@ -879,7 +879,7 @@ i_ar: entity axi_delay_lib.chan_delay
     port map (
 	dclk    => s_axi_lite_aclk,
 	dresetn => s_axi_lite_aresetn,
-	delay   => slv_reg(3)(C_COUNTER_WIDTH-1 downto 0),
+	delay   => slv_reg(3)(DELAY_WIDTH-1 downto 0),
 	aclk    => s_axi_aclk,
 	aresetn => s_axi_aresetn,
 	counter => counter,
@@ -918,7 +918,7 @@ i_ar: entity axi_delay_lib.chan_delay
 -----     	i_r: entity chan_delay
 -----     	generic map (
 -----     	C_FAMILY        => C_FAMILY,
------     	C_COUNTER_WIDTH => C_COUNTER_WIDTH,
+-----     	C_COUNTER_WIDTH => DELAY_WIDTH,
 -----     	C_FIFO_DEPTH    => C_FIFO_DEPTH_R,
 -----     	C_00_USE        => ite(C_AXI_PROTOCOL /= P_AXILITE,1,0), -- rid
 -----     	C_01_USE        => 1,                                    -- rdata -- AXILITE
@@ -934,7 +934,7 @@ i_ar: entity axi_delay_lib.chan_delay
 -----     	port map (
 -----     	dclk    => s_axi_lite_aclk,
 -----     	dresetn => s_axi_lite_aresetn,
------     	delay   => r_doutb_i(C_COUNTER_WIDTH-1 downto 0),
+-----     	delay   => r_doutb_i(DELAY_WIDTH-1 downto 0),
 -----     	aclk    => m_axi_aclk,
 -----     	aresetn => m_axi_aresetn,
 -----     	counter => counter,
@@ -960,7 +960,7 @@ generic map (
     CHANNEL_TYPE         => "R", -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
-    C_COUNTER_WIDTH      => C_COUNTER_WIDTH,
+    C_COUNTER_WIDTH      => DELAY_WIDTH,
 
     C_AXI_ID_WIDTH       => C_AXI_ID_WIDTH,
     C_AXI_ADDR_WIDTH     => C_AXI_ADDR_WIDTH,

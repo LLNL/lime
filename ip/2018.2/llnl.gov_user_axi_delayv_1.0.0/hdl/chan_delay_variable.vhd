@@ -24,7 +24,7 @@ generic (
     CHANNEL_TYPE         : string  := "AW" ; -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH : integer := 16;
     DELAY_WIDTH          : integer := 24;
-    C_COUNTER_WIDTH      : integer := 20;
+    C_COUNTER_WIDTH      : integer := 24;
 
     -- AXI-Full Bus Interface
     C_AXI_ID_WIDTH       : integer := 16;

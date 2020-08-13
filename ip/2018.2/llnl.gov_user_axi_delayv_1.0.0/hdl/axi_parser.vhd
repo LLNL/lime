@@ -158,7 +158,8 @@ begin
 -- generated in axi_perf_mon_v5_0_10_flags_gen.v
 --------------------------------------------------------------------------------
 s_axi_last  <= s_axi_last_i when (CHANNEL_TYPE = "R" or CHANNEL_TYPE = "W") else '1';
-s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i) and (pq_ready_i);
+s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i);
+--s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i) and (pq_ready_i);
 
 first_data_flag  <= s_axi_valid_i and s_axi_ready and (not acc_going_on);
 mid_data_flag    <= s_axi_valid_i and s_axi_ready and acc_going_on and (not s_axi_last);
@@ -268,7 +269,7 @@ PORT MAP (
         din         => misc_fifo_din,
         prog_full   => OPEN ,
         full        => OPEN,
-        wr_en       => mc_ctr_ptr_wr_i,
+        wr_en       => axi_info_wr, --mc_ctr_ptr_wr_i,
 
         dout        => misc_fifo_dout, --mc_ctr_ptr_q,
         prog_empty  => OPEN,

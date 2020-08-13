@@ -13,13 +13,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="1510385944700fs"></ZoomStartTime>
-      <ZoomEndTime time="1511122811061fs"></ZoomEndTime>
-      <Cursor1Time time="1511000000000fs"></Cursor1Time>
+      <ZoomStartTime time="4380227093fs"></ZoomStartTime>
+      <ZoomEndTime time="4989623569fs"></ZoomEndTime>
+      <Cursor1Time time="4590000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="224"></NameColumnWidth>
-      <ValueColumnWidth column_width="163"></ValueColumnWidth>
+      <ValueColumnWidth column_width="159"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="30" />
    <wvobject fp_name="/channel_delay_tb/sys_clk" type="logic">
@@ -2177,6 +2177,10 @@
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/din_en_i" type="logic">
          <obj_property name="ElementShortName">din_en_i</obj_property>
          <obj_property name="ObjectShortName">din_en_i</obj_property>
+      </wvobject>
+      <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/dout_ready" type="logic">
+         <obj_property name="ElementShortName">dout_ready</obj_property>
+         <obj_property name="ObjectShortName">dout_ready</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/\GEN_shift_reg_blocks(0)\/srb/debug_shift" type="array">
          <obj_property name="ElementShortName">debug_shift[2:0]</obj_property>

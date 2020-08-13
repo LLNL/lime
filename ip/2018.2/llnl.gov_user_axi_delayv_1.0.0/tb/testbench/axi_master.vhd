@@ -160,20 +160,26 @@ begin
             maxi_state_nxt <= MAXI_SM_INIT;
         else
 
+            axi_info_tmp  <= (others => '0');
             valid_cycle   <= '0';
-            ieg_cyc     <= (others => '0'); 
+            ieg_cyc       <= (others => '0'); 
       
       case maxi_state_nxt is
       
          when MAXI_SM_INIT  => 
 
             if (m_axi_aresetn_i = '0' or transmission_en_i = '0') then
+               axi_info_tmp   <= (others => '0');
                maxi_state_nxt <= MAXI_SM_INIT;
             else
                ------------------------------------------
                -- get test vector
-               READLINE     (file_in, line_in);
-               HREAD        (line_in, input_tmp);
+               if not (endfile(file_in)) then
+                  READLINE     (file_in, line_in);
+                  HREAD        (line_in, input_tmp);
+               else
+                  input_tmp := (others => '0');
+               end if;
 
                -- write status to stat_out file
                write      (line_out, string'("input from file: "));
@@ -194,8 +200,12 @@ begin
                if (ieg_cyc = x"00000000") then -- zero inter-event gap
                   ------------------------------------------
                   -- get test vector
-                  READLINE     (file_in, line_in);
-                  HREAD        (line_in, input_tmp);
+                  if not (endfile(file_in)) then
+                     READLINE     (file_in, line_in);
+                     HREAD        (line_in, input_tmp);
+                  else
+                     input_tmp := (others => '0');
+                  end if;
       
                   -- write status to stat_out file
                   write      (line_out, string'("input from file: "));
@@ -213,11 +223,13 @@ begin
                       maxi_state_nxt <= MAXI_SM_RDY_WAIT;
                   end if;
                else  -- non-zero inter-event gap
+                  axi_info_tmp   <= (others => '0');
                   maxi_state_nxt <= MAXI_SM_IPG;
                end if;
             end if;
                  
          when MAXI_SM_RDY_WAIT =>            
+            axi_info_tmp   <= (others => '0');
             if (m_axi_ready_i = '1') then
                maxi_state_nxt <= MAXI_SM_VALID_EVENT;
             else
@@ -228,8 +240,12 @@ begin
             if (ieg_cnt_tc = '1' or ieg_cnt = x"00000000") then
                ------------------------------------------
                -- get test vector from file_in
-               READLINE     (file_in, line_in);
-               HREAD        (line_in, input_tmp);
+              if not (endfile(file_in)) then
+                 READLINE     (file_in, line_in);
+                 HREAD        (line_in, input_tmp);
+              else
+                 input_tmp := (others => '0');
+              end if;
 
                -- write status to stat_out file (for debug only)
                write      (line_out, string'("input from file: "));
@@ -243,10 +259,12 @@ begin
                ------------------------------------------
                maxi_state_nxt <= MAXI_SM_VALID_EVENT;
             else
+               axi_info_tmp   <= (others => '0');
                maxi_state_nxt <= MAXI_SM_IPG;
             end if;      
                     
          when others =>
+            axi_info_tmp   <= (others => '0');
             maxi_state_nxt <= MAXI_SM_INIT;
             
       end case;
