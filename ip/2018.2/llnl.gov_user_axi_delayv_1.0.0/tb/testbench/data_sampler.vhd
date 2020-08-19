@@ -57,11 +57,11 @@ begin
          addrb_q <= SIM_addrb;
       
          if (SIM_random_dly_en = '1' ) then
-            write     (line_out, to_integer(unsigned(SIM_random_dly)));
+            write     (line_out, to_integer(unsigned(SIM_random_dly))); -- timestamp, defines time to transmit packet
             write     (line_out, string'(","));
-            write     (line_out, to_integer(unsigned(lfsr_q)));
+            write     (line_out, to_integer(unsigned(lfsr_q))); -- random number - same as GDT address
             write     (line_out, string'(","));
-            write     (line_out, to_integer(unsigned(addrb_q)));
+            write     (line_out, to_integer(unsigned(addrb_q))); -- GDT address
             writeline (gdt_outfile, line_out);
                         
          end if;

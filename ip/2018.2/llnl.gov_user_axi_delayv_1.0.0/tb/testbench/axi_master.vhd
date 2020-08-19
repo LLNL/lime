@@ -11,7 +11,7 @@ use IEEE.std_logic_1164.all;
 use IEEE.std_logic_arith.all;
 use IEEE.std_logic_unsigned.all;
 use IEEE.std_logic_textio.all;
-use IEEE.numeric_std.all;
+--use IEEE.numeric_std.all;
 use std.textio.all;
 
 entity axi_master is
@@ -96,6 +96,13 @@ constant MAXI_SM_VALID_EVENT : std_logic_vector(2 downto 0) := "001";
 constant MAXI_SM_RDY_WAIT    : std_logic_vector(2 downto 0) := "010";
 constant MAXI_SM_IPG         : std_logic_vector(2 downto 0) := "100";
 
+signal counter_std     : std_logic_vector(7 downto 0);
+signal counter_std_p5  : std_logic_vector(7 downto 0);
+signal counter_std_m5  : std_logic_vector(7 downto 0);
+signal counter_u       : unsigned(7 downto 0);
+signal counter_u_p5    : unsigned(7 downto 0);
+signal counter_u_m5    : unsigned(7 downto 0);
+
 --*********************************************************************
 --Component Definitions
 --*********************************************************************
@@ -104,6 +111,24 @@ constant MAXI_SM_IPG         : std_logic_vector(2 downto 0) := "100";
 -- Connectivity and Logic
 --*********************************************************************
 begin
+
+
+ucntr_proc : process (m_axi_aclk_i) begin
+    if rising_edge(m_axi_aclk_i) then
+        if (m_axi_aresetn_i = '0') then              
+            counter_std <= (others => '0');
+            counter_u   <= (others => '0');
+        else
+            counter_std <= counter_std + '1';
+            counter_u   <= counter_u + 1;
+        end if;
+    end if;
+end process;              
+
+counter_std_p5 <= counter_std + "0101";
+counter_u_p5   <= counter_u + "0101";
+counter_std_m5 <= counter_std - "0101";
+counter_u_m5   <= counter_u - "0101";
 
 -----------------------------------------------------------------------
 -- Registers

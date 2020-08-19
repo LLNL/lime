@@ -20,12 +20,12 @@ from axi_delay_pkg import *
 LAST  = 0  ## defines last bit of packet
 DEL   = 0  ## used within generation loop
 DELZ  = 0  ## zero inter-event gap (ieg). DO NOT CHANGE!!!
-DEL0  = 20
-DEL1  = 20
-DEL2  = 20
-DEL3  = 20
-DEL4  = 20
-DEL5  = 20
+DEL0  = 5
+DEL1  = 5
+DEL2  = 5
+DEL3  = 5
+DEL4  = 5
+DEL5  = 5
 
 #-------------------------------------------------------------------------------
 # default output file names

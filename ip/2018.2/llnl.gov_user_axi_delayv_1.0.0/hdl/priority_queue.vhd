@@ -49,6 +49,7 @@ architecture behavioral of priority_queue is
 --******************************************************************************
 -- Constants
 --******************************************************************************
+constant C_ZERO   : std_logic_vector(PRIORITY_QUEUE_WIDTH-1 downto 0) := (others => '0');
 
 --******************************************************************************
 --Signal Definitions
@@ -63,15 +64,7 @@ signal delay_reg       : delay_array  := (others => (others => '0'));
 signal ddiff           : delay_array  := (others => (others => '0'));
 type id_array is array (0 to PRIORITY_QUEUE_WIDTH-1) of std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
 signal id_reg          : id_array  := (others => (others => '0'));
---signal ddiff           : std_logic_vector(DELAY_WIDTH-1 downto 0); -- delay diff, compare incoming timestamp (delay) with timestamp in each register
---signal ddiff_hi        : std_logic;
 signal tdiff           : std_logic_vector(DELAY_WIDTH-1 downto 0); -- time diff, compare counter with timestamp in output SRB
-
-signal ddiff_0           : std_logic_vector(DELAY_WIDTH-1 downto 0); -- delay diff, compare incoming timestamp (delay) with timestamp in each register
-signal ddiff_1           : std_logic_vector(DELAY_WIDTH-1 downto 0); -- delay diff, compare incoming timestamp (delay) with timestamp in each register
-signal ddiff_2           : std_logic_vector(DELAY_WIDTH-1 downto 0); -- delay diff, compare incoming timestamp (delay) with timestamp in each register
-signal ddiff_3           : std_logic_vector(DELAY_WIDTH-1 downto 0); -- delay diff, compare incoming timestamp (delay) with timestamp in each register
-
 
 signal valid_reg       : std_logic_vector(PRIORITY_QUEUE_WIDTH-1 downto 0);
 signal delay_new       : std_logic_vector(DELAY_WIDTH-1 downto 0) := (others => '0');   
@@ -95,26 +88,47 @@ signal dout_ready      : std_logic;
 ----------------------------------------------------------------------------------------------
 -- FOR DEBUG (CHIPSCOPE) ONLY
 ----------------------------------------------------------------------------------------------
-signal CS_delay_reg  : std_logic_vector(DELAY_WIDTH-1 downto 0) := (others => '0');  
-signal CS_id_reg     : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0) := (others => '0');  
-signal CS_valid_reg  : std_logic_vector(PRIORITY_QUEUE_WIDTH-1 downto 0);
-signal CS_srb_insert : integer := 0;
-signal CS_din_ready  : std_logic;
-signal CS_dout       : std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
-signal CS_dout_valid : std_logic;
-signal CS_din        : std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
-signal CS_din_en     : std_logic;
+signal CS_id_reg        : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0) := (others => '0');  
+signal CS_valid_reg     : std_logic_vector(PRIORITY_QUEUE_WIDTH-1 downto 0);
+signal CS_delay_srb_low : integer := 0; -- lowest srb for delay insertion
+signal CS_axi_id_max_hi : integer := 0;
+signal CS_srb_insert    : integer := 0;
+signal CS_found_axi_id  : std_logic;
+signal CS_din_ready     : std_logic;
+signal CS_dout          : std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+signal CS_dout_valid    : std_logic;
+signal CS_dout_ready    : std_logic;
+signal CS_din           : std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+signal CS_din_en        : std_logic;
+
+signal CS_dout_ready_i  : std_logic;
+signal CS_din_en_i      : std_logic;
+signal CS_tdiff         : std_logic_vector(DELAY_WIDTH-1 downto 0); 
+signal CS_ddiff         : delay_array  := (others => (others => '0'));
+signal CS_delay_reg_0   : std_logic_vector(DELAY_WIDTH-1 downto 0);
+signal CS_counter_i     : std_logic_vector(DELAY_WIDTH-1 downto 0);
 
 attribute mark_debug : string;
---attribute mark_debug of CS_delay_reg  : signal is "true"; 
---attribute mark_debug of CS_id_reg     : signal is "true"; 
-attribute mark_debug of CS_valid_reg  : signal is "true"; 
---attribute mark_debug of CS_srb_insert : signal is "true"; 
---attribute mark_debug of CS_din_ready  : signal is "true"; 
---attribute mark_debug of CS_dout       : signal is "true"; 
---attribute mark_debug of CS_dout_valid : signal is "true"; 
---attribute mark_debug of CS_din        : signal is "true";
---attribute mark_debug of CS_din_en     : signal is "true";
+attribute mark_debug of CS_id_reg        : signal is "true"; 
+attribute mark_debug of CS_valid_reg     : signal is "true";
+attribute mark_debug of CS_delay_srb_low : signal is "true"; 
+attribute mark_debug of CS_axi_id_max_hi : signal is "true"; 
+attribute mark_debug of CS_srb_insert    : signal is "true"; 
+attribute mark_debug of CS_found_axi_id  : signal is "true"; 
+attribute mark_debug of CS_din_ready     : signal is "true";
+attribute mark_debug of CS_dout          : signal is "true";
+attribute mark_debug of CS_dout_valid    : signal is "true";
+attribute mark_debug of CS_dout_ready    : signal is "true";
+attribute mark_debug of CS_din           : signal is "true";
+attribute mark_debug of CS_din_en        : signal is "true";
+
+attribute mark_debug of CS_dout_ready_i  : signal is "true";
+attribute mark_debug of CS_din_en_i      : signal is "true";
+attribute mark_debug of CS_tdiff         : signal is "true";
+attribute mark_debug of CS_ddiff         : signal is "true";
+attribute mark_debug of CS_delay_reg_0   : signal is "true";
+attribute mark_debug of CS_counter_i     : signal is "true";
+
 
 --******************************************************************************
 -- Connectivity and Logic
@@ -247,22 +261,51 @@ end process;
 
 axi_id_ins_err_o <= '1' when (axi_id_max_hi = (PRIORITY_QUEUE_WIDTH-1)) else '0';
 
-gen_diff_array_proc : process (din_en_i, delay_new, delay_reg) begin
+gen_diff_array_proc : process (delay_new, delay_reg) begin
     gen_diff_loop : for ii in 0 to (PRIORITY_QUEUE_WIDTH-1) loop
         ddiff(ii)     <= std_logic_vector(unsigned(delay_reg(ii)) - unsigned(delay_new));
     end loop;   
 end process;
 
-ddiff_0 <= std_logic_vector(unsigned(delay_reg(0)) - unsigned(delay_new)); 
-ddiff_1 <= std_logic_vector(unsigned(delay_reg(1)) - unsigned(delay_new)); 
-ddiff_2 <= std_logic_vector(unsigned(delay_reg(2)) - unsigned(delay_new)); 
-ddiff_3 <= std_logic_vector(unsigned(delay_reg(3)) - unsigned(delay_new)); 
+--pr_enc_proc : process (din_en_i, ddiff) begin
+--    if    ((din_en_i = '1') and (valid_reg = x"0000"))            then delay_srb_low <= 0; 
+--    elsif ((din_en_i = '1') and (ddiff(0) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 0; 
+--    elsif ((din_en_i = '1') and (ddiff(1) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 1; 
+--    elsif ((din_en_i = '1') and (ddiff(2) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 2; 
+--    elsif ((din_en_i = '1') and (ddiff(3) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 3; 
+--    elsif ((din_en_i = '1') and (ddiff(4) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 4;
+--    elsif ((din_en_i = '1') and (ddiff(5) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 5; 
+--    elsif ((din_en_i = '1') and (ddiff(6) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 6; 
+--    elsif ((din_en_i = '1') and (ddiff(7) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 7; 
+--    elsif ((din_en_i = '1') and (ddiff(8) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 8; 
+--    elsif ((din_en_i = '1') and (ddiff(9) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 9; 
+--    elsif ((din_en_i = '1') and (ddiff(10)(DELAY_WIDTH-1) = '0')) then delay_srb_low <= 10; 
+--    elsif ((din_en_i = '1') and (ddiff(11)(DELAY_WIDTH-1) = '0')) then delay_srb_low <= 11; 
+--    elsif ((din_en_i = '1') and (ddiff(12)(DELAY_WIDTH-1) = '0')) then delay_srb_low <= 12; 
+--    elsif ((din_en_i = '1') and (ddiff(13)(DELAY_WIDTH-1) = '0')) then delay_srb_low <= 13; 
+--    elsif ((din_en_i = '1') and (ddiff(14)(DELAY_WIDTH-1) = '0')) then delay_srb_low <= 14; 
+--    else                                                               delay_srb_low <= 15;
+--    end if;
+--end process;
 
-ins_chk_loop_proc : process (din_en_i, delay_new, delay_reg, ddiff) begin
-    insert_check_loop: for jj in 0 to (PRIORITY_QUEUE_WIDTH-1) loop        
-        if (din_en_i = '1') and (delay_reg(jj)(DELAY_WIDTH-1) = '0') then
+--  ins_chk_loop_proc : process (din_en_i, delay_new, delay_reg, ddiff) begin
+--      insert_check_loop: for jj in 0 to (PRIORITY_QUEUE_WIDTH-1) loop        
+--          if (din_en_i = '1') and (ddiff(jj)(DELAY_WIDTH-1) = '0') then
+--              delay_srb_low <= jj;
+--              exit insert_check_loop when (ddiff(jj)(DELAY_WIDTH-1) = '0'); -- same as if condition
+--          end if;
+--      end loop;   
+--  end process;
+
+ins_chk_loop_proc : process (din_en_i, valid_reg, ddiff) begin
+    insert_check_loop: for jj in 0 to (PRIORITY_QUEUE_WIDTH-1) loop
+        if (din_en_i = '1') and (valid_reg = C_ZERO) then
+            delay_srb_low <= 0;
+        elsif (din_en_i = '1') and (ddiff(jj)(DELAY_WIDTH-1) = '0') then
             delay_srb_low <= jj;
             exit insert_check_loop when (ddiff(jj)(DELAY_WIDTH-1) = '0'); -- same as if condition
+        else
+            delay_srb_low <= PRIORITY_QUEUE_WIDTH-1;
         end if;
     end loop;   
 end process;
@@ -294,28 +337,48 @@ end generate gen_SIMout;
 ----------------------------------------------------------------------------------------------
 CHIPSCOPE_proc : process (clk_i, nreset_i) begin
     if (nreset_i = '0') then
-      CS_delay_reg  <= (others => '0');
-      CS_id_reg     <= (others => '0');
-      CS_valid_reg  <= (others => '0');
-      CS_srb_insert <= 0;
-      CS_din_ready  <= '0';
-      CS_dout       <= (others => '0');
-      CS_dout_valid <= '0';
+      CS_id_reg        <= (others => '0');
+      CS_valid_reg     <= (others => '0');
+      CS_delay_srb_low <= 0;
+      CS_axi_id_max_hi <= 0;
+      CS_srb_insert    <= 0;
+      CS_found_axi_id  <= '0';
+      CS_din_ready     <= '0';
+      CS_dout          <= (others => '0');
+      CS_dout_valid    <= '0';
+      CS_dout_ready    <= '0';  
       
-      CS_din         <= (others => '0');
-      CS_din_en      <= '0';
+      CS_din           <= (others => '0');
+      CS_din_en        <= '0';
+      
+      CS_dout_ready_i  <= '0';
+      CS_din_en_i      <= '0';
+      CS_tdiff         <= (others => '0');
+      CS_ddiff         <= (others => (others => '0'));
+      CS_delay_reg_0   <= (others => '0');
+      CS_counter_i     <= (others => '0');
 
     elsif rising_edge(clk_i) then
-      CS_delay_reg  <= delay_reg(0);
-      CS_id_reg     <= id_reg(0);
-      CS_valid_reg  <= valid_reg;
-      CS_srb_insert <= srb_insert;
-      CS_din_ready  <= din_ready;
-      CS_dout       <= m_shift_data(0)(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
-      CS_dout_valid <= m_shift_valid(0);
+      CS_id_reg        <= id_reg(0);
+      CS_valid_reg     <= valid_reg;
+      CS_delay_srb_low <= delay_srb_low;
+      CS_axi_id_max_hi <= axi_id_max_hi;
+      CS_srb_insert    <= srb_insert;
+      CS_found_axi_id  <= found_axi_id;
+      CS_din_ready     <= din_ready;
+      CS_dout          <= m_shift_data(0)(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+      CS_dout_valid    <= m_shift_valid(0);
+      CS_dout_ready    <= dout_ready;
       
-      CS_din         <= din_i;
-      CS_din_en      <= din_en_i;
+      CS_din           <= din_i;
+      CS_din_en        <= din_en_i;
+
+      CS_dout_ready_i  <= dout_ready_i;
+      CS_din_en_i      <= din_en_i;    
+      CS_tdiff         <= tdiff;       
+      CS_ddiff         <= ddiff;
+      CS_delay_reg_0   <= delay_reg(0); 
+      CS_counter_i     <= counter_i;   
 
     end if;
 end process;

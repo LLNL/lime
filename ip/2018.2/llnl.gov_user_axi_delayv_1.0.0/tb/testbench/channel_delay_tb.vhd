@@ -27,7 +27,7 @@ entity channel_delay_tb is
     generic (
         SIMULATION           : std_logic := '1';
         CHANNEL_TYPE         : string := "R" ; -- valid values are:  AW, W, B, AR, R
-        PRIORITY_QUEUE_WIDTH : integer := 32;
+        PRIORITY_QUEUE_WIDTH : integer := 16;
         DELAY_WIDTH          : integer := 24;
 
         -- AXI-Full Bus Interface
