@@ -13,15 +13,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="3304990445fs"></ZoomStartTime>
-      <ZoomEndTime time="6263001912fs"></ZoomEndTime>
-      <Cursor1Time time="5770000000fs"></Cursor1Time>
+      <ZoomStartTime time="22223481708fs"></ZoomStartTime>
+      <ZoomEndTime time="23539856907fs"></ZoomEndTime>
+      <Cursor1Time time="22270000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="224"></NameColumnWidth>
-      <ValueColumnWidth column_width="151"></ValueColumnWidth>
+      <ValueColumnWidth column_width="135"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="30" />
+   <WVObjectSize size="31" />
    <wvobject fp_name="/channel_delay_tb/sys_clk" type="logic">
       <obj_property name="ElementShortName">sys_clk</obj_property>
       <obj_property name="ObjectShortName">sys_clk</obj_property>
@@ -41,6 +41,10 @@
    <wvobject fp_name="/channel_delay_tb/axi_slave_inst/timer" type="other">
       <obj_property name="ElementShortName">timer</obj_property>
       <obj_property name="ObjectShortName">timer</obj_property>
+   </wvobject>
+   <wvobject fp_name="/channel_delay_tb/counter" type="array">
+      <obj_property name="ElementShortName">counter[23:0]</obj_property>
+      <obj_property name="ObjectShortName">counter[23:0]</obj_property>
    </wvobject>
    <wvobject fp_name="group203" type="group">
       <obj_property name="label">axi_master</obj_property>
@@ -2023,9 +2027,14 @@
          <obj_property name="ElementShortName">s_data_en[0:15]</obj_property>
          <obj_property name="ObjectShortName">s_data_en[0:15]</obj_property>
       </wvobject>
+      <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/valid_reg" type="array">
+         <obj_property name="ElementShortName">valid_reg[15:0]</obj_property>
+         <obj_property name="ObjectShortName">valid_reg[15:0]</obj_property>
+      </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/counter_i" type="array">
          <obj_property name="ElementShortName">counter_i[23:0]</obj_property>
          <obj_property name="ObjectShortName">counter_i[23:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/channel_delay_tb/channel_delay_inst/priority_queue_inst/ddiff" type="array">
          <obj_property name="ElementShortName">ddiff[0:15][23:0]</obj_property>

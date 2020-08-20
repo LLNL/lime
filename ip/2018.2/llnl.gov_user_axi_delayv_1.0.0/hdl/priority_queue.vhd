@@ -251,7 +251,7 @@ axi_id_chk_loop_proc : process (din_en_i, valid_reg, axi_id_new, id_reg) begin
         if (din_en_i = '1') and valid_reg(kk) = '1' and (axi_id_new = id_reg(kk)) then
             axi_id_max_hi <= kk + 1;
             found_axi_id  <= '1';
-            exit axi_id_chk_loop when (din_en_i = '1') and (axi_id_new = id_reg(kk)); -- same as if condition
+            exit axi_id_chk_loop when (din_en_i = '1') and valid_reg(kk) = '1' and (axi_id_new = id_reg(kk)); -- same as if condition
         else
             axi_id_max_hi <= 0;
             found_axi_id  <= '0';
@@ -264,50 +264,22 @@ axi_id_ins_err_o <= '1' when (axi_id_max_hi = (PRIORITY_QUEUE_WIDTH-1)) else '0'
 gen_diff_array_proc : process (delay_new, delay_reg) begin
     gen_diff_loop : for ii in 0 to (PRIORITY_QUEUE_WIDTH-1) loop
         ddiff(ii)     <= std_logic_vector(unsigned(delay_reg(ii)) - unsigned(delay_new));
-    end loop;   
+    end loop;
 end process;
-
---pr_enc_proc : process (din_en_i, ddiff) begin
---    if    ((din_en_i = '1') and (valid_reg = x"0000"))            then delay_srb_low <= 0; 
---    elsif ((din_en_i = '1') and (ddiff(0) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 0; 
---    elsif ((din_en_i = '1') and (ddiff(1) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 1; 
---    elsif ((din_en_i = '1') and (ddiff(2) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 2; 
---    elsif ((din_en_i = '1') and (ddiff(3) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 3; 
---    elsif ((din_en_i = '1') and (ddiff(4) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 4;
---    elsif ((din_en_i = '1') and (ddiff(5) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 5; 
---    elsif ((din_en_i = '1') and (ddiff(6) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 6; 
---    elsif ((din_en_i = '1') and (ddiff(7) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 7; 
---    elsif ((din_en_i = '1') and (ddiff(8) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 8; 
---    elsif ((din_en_i = '1') and (ddiff(9) (DELAY_WIDTH-1) = '0')) then delay_srb_low <= 9; 
---    elsif ((din_en_i = '1') and (ddiff(10)(DELAY_WIDTH-1) = '0')) then delay_srb_low <= 10; 
---    elsif ((din_en_i = '1') and (ddiff(11)(DELAY_WIDTH-1) = '0')) then delay_srb_low <= 11; 
---    elsif ((din_en_i = '1') and (ddiff(12)(DELAY_WIDTH-1) = '0')) then delay_srb_low <= 12; 
---    elsif ((din_en_i = '1') and (ddiff(13)(DELAY_WIDTH-1) = '0')) then delay_srb_low <= 13; 
---    elsif ((din_en_i = '1') and (ddiff(14)(DELAY_WIDTH-1) = '0')) then delay_srb_low <= 14; 
---    else                                                               delay_srb_low <= 15;
---    end if;
---end process;
-
---  ins_chk_loop_proc : process (din_en_i, delay_new, delay_reg, ddiff) begin
---      insert_check_loop: for jj in 0 to (PRIORITY_QUEUE_WIDTH-1) loop        
---          if (din_en_i = '1') and (ddiff(jj)(DELAY_WIDTH-1) = '0') then
---              delay_srb_low <= jj;
---              exit insert_check_loop when (ddiff(jj)(DELAY_WIDTH-1) = '0'); -- same as if condition
---          end if;
---      end loop;   
---  end process;
 
 ins_chk_loop_proc : process (din_en_i, valid_reg, ddiff) begin
     insert_check_loop: for jj in 0 to (PRIORITY_QUEUE_WIDTH-1) loop
         if (din_en_i = '1') and (valid_reg = C_ZERO) then
             delay_srb_low <= 0;
+            exit insert_check_loop;
         elsif (din_en_i = '1') and (ddiff(jj)(DELAY_WIDTH-1) = '0') then
             delay_srb_low <= jj;
-            exit insert_check_loop when (ddiff(jj)(DELAY_WIDTH-1) = '0'); -- same as if condition
-        else
-            delay_srb_low <= PRIORITY_QUEUE_WIDTH-1;
+            exit insert_check_loop;
+        elsif (din_en_i = '1') and (valid_reg(jj) = '0') then
+            delay_srb_low <= jj;
+            exit insert_check_loop;
         end if;
-    end loop;   
+    end loop;
 end process;
 
 srb_insert <= (axi_id_max_hi) when (found_axi_id = '1') and (axi_id_max_hi > delay_srb_low) else delay_srb_low;

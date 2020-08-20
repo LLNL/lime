@@ -9,16 +9,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 library axi_delay_lib;
 use axi_delay_lib.all;
 use axi_delay_lib.axi_delay_pkg.all;
@@ -60,6 +50,8 @@ architecture channel_delay_tb of channel_delay_tb is
 constant AXI_INFO_WIDTH    : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_ADDR_WIDTH + C_AXI_DATA_WIDTH/8 + 
                                     8 + 3 + 2 + 2 + 4 + 3 + 4 + 4 + 1 + 1 + 2;
 constant AXI_INFO_DEPTH    : integer := 64;
+constant COUNTER_INIT      : std_logic_vector(DELAY_WIDTH-1 downto 0) := x"7fffff";
+constant COUNTER_OFFSET    : integer := 984; --1024;
 
 --******************************************************************************
 --Signal Definitions
@@ -146,7 +138,7 @@ s_counter: process(sys_clk)
 begin
     if (rising_edge(sys_clk)) then
         if (sys_rst_n = '0') then
-            counter <= (others => '0');
+            counter <= std_logic_vector(unsigned(COUNTER_INIT) - COUNTER_OFFSET);
         else
             counter <= std_logic_vector(unsigned(counter) + 1);
         end if;

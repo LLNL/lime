@@ -105,8 +105,8 @@ shift_reg_proc : process (clk_i) begin
         -- defaults
         id_reg         <= (others => '0');
         index_reg      <= (others => '0');
-        delay_reg(C_DELAY_WIDTH-2 downto 0) <= (others => '1');
-        delay_reg(C_DELAY_WIDTH-1)          <= '0';
+        delay_reg(C_DELAY_WIDTH-2 downto 0) <= (others => '0');
+        delay_reg(C_DELAY_WIDTH-1)          <= '1';
         valid_reg      <= '0';
         debug_shift    <= (others => '0');
         else
