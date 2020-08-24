@@ -25,7 +25,6 @@ generic (
         C_FAMILY              : string := "rtl";
         C_AXI_PROTOCOL        : integer := P_AXI4;
         C_MEM_ADDR_WIDTH      : integer := 30;
-        C_COUNTER_WIDTH       : integer := 24; -- must match DELAY_WIDTH and GDT_DATA_BITS
         C_FIFO_DEPTH_AW       : integer := 0;
         C_FIFO_DEPTH_W        : integer := 0;
 --	C_FIFO_DEPTH_B        : integer := 0;
@@ -43,11 +42,11 @@ generic (
 
         -- chan_delay_variable generics
         PRIORITY_QUEUE_WIDTH  : integer := 16;
-        DELAY_WIDTH           : integer := 24; -- must match C_COUNTER_WIDTH and GDT_DATA_BITS
+        DELAY_WIDTH           : integer := 24; -- must match GDT_DATA_BITS
         
         GDT_FILENAME          : string := "bram_del_table.mem";
         GDT_ADDR_BITS         : integer := 10;
-        GDT_DATA_BITS         : integer := 24; -- must match C_COUNTER_WIDTH and DELAY_WIDTH
+        GDT_DATA_BITS         : integer := 24; -- must match DELAY_WIDTH
         
         BYPASS_MINICAM        : integer := 1;
         CAM_DEPTH             : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
@@ -218,7 +217,7 @@ constant CAM_WIDTH      : integer := C_AXI_ID_WIDTH; -- maximum width of axi_id 
 -- Note: assuming maximum width defined by C_AXI_ID_WIDTH = 16 and C_AXI_DATA_WIDTH = 128 (C_AXI_DATA_WIDTH/8 = 16) and misc (32) = 192
 constant AXI_INFO_WIDTH    : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_ADDR_WIDTH + C_AXI_DATA_WIDTH/8 + 
                                     8 + 3 + 2 + 2 + 4 + 3 + 4 + 4 + 1 + 1 + 2;
-constant AXI_INFO_DEPTH    : integer := 64;
+constant AXI_INFO_DEPTH    : integer := 64; --64; -- experiment to see if overflow occurs
 
 --******************************************************************************
 --Signal Definitions
@@ -266,8 +265,8 @@ signal m_axi_wlast_i : std_logic_vector(0 downto 0);
 signal m_axi_rlast_i : std_logic_vector(0 downto 0);
 
 -- signals added for decoder
-signal r_decoder_input : std_logic_vector (1 downto 0);
-signal w_decoder_input : std_logic_vector (1 downto 0);
+signal r_decoder_input : std_logic_vector(1 downto 0);
+signal w_decoder_input : std_logic_vector(1 downto 0);
 signal r_chipsel       : std_logic_vector(3 downto 0);
 signal w_chipsel       : std_logic_vector(3 downto 0);
 
@@ -766,7 +765,6 @@ generic map (
     CHANNEL_TYPE         => "B", -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
-    C_COUNTER_WIDTH      => DELAY_WIDTH,
 
     C_AXI_ID_WIDTH       => C_AXI_ID_WIDTH,
     C_AXI_ADDR_WIDTH     => C_AXI_ADDR_WIDTH,
@@ -960,7 +958,6 @@ generic map (
     CHANNEL_TYPE         => "R", -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
-    C_COUNTER_WIDTH      => DELAY_WIDTH,
 
     C_AXI_ID_WIDTH       => C_AXI_ID_WIDTH,
     C_AXI_ADDR_WIDTH     => C_AXI_ADDR_WIDTH,

@@ -28,8 +28,7 @@ entity axi_parser is
         C_AXI_DATA_WIDTH   : integer := 128;
         AXI_INFO_WIDTH     : integer := 192;
         AXI_INFO_DEPTH     : integer := 32;
-        DELAY_WIDTH        : integer := 16;
-        AIDBUF_ADDR_WIDTH  : integer := 6
+        DELAY_WIDTH        : integer := 16
     );
     port (
         clk_i              : in  std_logic;
@@ -71,7 +70,7 @@ entity axi_parser is
         
         ----- axi_id_buffer interface -----
         aidb_id_o            : out std_logic_vector(C_AXI_ID_WIDTH-1 downto 0);
-        aidb_cntr_ptr_base_o : out std_logic_vector(AIDBUF_ADDR_WIDTH-1 downto 0);
+        aidb_cntr_ptr_base_o : out std_logic_vector(MINIBUF_IDX_WIDTH-1 downto 0);
         aidb_wr_o            : out std_logic;   
 
         ----- pkt_buffer interface -----
@@ -158,7 +157,8 @@ begin
 -- generated in axi_perf_mon_v5_0_10_flags_gen.v
 --------------------------------------------------------------------------------
 s_axi_last  <= s_axi_last_i when (CHANNEL_TYPE = "R" or CHANNEL_TYPE = "W") else '1';
-s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i);
+s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i) and (available_ctrptr_i);
+--s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i);
 --s_axi_ready <= (not axi_info_af) and (not minibuf_fe_i) and (pq_ready_i);
 
 first_data_flag  <= s_axi_valid_i and s_axi_ready and (not acc_going_on);

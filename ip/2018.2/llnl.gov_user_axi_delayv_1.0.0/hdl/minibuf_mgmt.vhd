@@ -33,9 +33,11 @@ port (
 
     minibuf_wr_i        : in  std_logic; -- write enable for minibuf FIFO
     minibuf_rd_i        : in  std_logic; -- read enable for minibuf FIFO
-    minibuf_af_o        : out std_logic; -- almost fuill for minibuf FIFO
+    minibuf_af_o        : out std_logic; -- almost full for minibuf FIFO
+    minibuf_ae_o        : out std_logic; -- almost empty for minibuf FIFO
     minibuf_fe_o        : out std_logic; -- empty flag for minibuf FIFO
     minibuf_rdy_o       : out std_logic; -- when '1', indicates that minibuf FIFO has been initialized and is ready for operation
+    minibuf_valid_o     : out std_logic;
     minibuf_wdata_i     : in  std_logic_vector(CTR_PTR_WIDTH-1 downto 0); -- free minibuffer to add to minibuf_fifo
     minibuf_rdata_o     : out std_logic_vector(CTR_PTR_WIDTH-1 downto 0) -- fresh (unused) minibuffer, ready for use
 );
@@ -55,8 +57,7 @@ constant C_ZERO : std_logic_vector(15 downto 0) := (others => '0'); -- create st
 --******************************************************************************
 --Signal Definitions
 --******************************************************************************
-
-signal minibuf_rdata     : std_logic_vector(15 downto 0);
+signal minibuf_init      : std_logic; -- it takes 2 or 3 clocks for ff/af flags to deassert after reset
 
 signal minibuf_ff        : std_logic;
 signal minibuf_init_wren : std_logic;
@@ -64,9 +65,13 @@ signal minibuf_wr        : std_logic;
 signal minibuf_wdata     : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
 signal minibuf_wdata_ext : std_logic_vector(15 downto 0);
 signal minibuf_rd_init   : std_logic; -- first read after initialization; ensures that rdata is available immediately
+signal minibuf_rd_init_q : std_logic; -- first read after initialization; ensures that rdata is available immediately
+signal minibuf_fe        : std_logic;
 signal minibuf_rd        : std_logic;
+signal minibuf_rdata     : std_logic_vector(15 downto 0);
 
 signal ctr_ptr_init      : integer;
+signal ctr_ptr_init_sl2  : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
 constant ISM_IDLE        : std_logic_vector(1 downto 0) := "00";
 constant ISM_INIT        : std_logic_vector(1 downto 0) := "01";
 constant ISM_HOLD        : std_logic_vector(1 downto 0) := "10";
@@ -77,6 +82,8 @@ signal initfifo_state    : std_logic_vector(1 downto 0) := "00";
 --******************************************************************************
 
 begin
+
+minibuf_init <= minibuf_fe and not minibuf_ff;
 
 ---------------------------------------
 -- Minibuffer Management FIFO Initialization State Machine
@@ -91,16 +98,20 @@ wfifo_sm_proc : process (clk_i) begin
             minibuf_init_wren <= '0';
             minibuf_rdy_o     <= '0';
             minibuf_rd_init   <= '0';
+            minibuf_rd_init_q <= '0';
             initfifo_state    <= ISM_IDLE;   
         else                              
             minibuf_rdy_o     <= '0';   
             minibuf_rd_init   <= '0';   
+            minibuf_rd_init_q <= minibuf_rd_init;   
 
             case initfifo_state is                                        
                 when ISM_IDLE =>
-                    ctr_ptr_init      <= 0; -- initialize ctr_ptr_init with the value following last minicam init value
-                    minibuf_init_wren <= '1';
-                    initfifo_state    <= ISM_INIT;
+                    if (minibuf_init = '1') then
+                        ctr_ptr_init      <= 0; -- initialize ctr_ptr_init with the value following last minicam init value
+                        minibuf_init_wren <= '1';
+                        initfifo_state    <= ISM_INIT;
+                    end if;
                 
                 when ISM_INIT =>
                     if (ctr_ptr_init >= (NUM_MINI_BUFS-1)) then
@@ -128,8 +139,11 @@ wfifo_sm_proc : process (clk_i) begin
     end if;
 end process;
 
+ctr_ptr_init_sl2 <= std_logic_vector(shift_left(to_unsigned(ctr_ptr_init,CTR_PTR_WIDTH),2));
+
 minibuf_wr    <= minibuf_init_wren or minibuf_wr_i;
-minibuf_wdata <= std_logic_vector(to_unsigned(ctr_ptr_init, minibuf_wdata'length)) when (minibuf_init_wren = '1') else minibuf_wdata_i;
+minibuf_wdata <= ctr_ptr_init_sl2 when (minibuf_init_wren = '1') else minibuf_wdata_i;
+--minibuf_wdata <= std_logic_vector(to_unsigned(ctr_ptr_init, minibuf_wdata'length)) when (minibuf_init_wren = '1') else minibuf_wdata_i;
 
 -- minibuf_fifo stores valid ctr_ptr values.
 -- Initializing the minibuf_fifo: This is done via the initfifo_state state machine. After initialization, the initfifo_state
@@ -139,8 +153,10 @@ minibuf_wdata <= std_logic_vector(to_unsigned(ctr_ptr_init, minibuf_wdata'length
 -- Reading a ctr_ptr from the minibuf_fifo:  When a minicam location's ACTIVE bit is '0' and VALID bit is '0', a new ctr_ptr 
 -- is read from the minibuf_fifo and stored in the minicam, and the minicam's VALID bit is set to '1'.
 
-minibuf_wdata_ext <= C_ZERO(15 downto CTR_PTR_WIDTH) & std_logic_vector(shift_left(unsigned(minibuf_wdata),2));
-minibuf_rd        <= minibuf_rd_init or minibuf_rd_i;
+--minibuf_wdata_ext <= C_ZERO(15 downto CTR_PTR_WIDTH) & std_logic_vector(shift_left(unsigned(minibuf_wdata),2));
+minibuf_wdata_ext <= C_ZERO(15 downto CTR_PTR_WIDTH) & minibuf_wdata;
+--minibuf_rd        <= minibuf_rd_i;
+minibuf_rd        <= minibuf_rd_init or minibuf_rd_init_q or minibuf_rd_i;
 
 minibuf_fifo : entity fifo_sync
     GENERIC MAP (
@@ -158,9 +174,9 @@ minibuf_fifo : entity fifo_sync
         wr_en       => minibuf_wr,
 
         dout        => minibuf_rdata, --minibuf_rdata_o,
-        prog_empty  => OPEN,
-        empty       => minibuf_fe_o,
-        valid       => OPEN,
+        prog_empty  => minibuf_ae_o,
+        empty       => minibuf_fe,
+        valid       => minibuf_valid_o,
         rd_en       => minibuf_rd
     );
 
@@ -169,6 +185,7 @@ minibuf_rdata_o <= minibuf_rdata(CTR_PTR_WIDTH-1 downto 0);
 ----------------------------------------------------------------------------------------------
 -- Output assignments
 ----------------------------------------------------------------------------------------------
+minibuf_fe_o <= minibuf_fe;
 
 ----------------------------------------------------------------------------------------------
 end minibuf_mgmt;

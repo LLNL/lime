@@ -17,6 +17,7 @@ entity minicam_bypass is
 generic (
     CAM_WIDTH           : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
     CTR_PTR_WIDTH       : integer := 5;  -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
+    NUM_EVENTS_PER_MBUF : integer := 8;  -- maximum number of events each minibuffer can hold
     NUM_MINI_BUFS       : integer := 32  -- number of minibufs; each must be sized to hold the largest packet size supported
 );
 port (
@@ -55,6 +56,13 @@ signal ctr_ptr_msb       : std_logic_vector((CTR_PTR_WIDTH - 1 - C_LSB_WIDTH) do
 signal ctr_ptr           : std_logic_vector((CTR_PTR_WIDTH-1) downto 0);
 signal ctr_ptr_wr        : std_logic;
 
+signal minibuf_af        : std_logic;
+signal minibuf_ae        : std_logic;
+signal minibuf_fe        : std_logic;
+signal minibuf_valid     : std_logic;
+signal minibuf_rdata     : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
+signal minibuf_rd        : std_logic;
+
 --******************************************************************************
 -- Connectivity and Logic
 --******************************************************************************
@@ -73,11 +81,12 @@ ctr_ptr_proc: process(clk_i) begin
             -- when data_valid_i and !tlast_i, increment by '1'
             
             if (data_valid_i = '1' and tlast_i = '1') then
-                if ((ctr_ptr_msb & "00") = std_logic_vector(to_unsigned(NUM_MINI_BUFS-1, ctr_ptr'length))) then
-                    ctr_ptr_msb <= (others => '0');
-                else
-                    ctr_ptr_msb <= ctr_ptr_msb + '1';
-                end if;
+--                if ((ctr_ptr_msb & "00") = std_logic_vector(to_unsigned(NUM_MINI_BUFS-1, ctr_ptr'length))) then
+--                    ctr_ptr_msb <= (others => '0');
+--                else
+--                    ctr_ptr_msb <= ctr_ptr_msb + '1';
+--                end if;
+                ctr_ptr_msb <= minibuf_rdata(CTR_PTR_WIDTH-1 downto 2);
                 
                 ctr_ptr_lsb <= (others => '0');
 
@@ -96,13 +105,36 @@ ctr_ptr_proc: process(clk_i) begin
     end if;
 end process;
 
+minibuf_rd <= data_valid_i and tlast_i;
+
+minibuf_mgmt_inst : entity axi_delay_lib.minibuf_mgmt
+    generic map (
+        CAM_DEPTH           => 0,                   -- No CAM
+        CTR_PTR_WIDTH       => CTR_PTR_WIDTH,       -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
+        NUM_EVENTS_PER_MBUF => NUM_EVENTS_PER_MBUF, -- maximum number of events each minibuffer can hold
+        NUM_MINI_BUFS       => NUM_MINI_BUFS        -- number of minibufs; each must be sized to hold the largest packet size supported
+    )
+    port map (
+        clk_i               => clk_i,
+        rst_i               => rst_i,
+        minibuf_wdata_i     => minibuf_wdata_i,
+        minibuf_af_o        => minibuf_af,
+        minibuf_wr_i        => minibuf_wr_i,
+        minibuf_rdata_o     => minibuf_rdata,
+        minibuf_fe_o        => minibuf_fe,
+        minibuf_ae_o        => minibuf_ae,
+        minibuf_valid_o     => OPEN,
+        minibuf_rd_i        => minibuf_rd,
+        minibuf_rdy_o       => OPEN
+    );
+
 ----------------------------------------------------------------------------------------------
 -- Output assignments
 ----------------------------------------------------------------------------------------------
-available_ctrptr_o <= '1'; -- there is always a counter/pointer avialble
+available_ctrptr_o <= not minibuf_ae; --'1'; -- there is always a counter/pointer avialble
 minicam_full_o     <= '0'; -- never full for this bypass module
 minicam_err_o      <= '0'; -- no minicam, no errors
-minibuf_fe_o       <= '0'; -- never empty for this bypass module
+minibuf_fe_o       <= minibuf_fe;     --'0'; -- never empty for this bypass module
 
 ctr_ptr_o          <= ctr_ptr;
 ctr_ptr_wr_o       <= ctr_ptr_wr;

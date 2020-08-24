@@ -34,7 +34,7 @@ port (
     pq_dout_ready_o     : out std_logic;
 
     pktbuf_enb_o        : out std_logic;                        -- packet buffer enable
-    pktbuf_addrb_o      : out std_logic_vector(7 downto 0);     -- packet buffer address
+    pktbuf_addrb_o      : out std_logic_vector(CTR_PTR_WIDTH-1 downto 0);     -- packet buffer address
     pktbuf_dinb_o       : out std_logic_vector(AXI_INFO_WIDTH-1 downto 0);  -- output data to packet_buffer
     pktbuf_doutb_i      : in  std_logic_vector(AXI_INFO_WIDTH-1 downto 0);  -- input data from packet buffer (for writing tlast)
     
@@ -74,8 +74,8 @@ signal gnt_or     : std_logic; -- OR of all gnt bits
 
 -- packet buffer i/o
 signal pktbuf_enb          : std_logic;                   
-signal pktbuf_addrb        : std_logic_vector(7 downto 0); 
-signal pktbuf_addrb_ns     : std_logic_vector(7 downto 0); 
+signal pktbuf_addrb        : std_logic_vector(CTR_PTR_WIDTH-1 downto 0); 
+signal pktbuf_addrb_ns     : std_logic_vector(CTR_PTR_WIDTH-1 downto 0); 
 signal pktbuf_dinb         : std_logic_vector(AXI_INFO_WIDTH-1 downto 0);
 
 -- misc.
@@ -163,7 +163,7 @@ begin
             pktbuf_enb      <= '1';
 
             pktbuf_addrb      <= std_logic_vector(base_minicam_addr(pktbuf_addrb'length-1 downto 0));
-            free_ctrptr       <= std_logic_vector(ctr_ptr_addr(free_ctrptr'length-1 downto 0));
+            free_ctrptr       <= std_logic_vector(base_minicam_addr(pktbuf_addrb'length-1 downto 0)); --std_logic_vector(ctr_ptr_addr(free_ctrptr'length-1 downto 0));
             free_ctrptr_wr    <= '1';
 
             pbrd_cs           <= PBRDSM_RD_MINIBUF;

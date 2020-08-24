@@ -24,7 +24,6 @@ generic (
     CHANNEL_TYPE         : string  := "AW" ; -- valid values are:  AW, W, B, AR, R
     PRIORITY_QUEUE_WIDTH : integer := 16;
     DELAY_WIDTH          : integer := 24;
-    C_COUNTER_WIDTH      : integer := 24;
 
     -- AXI-Full Bus Interface
     C_AXI_ID_WIDTH       : integer := 16;
@@ -52,7 +51,7 @@ port (
     --------------------------------------------
     s_axi_aclk    : in  std_logic;
     s_axi_aresetn : in  std_logic;
-    counter       : in  std_logic_vector(C_COUNTER_WIDTH-1 downto 0);
+    counter       : in  std_logic_vector(DELAY_WIDTH-1 downto 0);
     
     -- Slave AXI Interface --
     s_axi_id      : in  std_logic_vector(C_AXI_ID_WIDTH-1 downto 0) := (others => '0');
@@ -130,13 +129,13 @@ constant C_ZERO_16 : std_logic_vector(15 downto 0) := (others => '0');
 signal random_dly     : std_logic_vector(DELAY_WIDTH-1 downto 0);
 signal random_dly_buf : std_logic_vector(DELAY_WIDTH-1 downto 0);
 signal random_dly_req : std_logic;
-signal s_time         : std_logic_vector(C_COUNTER_WIDTH-1 downto 0);
+signal s_time         : std_logic_vector(DELAY_WIDTH-1 downto 0);
 
 signal s_axi_areset   : std_logic;
 signal m_axi_areset   : std_logic;
 
 signal pktbuf_enb     : std_logic;
-signal pktbuf_addrb   : std_logic_vector(7 downto 0);
+signal pktbuf_addrb   : std_logic_vector(CTR_PTR_WIDTH-1 downto 0);
 signal pktbuf_dinb    : std_logic_vector(AXI_INFO_WIDTH-1 downto 0); 
 signal pktbuf_doutb   : std_logic_vector(AXI_INFO_WIDTH-1 downto 0); 
 
@@ -310,6 +309,7 @@ skip_minicam : if (BYPASS_MINICAM = 1) generate
     generic map (
         CAM_WIDTH           => CAM_WIDTH,           -- maximum width of axi_id input. Requirement: CAMWIDTH => NUM_MINI_BUFS
         CTR_PTR_WIDTH       => CTR_PTR_WIDTH,       -- width of counter/pointer, which is the index to the Packet Buffer (start of mini-buffer)
+        NUM_EVENTS_PER_MBUF => NUM_EVENTS_PER_MBUF, -- maximum number of events each minibuffer can hold
         NUM_MINI_BUFS       => NUM_MINI_BUFS        -- number of minibufs; each must be sized to hold the largest packet size supported
     )
     port map (

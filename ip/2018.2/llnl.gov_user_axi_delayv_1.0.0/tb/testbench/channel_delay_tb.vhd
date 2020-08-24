@@ -50,7 +50,7 @@ architecture channel_delay_tb of channel_delay_tb is
 constant AXI_INFO_WIDTH    : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_ADDR_WIDTH + C_AXI_DATA_WIDTH/8 + 
                                     8 + 3 + 2 + 2 + 4 + 3 + 4 + 4 + 1 + 1 + 2;
 constant AXI_INFO_DEPTH    : integer := 64;
-constant COUNTER_INIT      : std_logic_vector(DELAY_WIDTH-1 downto 0) := x"7fffff";
+constant COUNTER_INIT      : std_logic_vector(DELAY_WIDTH-1 downto 0) := x"ffffff";
 constant COUNTER_OFFSET    : integer := 984; --1024;
 
 --******************************************************************************
@@ -129,7 +129,7 @@ begin
 sys_clk         <= not sys_clk after 10 ns;
 sys_rst         <= '0' after 1 us;  
 sys_rst_n       <= not sys_rst;
-transmission_en <= '1' after  2 us;  
+transmission_en <= '1' after  3 us;  
 
 s_axi_lite_aclk    <= not s_axi_lite_aclk after 10 ns;
 s_axi_lite_aresetn <= '1' after 1 us;  
@@ -192,7 +192,6 @@ channel_delay_inst : entity axi_delay_lib.chan_delay_variable
     CHANNEL_TYPE         => CHANNEL_TYPE,
     PRIORITY_QUEUE_WIDTH => PRIORITY_QUEUE_WIDTH,
     DELAY_WIDTH          => DELAY_WIDTH,
-    C_COUNTER_WIDTH      => DELAY_WIDTH,
 
     C_AXI_ID_WIDTH      => C_AXI_ID_WIDTH,
     C_AXI_ADDR_WIDTH    => C_AXI_ADDR_WIDTH,

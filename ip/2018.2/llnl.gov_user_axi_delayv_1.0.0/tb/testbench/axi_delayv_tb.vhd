@@ -47,7 +47,6 @@ entity axi_delayv_tb is
 	C_FAMILY              : string := "rtl";
 	C_AXI_PROTOCOL        : integer := P_AXI4;
 	C_MEM_ADDR_WIDTH      : integer := 30;
-	C_COUNTER_WIDTH       : integer := 20;
 	C_FIFO_DEPTH_AW       : integer := 0;
 	C_FIFO_DEPTH_W        : integer := 0;
 	C_FIFO_DEPTH_B        : integer := 0;
@@ -470,7 +469,6 @@ axi_delayv_int : entity axi_delay_lib.axi_delayv
         C_FAMILY              => C_FAMILY,      
         C_AXI_PROTOCOL        => C_AXI_PROTOCOL,
         C_MEM_ADDR_WIDTH      => C_MEM_ADDR_WIDTH,
-        C_COUNTER_WIDTH       => C_COUNTER_WIDTH, 
         C_FIFO_DEPTH_AW       => C_FIFO_DEPTH_AW, 
         C_FIFO_DEPTH_W        => C_FIFO_DEPTH_W,  
         C_FIFO_DEPTH_AR       => C_FIFO_DEPTH_AR, 
