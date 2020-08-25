@@ -141,14 +141,14 @@ void config_gdt()
 
     for (iii = 0; iii < num_elements; ++iii){
 
-        *avd_0_0_b = gdt_data_n500[iii];  // CPU SRAM write response
-        *avd_0_0_r = gdt_data_n500[iii];  // CPU SRAM read response
-        *avd_0_1_b = gdt_data_n500[iii];  // CPU DRAM write response
-        *avd_0_1_r = gdt_data_n500[iii];  // CPU DRAM read response
-        *avd_1_0_b = gdt_data_n500[iii];  // Accererator SRAM write response
-        *avd_1_0_r = gdt_data_n500[iii];  // Accererator SRAM read response
-        *avd_1_1_b = gdt_data_n500[iii];  // Accererator DRAM write response
-        *avd_1_1_r = gdt_data_n500[iii];  // Accererator DRAM read response
+        *avd_0_0_b = gdt_data_n0[iii];  // CPU SRAM write response
+        *avd_0_0_r = gdt_data_n0[iii];  // CPU SRAM read response
+        *avd_0_1_b = gdt_data_n0[iii];  // CPU DRAM write response
+        *avd_0_1_r = gdt_data_n0[iii];  // CPU DRAM read response
+        *avd_1_0_b = gdt_data_n0[iii];  // Accererator SRAM write response
+        *avd_1_0_r = gdt_data_n0[iii];  // Accererator SRAM read response
+        *avd_1_1_b = gdt_data_n0[iii];  // Accererator DRAM write response
+        *avd_1_1_r = gdt_data_n0[iii];  // Accererator DRAM read response
 
         avd_0_0_b++;
         avd_0_0_r++;
