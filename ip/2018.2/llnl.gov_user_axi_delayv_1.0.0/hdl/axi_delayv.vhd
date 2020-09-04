@@ -217,7 +217,7 @@ constant CAM_WIDTH      : integer := C_AXI_ID_WIDTH; -- maximum width of axi_id 
 -- Note: assuming maximum width defined by C_AXI_ID_WIDTH = 16 and C_AXI_DATA_WIDTH = 128 (C_AXI_DATA_WIDTH/8 = 16) and misc (32) = 192
 constant AXI_INFO_WIDTH    : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_ADDR_WIDTH + C_AXI_DATA_WIDTH/8 + 
                                     8 + 3 + 2 + 2 + 4 + 3 + 4 + 4 + 1 + 1 + 2;
-constant AXI_INFO_DEPTH    : integer := 128; --64; -- experiment to see if overflow occurs
+constant AXI_INFO_DEPTH    : integer := 64; -- experiment to see if overflow occurs
 
 --******************************************************************************
 --Signal Definitions
