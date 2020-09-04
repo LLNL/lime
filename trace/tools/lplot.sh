@@ -41,8 +41,7 @@ if (($opt_a)); then ch=10; else ch=2; fi
 if [ -n "$opt_b" ]; then fbase=$opt_b; fi
 if (($opt_s)); then ss=-s; fi
 # 20x the PL 1 clock frequency
-if (($opt_z)); then fr="4e9"; zz=-z; else fr="6e9"; fi
-#if (($opt_z)); then fr="4e9"; zz=-z; else fr="3.749625e9"; fi
+if (($opt_z)); then fr="4e9"; zz=-z; else fr="3.749625e9"; fi
 
 # Create latency annotated .csv file and latency summary .csv file.
 fann=${fbase}_a.csv
