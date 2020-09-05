@@ -21,7 +21,6 @@
 static int mfd;
 static off_t page_size;
 
-
 void *dev_mmap(off_t paddr)
 {
 	off_t page_addr;
@@ -31,7 +30,7 @@ void *dev_mmap(off_t paddr)
 		page_size = sysconf(_SC_PAGESIZE);
 
 		/* Open device */
-		mfd = open(name, O_RDWR);
+		mfd = open(name, O_RDWR | O_DSYNC);
 		if (mfd < 1) {
 			fprintf(stderr, "Can't open(%s): %s\n", name, strerror(errno));
 			return MAP_FAILED;

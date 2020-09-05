@@ -6,7 +6,8 @@ extern int gdt_data[1024];
 #ifdef __cplusplus
 extern "C" {
 #endif
-void config_gdt();
+void config_gdt(volatile void *, int);
+void clear_gdt(volatile void *, int);
 #ifdef __cplusplus
 }
 #endif
