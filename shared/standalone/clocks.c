@@ -36,6 +36,10 @@
 #define CLK_621_TRUE        0x1C4 /* 0 CLK_621_TRUE */
 #define CLK_621_CHK             0 /*        (4:2:1) */
 
+int gdt_n0[1024] = {
+	#include "gdt_data_n0.txt"
+	};
+
 void clocks_emulate(void)
 {
 	volatile unsigned int *unlock   = (unsigned int *)(SLCR+SLCR_UNLOCK);
@@ -69,14 +73,14 @@ void clocks_emulate(void)
 #if defined VAR_DELAY && VAR_DELAY==_GDT_
 	/* --- Configure the Gaussian Delay Tables (GTD) --- */
         #pragma message "Compiling " __FILE__ "..."
-	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + B_OFFSET);
-	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + R_OFFSET);
-	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + B_OFFSET);
-	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + R_OFFSET);
-	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + B_OFFSET);
-	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + R_OFFSET);
-	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + B_OFFSET);
-	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + R_OFFSET);
+	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + B_OFFSET, 0, gdt_n0);
+	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + R_OFFSET, 0, gdt_n0);
+	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + B_OFFSET, 0, gdt_n0);
+	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + R_OFFSET, 0, gdt_n0);
+	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + B_OFFSET, 0, gdt_n0);
+	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + R_OFFSET, 0, gdt_n0);
+	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + B_OFFSET, 0, gdt_n0);
+	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + R_OFFSET, 0, gdt_n0);
 	printf("Gaussian Delay Tables Initialized\n");
 
 //	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
@@ -110,14 +114,14 @@ void clocks_normal(void)
 #if defined VAR_DELAY && VAR_DELAY==_GDT_
 	/* --- Configure the Gaussian Delay Tables (GTD) --- */
         #pragma message "Compiling " __FILE__ "..."
-	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + B_OFFSET);
-	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + R_OFFSET);
-	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + B_OFFSET);
-	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + R_OFFSET);
-	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + B_OFFSET);
-	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + R_OFFSET);
-	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + B_OFFSET);
-	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + R_OFFSET);
+	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + B_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + R_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + B_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + R_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + B_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + R_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + B_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + R_OFFSET, gdt_n0);
 	printf("Gaussian Delay Tables have been cleared\n");
 
 //	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
@@ -162,6 +166,35 @@ int cpu_rd_lat = 69;
 int acc_wr_lat = 48;
 int acc_rd_lat = 66;
 
+int gdt_n0[1024] = {
+	#include "gdt_data_n0.txt"
+	};
+
+int gdt_0_0_b[1024] = {
+	#include "gdt_data_c216.txt"  // CPU SRAM write response; fixed delay (before compensation) = 216 clocks
+	};
+int gdt_0_0_r[1024] = {
+	#include "gdt_data_c216.txt"  // CPU SRAM read response; fixed delay (before compensation) = 216 clocks
+	};
+int gdt_0_1_b[1024] = {
+	#include "gdt_data_c636.txt"  // CPU DRAM write response; fixed delay (before compensation) = 636 clocks
+	};
+int gdt_0_1_r[1024] = {
+	#include "gdt_data_c510.txt"  // CPU DRAM read response; fixed delay (before compensation) = 510 clocks
+	};
+int gdt_1_0_b[1024] = {
+	#include "gdt_data_c72.txt"  // Accererator SRAM write response; fixed delay (before compensation) = 72 clocks
+	};
+int gdt_1_0_r[1024] = {
+	#include "gdt_data_c72.txt"  // Accererator SRAM read response; fixed delay (before compensation) = 72 clocks
+	};
+int gdt_1_1_b[1024] = {
+	#include "gdt_data_c492.txt"  // Accererator DRAM write response; fixed delay (before compensation) = 492 clocks
+	};
+int gdt_1_1_r[1024] = {
+	#include "gdt_data_c366.txt"  // Accererator DRAM read response; fixed delay (before compensation) = 366 clocks
+	};
+
 void clocks_emulate(void)
 {
 	volatile unsigned int *unlock   = (unsigned int *)(FPD_SLCR+wprot0);
@@ -199,15 +232,23 @@ void clocks_emulate(void)
 #if defined VAR_DELAY && VAR_DELAY==_GDT_
 	/* --- Configure the Gaussian Delay Tables (GTD) --- */
 	sleep(1);
-        #pragma message "Compiling " __FILE__ "..."
-	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + B_OFFSET, cpu_wr_lat);
-	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + R_OFFSET, cpu_rd_lat);
-	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + B_OFFSET, cpu_wr_lat);
-	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + R_OFFSET, cpu_rd_lat);
-	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + B_OFFSET, acc_wr_lat);
-	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + R_OFFSET, acc_rd_lat);
-	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + B_OFFSET, acc_wr_lat);
-	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + R_OFFSET, acc_rd_lat);
+    #pragma message "Compiling " __FILE__ "..."
+	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + B_OFFSET, cpu_wr_lat, gdt_0_0_b); // CPU SRAM write response
+	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + R_OFFSET, cpu_rd_lat, gdt_0_0_r); // CPU SRAM read response^S
+	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + B_OFFSET, cpu_wr_lat, gdt_0_1_b); // CPU DRAM write response
+	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + R_OFFSET, cpu_rd_lat, gdt_0_1_r); // CPU DRAM read response
+	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + B_OFFSET, acc_wr_lat, gdt_1_0_b); // Accererator SRAM write response
+	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + R_OFFSET, acc_rd_lat, gdt_1_0_r); // Accererator SRAM read response
+	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + B_OFFSET, acc_wr_lat, gdt_1_1_b); // Accererator DRAM write response
+	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + R_OFFSET, acc_rd_lat, gdt_1_1_r); // Accererator DRAM read response
+
+/*
+    int iii = 0;
+    for (iii = 0; iii < 1024; ++iii){
+		printf("%d %d\n", gdt_0_0_b[iii], iii);
+	}
+*/
+
 	printf("Gaussian Delay Tables Initialized\n");
 	sleep(1);
 
@@ -243,14 +284,14 @@ void clocks_normal(void)
 	/* --- Configure the Gaussian Delay Tables (GTD) --- */
 	sleep(1);
         #pragma message "Compiling " __FILE__ "..."
-	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + B_OFFSET, cpu_wr_lat);
-	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + R_OFFSET, cpu_rd_lat);
-	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + B_OFFSET, cpu_wr_lat);
-	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + R_OFFSET, cpu_rd_lat);
-	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + B_OFFSET, acc_wr_lat);
-	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + R_OFFSET, acc_rd_lat);
-	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + B_OFFSET, acc_wr_lat);
-	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + R_OFFSET, acc_rd_lat);
+	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + B_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + R_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + B_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + R_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + B_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + R_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + B_OFFSET, gdt_n0);
+	clear_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + R_OFFSET, gdt_n0);
 	sleep(1);
 	printf("Gaussian Delay Tables have been cleared\n");
 	sleep(1);

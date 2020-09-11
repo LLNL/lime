@@ -5,6 +5,7 @@
  *      Author: sarkar6
  */
 #include <stdio.h>
+#include <string.h>
 #include "gdt.h"
 
 // NOTE: files with nxx suffix contain gaussians; files with const_xx suffix contain constants
@@ -120,25 +121,27 @@ int gdt_data_const_10000[1024] = {
 #include "gdt_data_const_10000.txt"
 };
 
-int gdt_wr_data[1024];
+//int gdt_wr_data[1024];
 
-void config_gdt(volatile void *base, int latency)
+void config_gdt(volatile void *base, int latency, int gdt_input[])
 {
     int num_elements;
     int iii;
 
     volatile int *avd = (int *) (base);
 
+//    num_elements = sizeof(gdt_input)/sizeof(gdt_input[0]);
+//    printf("The size of Gaussian Delay Table in bytes is %lu\n", sizeof(gdt_input));
+//    printf("The number of entries in the Gaussian Delay Table is %d\n", num_elements);
 
-    num_elements = sizeof(gdt_data)/sizeof(gdt_data[0]);
-    printf("The size of Gaussian Delay Table in bytes is %lu\n", sizeof(gdt_data));
-    printf("The number of entries in the Gaussian Delay Table is %d\n", num_elements);
+    for (iii = 0; iii < 1024; ++iii){
 
-    for (iii = 0; iii < num_elements; ++iii){
-        gdt_wr_data[iii] = gdt_data_n10000[iii];  //***** Change target gdt filename here *****
+//		printf("%d %d\n", gdt_input[iii], iii);
 
-        if (gdt_wr_data[iii] >= latency) {
-            *avd = gdt_wr_data[iii] - latency;  // CPU DRAM/SRAM write response
+//        gdt_wr_data[iii] = gdt_input[iii];
+
+        if (gdt_input[iii] >= latency) {
+            *avd = gdt_input[iii] - latency;  // CPU DRAM/SRAM write response
 	    }
         else {
             *avd = 0;
@@ -147,7 +150,7 @@ void config_gdt(volatile void *base, int latency)
     }
 }
 
-void clear_gdt(volatile void *base, int latency)
+void clear_gdt(volatile void *base, int gdt_input[])
 {
     int num_elements;
     int iii;
@@ -155,7 +158,7 @@ void clear_gdt(volatile void *base, int latency)
     volatile int *avd = (int *) (base);
 
     printf("Clearing the GDT to set up for the next test...\n");
-    num_elements = sizeof(gdt_data)/sizeof(gdt_data[0]);
+    num_elements = sizeof(gdt_input)/sizeof(gdt_input[0]);
 
 /*
     //Read and see what were the values to start with
@@ -170,7 +173,7 @@ void clear_gdt(volatile void *base, int latency)
 
     avd = (int *)(base);
     for (iii = 0; iii < num_elements; ++iii){
-        *avd = gdt_data_n0[iii];  // CPU SRAM write response
+        *avd = gdt_input[iii];  // CPU SRAM write response
         avd++;
     }
 }

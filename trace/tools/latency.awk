@@ -23,8 +23,8 @@ function update() {
 #		# DRAM
 #	}
 	# latency in nano seconds
-#	latency = int($9/freq*1e9)
-	latency = int($9)
+	latency = int($9/freq*1e9)      #latency in ns
+#	latency = int($9)               #latency in clock cycles
 	if (latency < clo) clo = latency
 	if (latency > chi) chi = latency
 	clat[ch][latency]++
