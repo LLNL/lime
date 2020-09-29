@@ -62,8 +62,8 @@ fplt=${fout}.plt
 echo "set title \"Latency$subtitle\"" > $fplt
 #echo 'set key left top' >> $fplt
 echo 'set style data histeps' >> $fplt
-echo 'set xlabel "Number of Clock Cycles"' >> $fplt
-# echo 'set xlabel "Time in Nanoseconds"' >> $fplt
+#echo 'set xlabel "Number of Clock Cycles"' >> $fplt
+echo 'set xlabel "Time in Nanoseconds"' >> $fplt
 echo 'set ylabel "Number of Transactions"' >> $fplt
 echo "set yrange [0:]" >> $fplt
 echo "set xrange [0:]" >> $fplt

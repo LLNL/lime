@@ -141,7 +141,7 @@ void config_gdt(volatile void *base, int latency, int gdt_input[])
 //        gdt_wr_data[iii] = gdt_input[iii];
 
         if (gdt_input[iii] >= latency) {
-            *avd = gdt_input[iii] - latency;  // CPU DRAM/SRAM write response
+            *avd = (gdt_input[iii] - latency)*(187.5/300);  // adjusted for latency and scaled for clock freq. difference (compared to master branch)
 	    }
         else {
             *avd = 0;
@@ -157,8 +157,8 @@ void clear_gdt(volatile void *base, int gdt_input[])
 
     volatile int *avd = (int *) (base);
 
-    printf("Clearing the GDT to set up for the next test...\n");
-    num_elements = sizeof(gdt_input)/sizeof(gdt_input[0]);
+//    printf("Clearing the GDT to set up for the next test...\n");
+//    num_elements = sizeof(gdt_input)/sizeof(gdt_input[0]);
 
 /*
     //Read and see what were the values to start with
@@ -172,7 +172,7 @@ void clear_gdt(volatile void *base, int gdt_input[])
 */
 
     avd = (int *)(base);
-    for (iii = 0; iii < num_elements; ++iii){
+    for (iii = 0; iii < 1024; ++iii){
         *avd = gdt_input[iii];  // CPU SRAM write response
         avd++;
     }

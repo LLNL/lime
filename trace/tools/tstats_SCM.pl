@@ -4,7 +4,8 @@ use Getopt::Std;
 
 $opt_r = 1; # report level
 $opt_c = 100000; # cycles
-$opt_f = 300e6*20; # frequency
+$opt_f = 187.5e6*20; # frequency
+#$opt_f = 300e6*20; # frequency
 $opt_t = 0x1000100000; # threshold
 
 if (!getopts('r:sc:f:t:b:p:') || $#ARGV != 0) {

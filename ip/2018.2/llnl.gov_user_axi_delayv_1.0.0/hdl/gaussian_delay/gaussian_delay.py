@@ -32,15 +32,15 @@ import os
 
 ## output filename
 outputfilename = "bram_del_table.csv"  ## check file
-txt_filename   = "gdt_data.txt"        ## text file
+txt_filename   = "gdt_data_g636_mu_div128.txt"   ## text file
 mif_filename   = "bram_del_table.mif"  ## mif file format, not used
 bin_filename   = "bram_del_table.init" ## see UG901, p143 - this is the Vivado mem format, not the updatemem format
 coe_filename   = "bram_del_table.coe"  ## coe file format
 mem_filename   = "../bram_del_table.mem"  ## mem file format
 
 # path to lime-apps
-#txt_filepath   = "../../../../../test/shared/"  ## use for local test code
-txt_filepath   = "../../../../../../lime-apps/shared/" ## use for lime-apps test code (change path as needed)
+txt_filepath   = "../../../../../shared/"  ## use for local test code
+#txt_filepath   = "../../../../../../lime-apps/shared/" ## use for lime-apps test code (change path as needed)
 
 ## Width of address bus input to BRAM table. This MUST match the FPGA's BRAM address width.
 awidth = 10
@@ -49,7 +49,7 @@ awidth = 10
 dwidth = 24
 
 ## Maximum time delay, in clock cycles
-delay_clocks = 100 ## max =(2**dwidth)-1
+delay_clocks = 636*2 ## max =(2**dwidth)-1
 
 ## address offset for "B" channel GDT
 bchan_offset = 0x00010000
@@ -61,7 +61,7 @@ rchan_offset = 0x00020000
 CHECK_PLOT = 1
 
 ## Fill GDT with constant
-FILL_WITH_CONSTANT = 1 ## When 1, the entire GDT is filed with GDT_CONSTANT
+FILL_WITH_CONSTANT = 0 ## When 1, the entire GDT is filed with GDT_CONSTANT
 GDT_CONSTANT       = 0
 
 #------------------------------------------------------------------
@@ -85,10 +85,10 @@ file_mem = open(mem_filename, "w")
 n = 2**awidth
 
 ## mean
-mu = 2**(awidth-1)
+mu = delay_clocks/2    ##2**(awidth-1)
 
 ## standard deviation
-sig = mu/3 
+sig = mu/128 ###mu/3  ### mu/3 = normal
 
 ## define gaussian function based on GDT
 def gaussian(x, mu, sig):
@@ -99,13 +99,13 @@ def gaussian(x, mu, sig):
 #------------------------------------------------------------------
 
 if (CHECK_PLOT == 1):
-    gdt_base = [None] * (n)
+    gdt_base = [None] * (delay_clocks)
     
-    for i in range (0, n):
+    for i in range (0, delay_clocks):
         gdt_base[i] = gaussian(i, mu, sig)
         
     ## np.linspace: return evenly space numbers over a specific interval
-    x_values = np.linspace (0, n, n)
+    x_values = np.linspace (0, delay_clocks, delay_clocks)
     
     print("awidth = " + str(awidth))
     print("n      = " + str(n))
@@ -117,7 +117,7 @@ if (CHECK_PLOT == 1):
     print("\n")
     print("Plotting the test curve...")
     print("\n")
-    plt.title('Test Plot - Normal Gaussian, prior to adjustments')
+    plt.title('Test Plot - Gaussian, prior to adjustments')
     plt.plot(x_values, gaussian(x_values, mu, sig))
     plt.show()
 
@@ -125,8 +125,8 @@ if (CHECK_PLOT == 1):
 # Generate GDT Contents for delay_clocks < n
 #******************************************************************
 
-mu_new        = delay_clocks/2
-sig_new       = mu_new/3
+mu_new        = mu  ####  delay_clocks/2
+sig_new       = sig ####mu_new/3
 gauss_table_fp= [0] *  n 
 gauss_table   = [0] *  n 
 x_idx         = [0] *  n

@@ -31,7 +31,7 @@
 #define DDR_CLK_CTRL        0x124 /* 31:26 DDR_2XCLK_DIVISOR, 25:20 DDR_3XCLK_DIVISOR, 1 DDR_2XCLKACT, 0 DDR_3XCLKACT */
 #define FPGA0_CLK_CTRL      0x170 /* 25:20 DIVISOR1, 13:8 DIVISOR0, 5:4 SRCSEL */
 #define PL0_EMUL       0x00101000 /*              1,            16,      IOPLL */
-#define PL0_NORM       0x00100600 /*              1,             6,      IOPLL */
+#define PL0_NORM       0x00100800 /*              1,             6,      IOPLL */
 #define FPGA1_CLK_CTRL      0x180 /* 25:20 DIVISOR1, 13:8 DIVISOR0, 5:4 SRCSEL */
 #define CLK_621_TRUE        0x1C4 /* 0 CLK_621_TRUE */
 #define CLK_621_CHK             0 /*        (4:2:1) */
@@ -158,13 +158,25 @@ void clocks_normal(void)
 #define IOPLL_CHK  0x00015A00 /*             NA,    PS_REF_CLK,       1,         90,        0,       0 */
 #define PL0_REF_CTRL    0x0C0 /* 24 CLKACT, 21:16 DIVISOR1, 13:8 DIVISOR0, 2:0 SRCSEL */
 #define PL0_EMUL   0x01011800 /*         1,              1,            24,      IOPLL */
-#define PL0_NORM   0x01010600 /*         1,              1,             6,      IOPLL */
+#define PL0_NORM   0x01010800 /*         1,              1,             6,      IOPLL */
 #define PL1_REF_CTRL    0x0C4 /* 24 CLKACT, 21:16 DIVISOR1, 13:8 DIVISOR0, 2:0 SRCSEL */
 
+int cpu_dram_wr_lat = 62;
+int cpu_dram_rd_lat = 79;
+int acc_dram_wr_lat = 60; //100;
+int acc_dram_rd_lat = 78; //118;
+
+int cpu_sram_wr_lat = 62;
+int cpu_sram_rd_lat = 79;
+int acc_sram_wr_lat = 28; //48;
+int acc_sram_rd_lat = 46; //66;
+
+/* FDU offsets:
 int cpu_wr_lat = 52;
 int cpu_rd_lat = 69;
 int acc_wr_lat = 48;
 int acc_rd_lat = 66;
+*/
 
 int gdt_n0[1024] = {
 	#include "gdt_data_n0.txt"
@@ -233,14 +245,14 @@ void clocks_emulate(void)
 	/* --- Configure the Gaussian Delay Tables (GTD) --- */
 	sleep(1);
     #pragma message "Compiling " __FILE__ "..."
-	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + B_OFFSET, cpu_wr_lat, gdt_0_0_b); // CPU SRAM write response
-	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + R_OFFSET, cpu_rd_lat, gdt_0_0_r); // CPU SRAM read response^S
-	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + B_OFFSET, cpu_wr_lat, gdt_0_1_b); // CPU DRAM write response
-	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + R_OFFSET, cpu_rd_lat, gdt_0_1_r); // CPU DRAM read response
-	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + B_OFFSET, acc_wr_lat, gdt_1_0_b); // Accererator SRAM write response
-	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + R_OFFSET, acc_rd_lat, gdt_1_0_r); // Accererator SRAM read response
-	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + B_OFFSET, acc_wr_lat, gdt_1_1_b); // Accererator DRAM write response
-	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + R_OFFSET, acc_rd_lat, gdt_1_1_r); // Accererator DRAM read response
+	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + B_OFFSET, cpu_sram_wr_lat, gdt_0_0_b); // CPU SRAM write response
+	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + R_OFFSET, cpu_sram_rd_lat, gdt_0_0_r); // CPU SRAM read response^S
+	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + B_OFFSET, cpu_dram_wr_lat, gdt_0_1_b); // CPU DRAM write response
+	config_gdt((volatile void *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + R_OFFSET, cpu_dram_rd_lat, gdt_0_1_r); // CPU DRAM read response
+	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + B_OFFSET, acc_sram_wr_lat, gdt_1_0_b); // Accererator SRAM write response
+	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + R_OFFSET, acc_sram_rd_lat, gdt_1_0_r); // Accererator SRAM read response
+	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + B_OFFSET, acc_dram_wr_lat, gdt_1_1_b); // Accererator DRAM write response
+	config_gdt((volatile void *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + R_OFFSET, acc_dram_rd_lat, gdt_1_1_r); // Accererator DRAM read response
 
 /*
     int iii = 0;

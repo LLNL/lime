@@ -47,7 +47,8 @@ tools=$(dirname "${BASH_SOURCE[0]}")
 if (($opt_a)); then ch=10; else ch=2; fi
 if [ -n "$opt_b" ]; then fbase=$opt_b; fi
 # fr is 20x the PL 1 clock frequency
-if (($opt_z)); then fr="4e9"; th=0x40100000; else fr="6e9"; th=0x1000100000; fi
+if (($opt_z)); then fr="4e9"; th=0x40100000; else fr="3.75e9"; th=0x1000100000; fi
+#if (($opt_z)); then fr="4e9"; th=0x40100000; else fr="6e9"; th=0x1000100000; fi
 
 # Create .dat file for gnuplot.
 fout=${fbase}_${opt_w}_p
