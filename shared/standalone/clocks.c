@@ -161,17 +161,26 @@ void clocks_normal(void)
 #define PL0_NORM   0x01010800 /*         1,              1,             6,      IOPLL */
 #define PL1_REF_CTRL    0x0C4 /* 24 CLKACT, 21:16 DIVISOR1, 13:8 DIVISOR0, 2:0 SRCSEL */
 
+/*
+these offset/compensation values were determined empirically by running benchmarks, comparing the
+performance metrics to the master branch (FDU) operating at pl_clk_0 = pl_clk_1 = 187.5MHz, adjusting the
+delays, and repeating until the delta between the FDU@187.5MHz and VLD loaded with constants was less than 1%
+for all benchmarks.
+*/
 int cpu_dram_wr_lat = 62;
 int cpu_dram_rd_lat = 79;
-int acc_dram_wr_lat = 60; //100;
-int acc_dram_rd_lat = 78; //118;
+int acc_dram_wr_lat = 60; //60; //100;
+int acc_dram_rd_lat = 78; //78; //118;
 
 int cpu_sram_wr_lat = 62;
 int cpu_sram_rd_lat = 79;
-int acc_sram_wr_lat = 28; //48;
-int acc_sram_rd_lat = 46; //66;
+int acc_sram_wr_lat = 48; //28; //48;
+int acc_sram_rd_lat = 66; //46; //66;
 
-/* FDU offsets:
+/* FDU offsets. These were measured/calculated for the FDU at pl_clk_1 = 300MHz. For 187.5MHz operation of
+both the FDU and VLD, clock frequency scaling is performed. For the FDU, the scaling is performed in clocks.c
+by multiplying these clock cycle values by (187.5/300). For the VLD, the same scaling is performed in gdt.c.
+
 int cpu_wr_lat = 52;
 int cpu_rd_lat = 69;
 int acc_wr_lat = 48;
@@ -182,29 +191,31 @@ int gdt_n0[1024] = {
 	#include "gdt_data_n0.txt"
 	};
 
+//Files named gdt_data_cxxx.txt are filled with constants of value xxx and are used for calibration.
+//Files named gdt_data_gxxx.txt are filled with Gaussians where the median is xxx.
 int gdt_0_0_b[1024] = {
-	#include "gdt_data_c216.txt"  // CPU SRAM write response; fixed delay (before compensation) = 216 clocks
+	#include "gdt_data_g216.txt"  // CPU SRAM write response; fixed delay (before compensation) = 216 clocks
 	};
 int gdt_0_0_r[1024] = {
-	#include "gdt_data_c216.txt"  // CPU SRAM read response; fixed delay (before compensation) = 216 clocks
+	#include "gdt_data_g216.txt"  // CPU SRAM read response; fixed delay (before compensation) = 216 clocks
 	};
 int gdt_0_1_b[1024] = {
-	#include "gdt_data_c636.txt"  // CPU DRAM write response; fixed delay (before compensation) = 636 clocks
+	#include "gdt_data_g636.txt"  // CPU DRAM write response; fixed delay (before compensation) = 636 clocks
 	};
 int gdt_0_1_r[1024] = {
-	#include "gdt_data_c510.txt"  // CPU DRAM read response; fixed delay (before compensation) = 510 clocks
+	#include "gdt_data_g510.txt"  // CPU DRAM read response; fixed delay (before compensation) = 510 clocks
 	};
 int gdt_1_0_b[1024] = {
-	#include "gdt_data_c72.txt"  // Accererator SRAM write response; fixed delay (before compensation) = 72 clocks
+	#include "gdt_data_g72.txt"  // Accererator SRAM write response; fixed delay (before compensation) = 72 clocks
 	};
 int gdt_1_0_r[1024] = {
-	#include "gdt_data_c72.txt"  // Accererator SRAM read response; fixed delay (before compensation) = 72 clocks
+	#include "gdt_data_g72.txt"  // Accererator SRAM read response; fixed delay (before compensation) = 72 clocks
 	};
 int gdt_1_1_b[1024] = {
-	#include "gdt_data_c492.txt"  // Accererator DRAM write response; fixed delay (before compensation) = 492 clocks
+	#include "gdt_data_g492.txt"  // Accererator DRAM write response; fixed delay (before compensation) = 492 clocks
 	};
 int gdt_1_1_r[1024] = {
-	#include "gdt_data_c366.txt"  // Accererator DRAM read response; fixed delay (before compensation) = 366 clocks
+	#include "gdt_data_g366.txt"  // Accererator DRAM read response; fixed delay (before compensation) = 366 clocks
 	};
 
 void clocks_emulate(void)
