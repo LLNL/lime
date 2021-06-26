@@ -21,7 +21,8 @@ generic (
     CTR_PTR_WIDTH       : integer := 9;
     MINIBUF_IDX_WIDTH   : integer := 5;
     AXI_INFO_WIDTH      : integer := 256;
-    C_AXI_ID_WIDTH      : integer := 16
+    C_AXI_ID_WIDTH      : integer := 16;
+    NUM_EVENTS_PER_MBUF : integer := 8
 );
 port (
     clk_i               : in  std_logic;
@@ -124,7 +125,7 @@ pbrd_ns_proc: process(clk_i) begin
 
         if (gnt_or = '1') then
             ctr_ptr_addr       <= to_unsigned(gnt_bit,32);
-            base_minicam_addr  <= shift_left(to_unsigned(gnt_bit,32),2);
+            base_minicam_addr  <= shift_left(to_unsigned(gnt_bit,32),log2rp(NUM_EVENTS_PER_MBUF));
         end if;
 
             pktbuf_addrb_ns    <= pktbuf_addrb;
@@ -134,7 +135,7 @@ pbrd_ns_proc: process(clk_i) begin
 end process;
 
 vcpsm_proc : process(pbrd_ns, gnt_or, gnt_bit, pktbuf_addrb, pktbuf_addrb_ns, pktbuf_doutb_i,
-                     base_minicam_addr, ctr_ptr_addr)
+                     base_minicam_addr, ctr_ptr_addr, m_axi_ready_i)
 --                     scoreboard_rd_idx_ns, base_minicam_addr, ctr_ptr_addr)
 begin
     pktbuf_enb        <= '0';
@@ -152,7 +153,7 @@ begin
             pbrd_cs          <= PBRDSM_WAIT;
 
         when PBRDSM_WAIT =>  -- look for gnt, then read from packet buffer 
-            if (gnt_or = '1' and m_axi_ready_i = '1') then
+            if (gnt_or = '1') then
                 pbrd_cs        <= PBRDSM_DLY;
             else
                 pbrd_cs        <= PBRDSM_WAIT;
@@ -170,21 +171,28 @@ begin
 
         -- read the packet from the minibuffer
         when PBRDSM_RD_MINIBUF =>
-            if (pktbuf_doutb_i(0) = '1') then -- If Tlast asserted, return to wait state. 
-
+            if m_axi_ready_i = '1' then
+                if (pktbuf_doutb_i(0) = '1') then -- If Tlast asserted, return to wait state. 
+    
+                    axi_info_valid_o <= '1';
+                    axi_info_data    <= pktbuf_doutb_i;
+    
+                    pbrd_cs          <= PBRDSM_WAIT;
+                else   -- If Tlast not asserted, increment address and continue reading
+                    pktbuf_enb       <= '1';
+                    pktbuf_addrb     <= pktbuf_addrb_ns + '1';
+    
+                    axi_info_valid_o <= '1';
+                    axi_info_data    <= pktbuf_doutb_i;
+    
+                    pbrd_cs          <= PBRDSM_RD_MINIBUF;
+                end if;
+            else
                 axi_info_valid_o <= '1';
+                pktbuf_addrb     <= pktbuf_addrb_ns;
                 axi_info_data    <= pktbuf_doutb_i;
-
-                pbrd_cs          <= PBRDSM_WAIT;
-            else   -- If Tlast not asserted, increment address and continue reading
-                pktbuf_enb       <= '1';
-                pktbuf_addrb     <= pktbuf_addrb_ns + '1';
-
-                axi_info_valid_o <= '1';
-                axi_info_data    <= pktbuf_doutb_i;
-
                 pbrd_cs          <= PBRDSM_RD_MINIBUF;
-            end if;                
+            end if;                      
 
         when others => 
             pbrd_cs <= PBRDSM_IDLE;

@@ -79,11 +79,17 @@ proc create_hier_cell_delay {parentCell nameHier \
 	] $axi_shim_1
 
 	# Create instance: axi_interconnect_0, and set properties
-	if {$id_width > 6} {
+	# if {$id_width > 6} {
 		set axi_interconnect_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 axi_interconnect_0]
-	} else {
-		set axi_interconnect_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_0]
-	}
+	# } else {
+	# 	set axi_interconnect_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_0]
+	# }
+	startgroup
+	set_property -dict [list \
+		CONFIG.ADVANCED_PROPERTIES {  __view__ { functional { S00_Entry { LIM_R_LEN 4 LIM_W_LEN 4 } } } } \
+	]  $axi_interconnect_0
+	endgroup
+
 	set_property -dict [list \
 		CONFIG.NUM_MI {2} \
 		CONFIG.NUM_SI {1} \
@@ -185,16 +191,16 @@ proc create_hier_cell_delay {parentCell nameHier \
 		[get_bd_pins axi_delay_0/s_axi_aclk] \
 		[get_bd_pins axi_delay_1/m_axi_aclk] \
 		[get_bd_pins axi_delay_1/s_axi_aclk]
-	if {$id_width > 6} {
+	# if {$id_width > 6} {
 		connect_bd_net [get_bd_pins ACLK] \
 			[get_bd_pins axi_interconnect_0/aclk]
-	} else {
-		connect_bd_net [get_bd_pins ACLK] \
-			[get_bd_pins axi_interconnect_0/ACLK] \
-			[get_bd_pins axi_interconnect_0/S00_ACLK] \
-			[get_bd_pins axi_interconnect_0/M00_ACLK] \
-			[get_bd_pins axi_interconnect_0/M01_ACLK]
-	}
+	# } else {
+	# 	connect_bd_net [get_bd_pins ACLK] \
+	# 		[get_bd_pins axi_interconnect_0/ACLK] \
+	# 		[get_bd_pins axi_interconnect_0/S00_ACLK] \
+	# 		[get_bd_pins axi_interconnect_0/M00_ACLK] \
+	# 		[get_bd_pins axi_interconnect_0/M01_ACLK]
+	# }
 
 	connect_bd_net [get_bd_pins ARESETN] \
 		[get_bd_pins axi_shim_0/m_axi_aresetn] \
@@ -205,16 +211,16 @@ proc create_hier_cell_delay {parentCell nameHier \
 		[get_bd_pins axi_delay_0/s_axi_aresetn] \
 		[get_bd_pins axi_delay_1/m_axi_aresetn] \
 		[get_bd_pins axi_delay_1/s_axi_aresetn]
-	if {$id_width > 6} {
+	# if {$id_width > 6} {
 		connect_bd_net [get_bd_pins ARESETN] \
 			[get_bd_pins axi_interconnect_0/aresetn]
-	} else {
-		connect_bd_net [get_bd_pins ARESETN] \
-			[get_bd_pins axi_interconnect_0/ARESETN] \
-			[get_bd_pins axi_interconnect_0/S00_ARESETN] \
-			[get_bd_pins axi_interconnect_0/M00_ARESETN] \
-			[get_bd_pins axi_interconnect_0/M01_ARESETN]
-	}
+	# } else {
+	# 	connect_bd_net [get_bd_pins ARESETN] \
+	# 		[get_bd_pins axi_interconnect_0/ARESETN] \
+	# 		[get_bd_pins axi_interconnect_0/S00_ARESETN] \
+	# 		[get_bd_pins axi_interconnect_0/M00_ARESETN] \
+	# 		[get_bd_pins axi_interconnect_0/M01_ARESETN]
+	# }
 
 	puts "########## create $nameHier end ##########"
 

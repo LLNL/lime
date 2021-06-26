@@ -42,7 +42,7 @@ generic (
     BYPASS_MINICAM       : integer := 1;
     CAM_DEPTH            : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
     CAM_WIDTH            : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
-    NUM_EVENTS_PER_MBUF  : integer := 8;  -- maximum number of events each minibuffer can hold
+    NUM_EVENTS_PER_MBUF  : integer := 32;  -- maximum number of events each minibuffer can hold
     NUM_MINI_BUFS        : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported
 );
 port (
@@ -114,7 +114,7 @@ architecture chan_delay_variable of chan_delay_variable is
 --******************************************************************************
 constant C_DATA_LEN        : integer := 150; --length of pl_dly_din variable, i.e. depth of pl
 constant MINIBUF_IDX_WIDTH : integer := log2rp(NUM_MINI_BUFS);
-constant CTR_PTR_WIDTH     : integer := MINIBUF_IDX_WIDTH + 2; -- indexes into (i.e. addresses) the packet buffer. Minimum depth of Packet Buffer DPRAM = 2^(CTR_PTR_WIDTH)
+constant CTR_PTR_WIDTH     : integer := MINIBUF_IDX_WIDTH + log2rp(NUM_EVENTS_PER_MBUF); -- indexes into (i.e. addresses) the packet buffer. Minimum depth of Packet Buffer DPRAM = 2^(CTR_PTR_WIDTH)
 
 -- Note: assuming maximum width defined by C_AXI_ID_WIDTH = 16 and C_AXI_DATA_WIDTH = 128 (C_AXI_DATA_WIDTH/8 = 16) and misc (32) = 192
 --constant AXI_INFO_WIDTH    : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_ADDR_WIDTH + C_AXI_DATA_WIDTH/8 + 
@@ -185,6 +185,19 @@ attribute mark_debug of pb_wr         : signal is "true";
 attribute mark_debug of pb_cntr_ptr   : signal is "true";
 attribute mark_debug of pktbuf_enb    : signal is "true";
 attribute mark_debug of pktbuf_addrb  : signal is "true";
+
+attribute mark_debug of s_axi_id        : signal is "true";
+attribute mark_debug of s_axi_valid     : signal is "true";
+attribute mark_debug of s_axi_ready     : signal is "true";
+attribute mark_debug of s_axi_last      : signal is "true";
+attribute mark_debug of s_axi_resp      : signal is "true";
+attribute mark_debug of s_axi_region    : signal is "true";
+attribute mark_debug of m_axi_id        : signal is "true";
+attribute mark_debug of m_axi_valid     : signal is "true";
+attribute mark_debug of m_axi_ready     : signal is "true";
+attribute mark_debug of m_axi_last      : signal is "true";
+attribute mark_debug of m_axi_resp      : signal is "true";
+attribute mark_debug of m_axi_region    : signal is "true";
 
 --******************************************************************************
 --Component Definitions
@@ -461,7 +474,8 @@ generic map(
     MINIBUF_IDX_WIDTH   => MINIBUF_IDX_WIDTH,
     CTR_PTR_WIDTH       => CTR_PTR_WIDTH,
     AXI_INFO_WIDTH      => AXI_INFO_WIDTH,
-    C_AXI_ID_WIDTH      => C_AXI_ID_WIDTH
+    C_AXI_ID_WIDTH      => C_AXI_ID_WIDTH,
+    NUM_EVENTS_PER_MBUF => NUM_EVENTS_PER_MBUF
 )
 port map (
     clk_i               => m_axi_aclk,

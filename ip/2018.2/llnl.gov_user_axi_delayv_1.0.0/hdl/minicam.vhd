@@ -109,9 +109,9 @@ minibuf_mgmt_inst : entity axi_delay_lib.minibuf_mgmt
         minibuf_rdata_o     => minibuf_rdata
     );
 
-compare_proc : process (cam_memory, data_i, minicam_hit_slv) begin
+compare_proc : process (cam_memory, data_i, minicam_hit_slv, active) begin
     comp_loop : for m in 0 to (CAM_DEPTH-1) loop
-        if (cam_memory(m) = data_i) then
+        if (cam_memory(m) = data_i and active(m) = '1') then
             minicam_hit_slv(m) <= '1';
         else
             minicam_hit_slv(m) <= '0';
@@ -143,7 +143,6 @@ cam_proc: process(clk_i) begin
 
             if (data_valid_i = '1') then
                 search_loop : for j in 0 to (CAM_DEPTH-1) loop
-            
                     if (minicam_hit = '0') then
                         if ((valid(j) = '1') and (active(j) = '0') and tlast_i = '0') then  -- no hit, empty location found, store data here
                             cam_memory(j) <= data_i;
@@ -189,6 +188,8 @@ cam_proc: process(clk_i) begin
                             active(j)     <= active(j);
                             debug_code    <= 5;
                         end if;
+                    else
+                        debug_code <= 6;
                     end if;
 
                 end loop search_loop;

@@ -17,7 +17,7 @@ use ieee.numeric_std.all;
 
 library axi_delay_lib;
 use axi_delay_lib.all;
---use work.axi_delay_pkg.all;
+use work.axi_delay_pkg.all;
 
 entity minibuf_mgmt is
 
@@ -139,7 +139,7 @@ wfifo_sm_proc : process (clk_i) begin
     end if;
 end process;
 
-ctr_ptr_init_sl2 <= std_logic_vector(shift_left(to_unsigned(ctr_ptr_init,CTR_PTR_WIDTH),2));
+ctr_ptr_init_sl2 <= std_logic_vector(shift_left(to_unsigned(ctr_ptr_init,CTR_PTR_WIDTH),log2rp(NUM_EVENTS_PER_MBUF)));
 
 minibuf_wr    <= minibuf_init_wren or minibuf_wr_i;
 minibuf_wdata <= ctr_ptr_init_sl2 when (minibuf_init_wren = '1') else minibuf_wdata_i;

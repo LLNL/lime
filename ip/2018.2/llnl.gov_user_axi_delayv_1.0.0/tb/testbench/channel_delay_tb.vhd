@@ -32,8 +32,8 @@ entity channel_delay_tb is
         BYPASS_MINICAM       : integer := 1;
         CAM_DEPTH            : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
         CAM_WIDTH            : integer := 16; -- maximum width of axi_id input. Requirement: CAMWIDTH <= NUM_MINI_BUFS
-        NUM_EVENTS_PER_MBUF  : integer := 8;  -- maximum number of events each minibuffer can hold
-        NUM_MINI_BUFS        : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported
+        NUM_EVENTS_PER_MBUF  : integer := 32;  -- maximum number of events each minibuffer can hold
+        NUM_MINI_BUFS        : integer := 128  -- number of minibufs; each must be sized to hold the largest packet size supported
     );    
     Port ( 
         dummy_o : out std_logic
@@ -106,7 +106,7 @@ signal m_axi_prot    : std_logic_vector(2 downto 0) := (others => '0');
 signal m_axi_qos     : std_logic_vector(3 downto 0) := (others => '0');
 signal m_axi_region  : std_logic_vector(3 downto 0) := (others => '0');
 signal m_axi_valid   : std_logic;
-signal m_axi_ready   : std_logic;
+signal m_axi_ready   : std_logic := '1';
  
 signal m_axi_last    : std_logic;
 signal m_axi_resp    : std_logic_vector(1 downto 0);
@@ -130,6 +130,16 @@ sys_clk         <= not sys_clk after 10 ns;
 sys_rst         <= '0' after 1 us;  
 sys_rst_n       <= not sys_rst;
 transmission_en <= '1' after  3 us;  
+
+process
+begin
+    m_axi_ready <= '1';
+    wait for 6250 ns;
+    m_axi_ready <= '0';
+    wait for 80 ns;
+    m_axi_ready <= '1';
+    wait;
+end process;
 
 s_axi_lite_aclk    <= not s_axi_lite_aclk after 10 ns;
 s_axi_lite_aresetn <= '1' after 1 us;  
@@ -297,7 +307,7 @@ axi_slave_inst : entity axi_delay_lib.axi_slave
         s_axi_qos_i     => m_axi_qos,   
         s_axi_region_i  => m_axi_region,
         s_axi_valid_i   => m_axi_valid, 
-        s_axi_ready_o   => m_axi_ready, 
+        s_axi_ready_o   => open,--m_axi_ready, 
 	    	       	    	    
         s_axi_last_i    => m_axi_last,  
         s_axi_resp_i    => m_axi_resp

@@ -12,6 +12,7 @@ use ieee.std_logic_misc.all;
 
 library axi_delay_lib;
 use axi_delay_lib.all;
+use axi_delay_lib.axi_delay_pkg.all;
 
 entity minicam_bypass is
 generic (
@@ -46,7 +47,7 @@ architecture minicam_bypass of minicam_bypass is
 --******************************************************************************
 -- Constants
 --******************************************************************************
-constant C_LSB_WIDTH :  integer := 2;
+constant C_LSB_WIDTH :  integer := log2rp(NUM_EVENTS_PER_MBUF);
 
 --******************************************************************************
 --Signal Definitions
@@ -86,7 +87,7 @@ ctr_ptr_proc: process(clk_i) begin
 --                else
 --                    ctr_ptr_msb <= ctr_ptr_msb + '1';
 --                end if;
-                ctr_ptr_msb <= minibuf_rdata(CTR_PTR_WIDTH-1 downto 2);
+            --    ctr_ptr_msb <= minibuf_rdata(CTR_PTR_WIDTH-1 downto C_LSB_WIDTH);
                 
                 ctr_ptr_lsb <= (others => '0');
 
@@ -94,7 +95,7 @@ ctr_ptr_proc: process(clk_i) begin
                 ctr_ptr_lsb <= ctr_ptr_lsb + '1';
             end if;
             
-            ctr_ptr <= ctr_ptr_msb & ctr_ptr_lsb;
+            ctr_ptr <= minibuf_rdata(CTR_PTR_WIDTH-1 downto C_LSB_WIDTH) & ctr_ptr_lsb;
             
             if (data_valid_i = '1') then
                 ctr_ptr_wr <= '1';
