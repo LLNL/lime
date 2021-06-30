@@ -50,8 +50,8 @@ generic (
         
         BYPASS_MINICAM        : integer := 1;
         CAM_DEPTH             : integer := 8;  -- depth of cam (i.e. number of entries), must be modulo 2.
-        NUM_EVENTS_PER_MBUF   : integer := 64;  -- maximum number of events each minibuffer can hold
-        NUM_MINI_BUFS         : integer := 128  -- number of minibufs; each must be sized to hold the largest packet size supported    
+        NUM_EVENTS_PER_MBUF   : integer := 8;  -- maximum number of events each minibuffer can hold
+        NUM_MINI_BUFS         : integer := 64  -- number of minibufs; each must be sized to hold the largest packet size supported    
 );
 
 port (
