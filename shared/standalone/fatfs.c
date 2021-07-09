@@ -10,6 +10,7 @@
 #include "ff.h"
 
 #define MAX_FD 2
+#define file_size(fp) ((fp)->obj.fs->fsize)
 
 static int mounted;
 static FATFS ffsvol;
@@ -111,7 +112,8 @@ int _open(const char *pathname, int flags, mode_t mode)
 		mounted = 1;
 	}
 	for (i = 0; i < MAX_FD; i++) {
-		if (fds[i].fs == NULL) {
+		//if (fds[i].fs == NULL) {
+		if (fds[i].obj.fs == NULL) {
 			BYTE access = map_access(flags);
 			fr = f_open(&fds[i], pathname, access);
 			if (fr != FR_OK) {

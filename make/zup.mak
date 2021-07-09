@@ -1,8 +1,8 @@
 EXE = .elf
 
-WORKSPACE_LOC ?= $(SA_SDK)
-BSP = $(WORKSPACE_LOC)/standalone_bsp_a53
-HWP = $(WORKSPACE_LOC)/hw_platform_0
+WORKSPACE_LOC ?= $(VITIS_SDK)
+BSP = $(WORKSPACE_LOC)/final/psu_cortexa53_0/standalone_psu_cortexa53_0/bsp
+HWP = $(WORKSPACE_LOC)/final/hw
 XSDB := xsdb$(if $(findstring Linux,$(shell uname -s)),,.bat)
 
 #DEFS += -DVERSION=$(VERSION)
@@ -52,6 +52,7 @@ CFLAGS += $(MACH) $(OPT) -Wall
 CXXFLAGS += $(CFLAGS)
 LDFLAGS += -Wl,-T -Wl,cpu_lscript.ld -L$(BSP)/psu_cortexa53_0/lib
 LDLIBS += -Wl,--start-group,-lxilffs,-lxil,-lgcc,-lc,--end-group
+#LDLIBS += -Wl,--start-group,-lxil,-lgcc,-lc,--end-group
 
 .PHONY: all
 all: $(TARGET)$(EXE)

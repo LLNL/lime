@@ -1,0 +1,51 @@
+Release 2020.2   Jun  9 2021  -  20:49:12
+PMU-FW is not running, certain applications may not be supported.
+--Starting Memory Test Application--
+SARBASE0: 0x0000000000
+SARSIZE0: 0x0000000000
+SARBASE1: 0x0000000010
+SARSIZE1: 0x000000000F
+######################
+Testing memory region: psu_ddr_0_MEM_0
+    Memory Controller: psu_ddr_0
+         Base Address: 0x0000000000
+                 Size: 0x0080000000 bytes
+HERE
+++
+==
+          32-bit test: PASSED!
+memset dst: 0x0, sz: 0x80000000
+memset ticks: 25756430, time: 257590.046 us, bandwidth(wo): 8336.827 MB/s
+memcpy dst: 0x40000000, src: 0x0, sz: 0x40000000
+memcpy ticks: 57087192, time: 570928.984 us, bandwidth(rw): 3761.385 MB/s
+######################
+Testing memory region: psu_ddr_1_MEM_0
+    Memory Controller: psu_ddr_1
+         Base Address: 0x0800000000
+                 Size: 0x0100000000 bytes
+HERE
+++++
+====
+          32-bit test: PASSED!
+memset dst: 0x800000000, sz: 0x100000000
+memset ticks: 51519734, time: 515248.839 us, bandwidth(wo): 8335.715 MB/s
+memcpy dst: 0x880000000, src: 0x800000000, sz: 0x80000000
+memcpy ticks: 114180120, time: 1141915.334 us, bandwidth(rw): 3761.196 MB/s
+######################
+Testing memory region: axi_shim_0_mem0
+    Memory Controller: axi_shim_0
+         Base Address: 0x1000000000
+                 Size: 0x0100000000 bytes
+HERE
+++++
+====
+          32-bit test: PASSED!
+memset dst: 0x1000000000, sz: 0x100000000
+memset ticks: 198069174, time: 1980889.730 us, bandwidth(wo): 2168.201 MB/s
+memcpy dst: 0x1080000000, src: 0x1000000000, sz: 0x80000000
+memcpy ticks: 251765794, time: 2517909.605 us, bandwidth(rw): 1705.767 MB/s
+Testing memory alias:
+Error at 0x0800000000
+Error at 0x1000000000
+--Memory Test Application Complete--
+

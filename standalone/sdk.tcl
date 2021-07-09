@@ -11,11 +11,11 @@ if {$pA53 ne ""} {
 	exec sed -i.bak -f sar.sed sdk/hw_platform_0/psu_init_gpl.c
 	exec sed -i.bak -f sar.sed sdk/hw_platform_0/psu_init.tcl
 	createbsp -name standalone_bsp_a53 -proc $pA53 -hwproject hw_platform_0 -arch 64
-	setlib -bsp standalone_bsp_a53 -lib xilffs
+	bsp setlib xilffs
 	# PARAMETER READ_ONLY = false
 	# PARAMETER USE_MKFS = false
 	updatemss -mss sdk/standalone_bsp_a53/system.mss
-	regenbsp -bsp standalone_bsp_a53
+	platform generate
 	# patch translation table
 	exec cp -p translation_table_a53.S sdk/standalone_bsp_a53/$pA53/libsrc/standalone_v6_7/src/translation_table.S
 }

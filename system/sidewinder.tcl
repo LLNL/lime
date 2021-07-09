@@ -92,7 +92,7 @@ if {$::argc > 0} {
 	}
 }
 
-set_param board.repoPaths [list "$lime_dir/boards"]
+set_param board.repoPaths [list "$lime_dir/new_boards"]
 
 # Create project
 # BOARD: part
@@ -101,7 +101,7 @@ set cproj [current_project]
 
 # Set project properties
 # BOARD: board_part
-set_property board_part fidus.com:sidewinder100:part0:1.0 $cproj
+set_property board_part fidus.com:sidewinder100:part0:2.0 $cproj
 set_property default_lib xil_defaultlib $cproj
 set_property xpm_libraries "XPM_CDC XPM_MEMORY" $cproj
 set_property ip_repo_paths  "$ip_dir $lime_dir/ip/hls" $cproj
@@ -183,7 +183,8 @@ proc cr_bd_main {parentCell} {
 
 	# Create instance: zynq_ps_0
 	# BOARD: Zynq configuration
-	set zynq_ps_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.2 zynq_ps_0]
+	#set zynq_ps_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.2 zynq_ps_0]
+	set zynq_ps_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.3 zynq_ps_0]
 	# set_property -dict [list CONFIG.preset {???}] $zynq_ps_0
 	apply_bd_automation \
 		-rule xilinx.com:bd_rule:zynq_ultra_ps_e \

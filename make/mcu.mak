@@ -1,7 +1,7 @@
 EXE = .elf
 
-WORKSPACE_LOC ?= $(SA_SDK)
-BSP = $(WORKSPACE_LOC)/standalone_bsp_mb
+WORKSPACE_LOC ?= $(SA_VITIS)
+BSP = $(WORKSPACE_LOC)/final/engine_0_mcu_0_microblaze_0/standalone_bsp_mb/bsp
 
 #DEFS += -DVERSION=$(VERSION)
 

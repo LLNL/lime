@@ -92,14 +92,20 @@ if {$::argc > 0} {
 	}
 }
 
+#set_param board.repoPaths [list "$lime_dir/xczu9eg-ffvb1156-2-i-es2"]
+#set_param board.repoPaths [list "/home2/bhardwaj2/lime/xczu9eg-ffvb1156-2-i-es2"]
+#set_param board.repoPaths /opt/Xilinx/SDK/2018.2/data/boards/board_files/zcu102/es2/2.4
+
 # Create project
 # BOARD: part
-create_project ${proj_name} ./ -part xczu9eg-ffvb1156-2-i-es2
+#create_project ${proj_name} ./ -part xczu9eg-ffvb1156-2-i-es2
+create_project ${proj_name} ./ -part xczu9eg-ffvb1156-2-e
 set cproj [current_project]
 
 # Set project properties
 # BOARD: board_part
-set_property board_part xilinx.com:zcu102_es2:part0:2.4 $cproj
+#set_property board_part xilinx.com:zcu102_es2:part0:2.4 $cproj
+set_property board_part xilinx.com:zcu102:part0:3.4 $cproj
 set_property default_lib xil_defaultlib $cproj
 set_property xpm_libraries "XPM_CDC XPM_MEMORY" $cproj
 set_property ip_repo_paths  "$ip_dir $lime_dir/ip/hls" $cproj
@@ -183,7 +189,8 @@ proc cr_bd_main {parentCell} {
 
 	# Create instance: zynq_ps_0
 	# BOARD: Zynq configuration
-	set zynq_ps_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.2 zynq_ps_0]
+	#set zynq_ps_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.2 zynq_ps_0]
+	set zynq_ps_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.3 zynq_ps_0]
 	# set_property -dict [list CONFIG.preset {???}] $zynq_ps_0
 	apply_bd_automation \
 		-rule xilinx.com:bd_rule:zynq_ultra_ps_e \
@@ -214,6 +221,7 @@ proc cr_bd_main {parentCell} {
 		CONFIG.PSU__PCIE__PERIPHERAL__ENABLE {0} \
 		CONFIG.PSU__SATA__PERIPHERAL__ENABLE {0} \
 		CONFIG.PSU__PMU__PERIPHERAL__ENABLE {0} \
+		CONFIG.PSU_DYNAMIC_DDR_CONFIG_EN {1} \
 	] $zynq_ps_0
 	# Presets
 	# CONFIG.PSU__PSS_REF_CLK__FREQMHZ {33.330}
@@ -271,15 +279,24 @@ proc cr_bd_main {parentCell} {
 		CONFIG.PSU__USE__S_AXI_GP5 {1} \
 		CONFIG.PSU__SAXIGP5__DATA_WIDTH {64} \
 	] $zynq_ps_0
+	#set_property -dict [list \
+		CONFIG.PSU__USE__S_AXI_GP0 {1} \
+		CONFIG.PSU__SAXIGP0__DATA_WIDTH {64} \
+		CONFIG.PSU__USE__S_AXI_GP1 {1} \
+		CONFIG.PSU__SAXIGP1__DATA_WIDTH {64} \
+	] $zynq_ps_0
 
 	# TODO: programmatically set or propagate width params based on master
 	set eng_addr_width $cpu_addr_width
 	set eng_data_width [get_property CONFIG.DATA_WIDTH [get_bd_intf_pins zynq_ps_0/S_AXI_HP2_FPD]]
+	#set eng_data_width [get_property CONFIG.DATA_WIDTH [get_bd_intf_pins zynq_ps_0/S_AXI_HPC0_FPD]]
 	set eng_id_width {3}
 
 	# Connect Zynq PS AXI clocks
 	connect_bd_net [get_bd_pins zynq_ps_0/pl_clk1] [get_bd_pins zynq_ps_0/saxihp2_fpd_aclk]
 	connect_bd_net [get_bd_pins zynq_ps_0/pl_clk1] [get_bd_pins zynq_ps_0/saxihp3_fpd_aclk]
+	#connect_bd_net [get_bd_pins zynq_ps_0/pl_clk1] [get_bd_pins zynq_ps_0/saxihpc0_fpd_aclk]
+	#connect_bd_net [get_bd_pins zynq_ps_0/pl_clk1] [get_bd_pins zynq_ps_0/saxihpc1_fpd_aclk]
 
 	# Create instance: engine_0
 	source "$ip_dir/blocks/$ENGINE_SOURCE"
@@ -299,6 +316,8 @@ proc cr_bd_main {parentCell} {
 	connect_bd_net [get_bd_pins rst_pl_clk1/interconnect_aresetn] [get_bd_pins delay_1/ARESETN]
 	connect_bd_intf_net [get_bd_intf_pins delay_1/M0_AXI] [get_bd_intf_pins zynq_ps_0/S_AXI_HP2_FPD]
 	connect_bd_intf_net [get_bd_intf_pins delay_1/M1_AXI] [get_bd_intf_pins zynq_ps_0/S_AXI_HP3_FPD]
+	#connect_bd_intf_net [get_bd_intf_pins delay_1/M0_AXI] [get_bd_intf_pins zynq_ps_0/S_AXI_HPC0_FPD]
+	#connect_bd_intf_net [get_bd_intf_pins delay_1/M1_AXI] [get_bd_intf_pins zynq_ps_0/S_AXI_HPC1_FPD]
 	apply_bd_automation \
 		-rule xilinx.com:bd_rule:axi4 \
 		-config {Master "/zynq_ps_0/M_AXI_HPM1_FPD" Clk "Auto"} \
@@ -396,7 +415,7 @@ proc cr_bd_main {parentCell} {
 	# BOARD: sysclk
 	set_property -dict [list \
 		CONFIG.C0_CLOCK_BOARD_INTERFACE {user_si570_sysclk} \
-		CONFIG.C0_DDR4_BOARD_INTERFACE {ddr4_sdram} \
+		CONFIG.C0_DDR4_BOARD_INTERFACE {ddr4_sdram_062} \
 		CONFIG.RESET_BOARD_INTERFACE {reset} \
 	] [get_bd_cells trace_0/ddr_0]
 
