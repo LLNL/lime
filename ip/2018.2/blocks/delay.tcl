@@ -82,13 +82,9 @@ proc create_hier_cell_delay {parentCell nameHier \
 	if {$id_width > 6} {
 		set axi_interconnect_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 axi_interconnect_0]
 	} else {
-		# set axi_interconnect_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 axi_interconnect_0]
-		# startgroup
-		# set_property -dict [list CONFIG.ADVANCED_PROPERTIES {    __view__ { functional { S00_Buffer { AR_SIZE 0 AW_SIZE 0 B_SIZE 0 R_SIZE 0 W_SIZE 0 } M01_Buffer { AR_SIZE 0 AW_SIZE 0 B_SIZE 0 R_SIZE 0 W_SIZE 0 } M00_Buffer { AR_SIZE 0 AW_SIZE 0 B_SIZE 0 R_SIZE 0 W_SIZE 0 } S00_Entry { LIM_R_LEN 4 } } }   }] $axi_interconnect_0
-		# endgroup
 		set axi_interconnect_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_0]
 		startgroup
-		set_property -dict [list CONFIG.S00_HAS_DATA_FIFO {1}] $axi_interconnect_0
+		set_property -dict [list CONFIG.S00_HAS_DATA_FIFO {1} ] $axi_interconnect_0
 		endgroup
 	}
 

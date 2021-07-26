@@ -57,6 +57,7 @@ proc create_hier_cell_engine {parentCell nameHier addr_width data_width} {
 		CONFIG.NUM_SI {4} \
 		CONFIG.SYNCHRONIZATION_STAGES {2} \
 		CONFIG.XBAR_DATA_WIDTH $data_width \
+		CONFIG.S00_HAS_DATA_FIFO {1} CONFIG.S01_HAS_DATA_FIFO {1} CONFIG.S02_HAS_DATA_FIFO {1} CONFIG.S03_HAS_DATA_FIFO {1} \
 	] $axi_data_0
 
 	# Create instance: axi_lsu_0, and set properties

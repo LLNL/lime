@@ -179,25 +179,25 @@ signal pq_dout_ready      : std_logic;
 signal pq_data_sr         : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
 
 --------------------------------------------------------------------------------
-attribute mark_debug : string;
+-- attribute mark_debug : string;
 
-attribute mark_debug of pb_wr         : signal is "true";
-attribute mark_debug of pb_cntr_ptr   : signal is "true";
-attribute mark_debug of pktbuf_enb    : signal is "true";
-attribute mark_debug of pktbuf_addrb  : signal is "true";
+-- attribute mark_debug of pb_wr         : signal is "true";
+-- attribute mark_debug of pb_cntr_ptr   : signal is "true";
+-- attribute mark_debug of pktbuf_enb    : signal is "true";
+-- attribute mark_debug of pktbuf_addrb  : signal is "true";
 
-attribute mark_debug of s_axi_id        : signal is "true";
-attribute mark_debug of s_axi_valid     : signal is "true";
-attribute mark_debug of s_axi_ready     : signal is "true";
-attribute mark_debug of s_axi_last      : signal is "true";
-attribute mark_debug of s_axi_resp      : signal is "true";
-attribute mark_debug of s_axi_region    : signal is "true";
-attribute mark_debug of m_axi_id        : signal is "true";
-attribute mark_debug of m_axi_valid     : signal is "true";
-attribute mark_debug of m_axi_ready     : signal is "true";
-attribute mark_debug of m_axi_last      : signal is "true";
-attribute mark_debug of m_axi_resp      : signal is "true";
-attribute mark_debug of m_axi_region    : signal is "true";
+-- attribute mark_debug of s_axi_id        : signal is "true";
+-- attribute mark_debug of s_axi_valid     : signal is "true";
+-- attribute mark_debug of s_axi_ready     : signal is "true";
+-- attribute mark_debug of s_axi_last      : signal is "true";
+-- attribute mark_debug of s_axi_resp      : signal is "true";
+-- attribute mark_debug of s_axi_region    : signal is "true";
+-- attribute mark_debug of m_axi_id        : signal is "true";
+-- attribute mark_debug of m_axi_valid     : signal is "true";
+-- attribute mark_debug of m_axi_ready     : signal is "true";
+-- attribute mark_debug of m_axi_last      : signal is "true";
+-- attribute mark_debug of m_axi_resp      : signal is "true";
+-- attribute mark_debug of m_axi_region    : signal is "true";
 
 --******************************************************************************
 --Component Definitions

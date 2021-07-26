@@ -88,46 +88,46 @@ signal dout_ready      : std_logic;
 ----------------------------------------------------------------------------------------------
 -- FOR DEBUG (CHIPSCOPE) ONLY
 ----------------------------------------------------------------------------------------------
-signal CS_id_reg        : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0) := (others => '0');  
-signal CS_valid_reg     : std_logic_vector(PRIORITY_QUEUE_WIDTH-1 downto 0);
-signal CS_delay_srb_low : integer := 0; -- lowest srb for delay insertion
-signal CS_axi_id_max_hi : integer := 0;
-signal CS_srb_insert    : integer := 0;
-signal CS_found_axi_id  : std_logic;
-signal CS_din_ready     : std_logic;
-signal CS_dout          : std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
-signal CS_dout_valid    : std_logic;
-signal CS_dout_ready    : std_logic;
-signal CS_din           : std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
-signal CS_din_en        : std_logic;
+-- signal CS_id_reg        : std_logic_vector(C_AXI_ID_WIDTH-1 downto 0) := (others => '0');  
+-- signal CS_valid_reg     : std_logic_vector(PRIORITY_QUEUE_WIDTH-1 downto 0);
+-- signal CS_delay_srb_low : integer := 0; -- lowest srb for delay insertion
+-- signal CS_axi_id_max_hi : integer := 0;
+-- signal CS_srb_insert    : integer := 0;
+-- signal CS_found_axi_id  : std_logic;
+-- signal CS_din_ready     : std_logic;
+-- signal CS_dout          : std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+-- signal CS_dout_valid    : std_logic;
+-- signal CS_dout_ready    : std_logic;
+-- signal CS_din           : std_logic_vector(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+-- signal CS_din_en        : std_logic;
 
-signal CS_dout_ready_i  : std_logic;
-signal CS_din_en_i      : std_logic;
-signal CS_tdiff         : std_logic_vector(DELAY_WIDTH-1 downto 0); 
-signal CS_ddiff         : delay_array  := (others => (others => '0'));
-signal CS_delay_reg_0   : std_logic_vector(DELAY_WIDTH-1 downto 0);
-signal CS_counter_i     : std_logic_vector(DELAY_WIDTH-1 downto 0);
+-- signal CS_dout_ready_i  : std_logic;
+-- signal CS_din_en_i      : std_logic;
+-- signal CS_tdiff         : std_logic_vector(DELAY_WIDTH-1 downto 0); 
+-- signal CS_ddiff         : delay_array  := (others => (others => '0'));
+-- signal CS_delay_reg_0   : std_logic_vector(DELAY_WIDTH-1 downto 0);
+-- signal CS_counter_i     : std_logic_vector(DELAY_WIDTH-1 downto 0);
 
-attribute mark_debug : string;
-attribute mark_debug of CS_id_reg        : signal is "true"; 
-attribute mark_debug of CS_valid_reg     : signal is "true";
-attribute mark_debug of CS_delay_srb_low : signal is "true"; 
-attribute mark_debug of CS_axi_id_max_hi : signal is "true"; 
-attribute mark_debug of CS_srb_insert    : signal is "true"; 
-attribute mark_debug of CS_found_axi_id  : signal is "true"; 
-attribute mark_debug of CS_din_ready     : signal is "true";
-attribute mark_debug of CS_dout          : signal is "true";
-attribute mark_debug of CS_dout_valid    : signal is "true";
-attribute mark_debug of CS_dout_ready    : signal is "true";
-attribute mark_debug of CS_din           : signal is "true";
-attribute mark_debug of CS_din_en        : signal is "true";
+-- attribute mark_debug : string;
+-- attribute mark_debug of CS_id_reg        : signal is "true"; 
+-- attribute mark_debug of CS_valid_reg     : signal is "true";
+-- attribute mark_debug of CS_delay_srb_low : signal is "true"; 
+-- attribute mark_debug of CS_axi_id_max_hi : signal is "true"; 
+-- attribute mark_debug of CS_srb_insert    : signal is "true"; 
+-- attribute mark_debug of CS_found_axi_id  : signal is "true"; 
+-- attribute mark_debug of CS_din_ready     : signal is "true";
+-- attribute mark_debug of CS_dout          : signal is "true";
+-- attribute mark_debug of CS_dout_valid    : signal is "true";
+-- attribute mark_debug of CS_dout_ready    : signal is "true";
+-- attribute mark_debug of CS_din           : signal is "true";
+-- attribute mark_debug of CS_din_en        : signal is "true";
 
-attribute mark_debug of CS_dout_ready_i  : signal is "true";
-attribute mark_debug of CS_din_en_i      : signal is "true";
-attribute mark_debug of CS_tdiff         : signal is "true";
-attribute mark_debug of CS_ddiff         : signal is "true";
-attribute mark_debug of CS_delay_reg_0   : signal is "true";
-attribute mark_debug of CS_counter_i     : signal is "true";
+-- attribute mark_debug of CS_dout_ready_i  : signal is "true";
+-- attribute mark_debug of CS_din_en_i      : signal is "true";
+-- attribute mark_debug of CS_tdiff         : signal is "true";
+-- attribute mark_debug of CS_ddiff         : signal is "true";
+-- attribute mark_debug of CS_delay_reg_0   : signal is "true";
+-- attribute mark_debug of CS_counter_i     : signal is "true";
 
 
 --******************************************************************************
@@ -307,53 +307,53 @@ end generate gen_SIMout;
 ----------------------------------------------------------------------------------------------
 -- FOR DEBUG (CHIPSCOPE) ONLY
 ----------------------------------------------------------------------------------------------
-CHIPSCOPE_proc : process (clk_i, nreset_i) begin
-    if (nreset_i = '0') then
-      CS_id_reg        <= (others => '0');
-      CS_valid_reg     <= (others => '0');
-      CS_delay_srb_low <= 0;
-      CS_axi_id_max_hi <= 0;
-      CS_srb_insert    <= 0;
-      CS_found_axi_id  <= '0';
-      CS_din_ready     <= '0';
-      CS_dout          <= (others => '0');
-      CS_dout_valid    <= '0';
-      CS_dout_ready    <= '0';  
+-- CHIPSCOPE_proc : process (clk_i, nreset_i) begin
+--     if (nreset_i = '0') then
+--       CS_id_reg        <= (others => '0');
+--       CS_valid_reg     <= (others => '0');
+--       CS_delay_srb_low <= 0;
+--       CS_axi_id_max_hi <= 0;
+--       CS_srb_insert    <= 0;
+--       CS_found_axi_id  <= '0';
+--       CS_din_ready     <= '0';
+--       CS_dout          <= (others => '0');
+--       CS_dout_valid    <= '0';
+--       CS_dout_ready    <= '0';  
       
-      CS_din           <= (others => '0');
-      CS_din_en        <= '0';
+--       CS_din           <= (others => '0');
+--       CS_din_en        <= '0';
       
-      CS_dout_ready_i  <= '0';
-      CS_din_en_i      <= '0';
-      CS_tdiff         <= (others => '0');
-      CS_ddiff         <= (others => (others => '0'));
-      CS_delay_reg_0   <= (others => '0');
-      CS_counter_i     <= (others => '0');
+--       CS_dout_ready_i  <= '0';
+--       CS_din_en_i      <= '0';
+--       CS_tdiff         <= (others => '0');
+--       CS_ddiff         <= (others => (others => '0'));
+--       CS_delay_reg_0   <= (others => '0');
+--       CS_counter_i     <= (others => '0');
 
-    elsif rising_edge(clk_i) then
-      CS_id_reg        <= id_reg(0);
-      CS_valid_reg     <= valid_reg;
-      CS_delay_srb_low <= delay_srb_low;
-      CS_axi_id_max_hi <= axi_id_max_hi;
-      CS_srb_insert    <= srb_insert;
-      CS_found_axi_id  <= found_axi_id;
-      CS_din_ready     <= din_ready;
-      CS_dout          <= m_shift_data(0)(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
-      CS_dout_valid    <= m_shift_valid(0);
-      CS_dout_ready    <= dout_ready;
+--     elsif rising_edge(clk_i) then
+--       CS_id_reg        <= id_reg(0);
+--       CS_valid_reg     <= valid_reg;
+--       CS_delay_srb_low <= delay_srb_low;
+--       CS_axi_id_max_hi <= axi_id_max_hi;
+--       CS_srb_insert    <= srb_insert;
+--       CS_found_axi_id  <= found_axi_id;
+--       CS_din_ready     <= din_ready;
+--       CS_dout          <= m_shift_data(0)(DELAY_WIDTH+INDEX_WIDTH+C_AXI_ID_WIDTH-1 downto 0);
+--       CS_dout_valid    <= m_shift_valid(0);
+--       CS_dout_ready    <= dout_ready;
       
-      CS_din           <= din_i;
-      CS_din_en        <= din_en_i;
+--       CS_din           <= din_i;
+--       CS_din_en        <= din_en_i;
 
-      CS_dout_ready_i  <= dout_ready_i;
-      CS_din_en_i      <= din_en_i;    
-      CS_tdiff         <= tdiff;       
-      CS_ddiff         <= ddiff;
-      CS_delay_reg_0   <= delay_reg(0); 
-      CS_counter_i     <= counter_i;   
+--       CS_dout_ready_i  <= dout_ready_i;
+--       CS_din_en_i      <= din_en_i;    
+--       CS_tdiff         <= tdiff;       
+--       CS_ddiff         <= ddiff;
+--       CS_delay_reg_0   <= delay_reg(0); 
+--       CS_counter_i     <= counter_i;   
 
-    end if;
-end process;
+--     end if;
+-- end process;
 
 ----------------------------------------------------------------------------------------------
 end behavioral;

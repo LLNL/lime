@@ -25,6 +25,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import sys
 
 #------------------------------------------------------------------
 # initialization variables
@@ -32,7 +33,6 @@ import os
 
 ## output filename
 outputfilename = "bram_del_table.csv"  ## check file
-txt_filename   = "gdt_data_g636_mu_div128.txt"   ## text file
 mif_filename   = "bram_del_table.mif"  ## mif file format, not used
 bin_filename   = "bram_del_table.init" ## see UG901, p143 - this is the Vivado mem format, not the updatemem format
 coe_filename   = "bram_del_table.coe"  ## coe file format
@@ -49,7 +49,9 @@ awidth = 10
 dwidth = 24
 
 ## Maximum time delay, in clock cycles
-delay_clocks = 636*2 ## max =(2**dwidth)-1
+delay_clocks = int(sys.argv[1])*2 #2400*2 ## max =(2**dwidth)-1
+
+div = int(sys.argv[2]) # 4 
 
 ## address offset for "B" channel GDT
 bchan_offset = 0x00010000
@@ -58,11 +60,26 @@ bchan_offset = 0x00010000
 rchan_offset = 0x00020000
 
 ## Create check plot (use 1 or 0)
-CHECK_PLOT = 1
+CHECK_PLOT = 0
 
 ## Fill GDT with constant
 FILL_WITH_CONSTANT = 0 ## When 1, the entire GDT is filed with GDT_CONSTANT
 GDT_CONSTANT       = 0
+
+#------------------------------------------------------------------
+# calculate gaussian based on number of entries in Gaussian Delay Table (GDT)
+# Note: This number if fixed by the BRAM size.
+#------------------------------------------------------------------
+# Number of entries in GDT
+n = 2**awidth
+
+## mean
+mu = delay_clocks/2    ##2**(awidth-1)
+
+## standard deviation
+sig = mu/div ###mu/3  ### mu/3 = normal
+
+txt_filename   = "gdt_data_g" + str(int(mu)) + "_mu_div" + str(int(div)) + ".txt"   ## text file
 
 #------------------------------------------------------------------
 # open files for writing
@@ -76,19 +93,6 @@ file_mif = open(mif_filename, "w")
 file_bin = open(bin_filename, "w")
 file_coe = open(coe_filename, "w")
 file_mem = open(mem_filename, "w")
-
-#------------------------------------------------------------------
-# calculate gaussian based on number of entries in Gaussian Delay Table (GDT)
-# Note: This number if fixed by the BRAM size.
-#------------------------------------------------------------------
-# Number of entries in GDT
-n = 2**awidth
-
-## mean
-mu = delay_clocks/2    ##2**(awidth-1)
-
-## standard deviation
-sig = mu/128 ###mu/3  ### mu/3 = normal
 
 ## define gaussian function based on GDT
 def gaussian(x, mu, sig):
@@ -237,4 +241,4 @@ print("The .mem file, which will be used as the default GDT contents when the FP
 print("   is stored here: " + mem_filename)
 print("")
 print("The .txt file, which will be loaded into the GDT at runtime for mem, strm, and randa, ")
-print("   is stored here: " + txt_file_path_name + txt_filename)
+print("   is stored here: " + txt_file_path_name)
