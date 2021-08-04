@@ -88,6 +88,71 @@ void clocks_emulate(void)
 //	delay0[2] = 4*(T_SRAM_W+T_TRANS)           - 44; delay0[4] = 4*(T_SRAM_R+T_TRANS)           - 39; /* .25 ns per count */
 //	delay1[2] = 4*(T_DRAM_W+T_QUEUE_W+T_TRANS) - 45; delay1[4] = 4*(T_DRAM_R+T_QUEUE_R+T_TRANS) - 44;
 //	printf("Slot 0 - CPU_SRAM_B:%u CPU_SRAM_R:%u CPU_DRAM_B:%u CPU_DRAM_R:%u\n", delay0[2], delay0[4], delay1[2], delay1[4]);
+#elif defined VAR_DELAY && (VAR_DELAY==_PWCLT106W85R_ || VAR_DELAY==_PWCLT400W200R_) && defined STD
+
+	int *pwclt_0_0_b = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_0_0_r = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_0_1_b = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_0_1_r = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_1_0_b = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_1_0_r = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_1_1_b = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_1_1_r = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_cal_0_0_b = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + 2*sizeof(int));
+    int *pwclt_cal_0_0_r = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + 3*sizeof(int));
+    int *pwclt_cal_0_1_b = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + 2*sizeof(int));
+    int *pwclt_cal_0_1_r = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + 3*sizeof(int));
+    int *pwclt_cal_1_0_b = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + 2*sizeof(int));
+    int *pwclt_cal_1_0_r = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + 3*sizeof(int));
+    int *pwclt_cal_1_1_b = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + 2*sizeof(int));
+    int *pwclt_cal_1_1_r = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + 3*sizeof(int));
+	int pwclt_std;
+
+	#if STD == _MUDIVBY4_
+		pwclt_std = PWCLT_STD_MUDIVBY4;
+	#elif STD == _MUDIVBY8_
+		pwclt_std = PWCLT_STD_MUDIVBY8;
+	#elif STD == _MUDIVBY16_
+		pwclt_std = PWCLT_STD_MUDIVBY16;
+	#elif STD == _MUDIVBY32_
+		pwclt_std = PWCLT_STD_MUDIVBY32;
+	#else
+		pwclt_std = PWCLT_STD_MUDIVBY4;
+	#endif
+
+	#if VAR_DELAY == _MU106W85R_
+		*pwclt_0_0_b = PWCLT_MU216 | pwclt_std;
+		*pwclt_0_0_r = PWCLT_MU216 | pwclt_std;
+		*pwclt_0_1_b = PWCLT_MU636 | pwclt_std;
+		*pwclt_0_1_r = PWCLT_MU510 | pwclt_std;
+		*pwclt_1_0_b = PWCLT_MU72 | pwclt_std;
+		*pwclt_1_0_r = PWCLT_MU72 | pwclt_std;
+		*pwclt_1_1_b = PWCLT_MU492 | pwclt_std;
+		*pwclt_1_1_r = PWCLT_MU366 | pwclt_std;
+		printf("PWCLT configured with t_W=106ns and t_R=85ns mean gaussians.\n");
+	#elif VAR_DELAY == _MU400W200R_
+		*pwclt_0_0_b = PWCLT_MU216 | pwclt_std;
+		*pwclt_0_0_r = PWCLT_MU216 | pwclt_std;
+		*pwclt_0_1_b = PWCLT_MU2400 | pwclt_std;
+		*pwclt_0_1_r = PWCLT_MU1200 | pwclt_std;
+		*pwclt_1_0_b = PWCLT_MU72 | pwclt_std;
+		*pwclt_1_0_r = PWCLT_MU72 | pwclt_std;
+		*pwclt_1_1_b = PWCLT_MU2256 | pwclt_std;
+		*pwclt_1_1_r = PWCLT_MU1056 | pwclt_std;
+		printf("PWCLT configured with t_W=400ns and t_R=200ns mean gaussians.\n");
+	#else
+		/* --- Configure the Gaussian Delay Tables (GTD) --- */
+		config_gdt();
+		*pwclt_0_0_b = DISABLE_PWCLT; // CPU SRAM write response
+		*pwclt_0_0_r = DISABLE_PWCLT; // CPU SRAM read response
+		*pwclt_0_1_b = DISABLE_PWCLT; // CPU DRAM write response
+		*pwclt_0_1_r = DISABLE_PWCLT; // CPU DRAM read response
+		*pwclt_1_0_b = DISABLE_PWCLT; // Accererator SRAM write response
+		*pwclt_1_0_r = DISABLE_PWCLT; // Accererator SRAM read response
+		*pwclt_1_1_b = DISABLE_PWCLT; // Accererator DRAM write response
+		*pwclt_1_1_r = DISABLE_PWCLT; // Accererator DRAM read response
+	#endif
+
 #endif
 
 //#if defined(XPAR_DELAY_1_AXI_DELAY_0_BASEADDR)
@@ -127,6 +192,24 @@ void clocks_normal(void)
 //	volatile unsigned int *delay0 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_0_BASEADDR; /* slot 0, CPU SRAM W, R */
 //	volatile unsigned int *delay1 = (unsigned int *)XPAR_DELAY_0_AXI_DELAY_1_BASEADDR; /* slot 0, CPU DRAM W, R */
 //	delay0[2] = 0; delay0[4] = 0; delay1[2] = 0; delay1[4] = 0;
+#elif defined VAR_DELAY && (VAR_DELAY==_PWCLT106W85R_ || VAR_DELAY==_PWCLT400W200R_) && defined STD
+	int *pwclt_0_0_b = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_0_0_r = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_0_1_b = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_0_1_r = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_1_0_b = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_1_0_r = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_1_1_b = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_1_1_r = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + sizeof(int));
+	*pwclt_0_0_b = DISABLE_PWCLT; // CPU SRAM write response
+	*pwclt_0_0_r = DISABLE_PWCLT; // CPU SRAM read response
+	*pwclt_0_1_b = DISABLE_PWCLT; // CPU DRAM write response
+	*pwclt_0_1_r = DISABLE_PWCLT; // CPU DRAM read response
+	*pwclt_1_0_b = DISABLE_PWCLT; // Accererator SRAM write response
+	*pwclt_1_0_r = DISABLE_PWCLT; // Accererator SRAM read response
+	*pwclt_1_1_b = DISABLE_PWCLT; // Accererator DRAM write response
+	*pwclt_1_1_r = DISABLE_PWCLT; // Accererator DRAM read response
+	printf("PWCLT configuration cleared.\n");
 #endif
 
 //#if defined(XPAR_DELAY_1_AXI_DELAY_0_BASEADDR)
@@ -252,6 +335,8 @@ void clocks_emulate(void)
 	/* one for the zcu102 and the other for the sidewinder */
 	/* The values here likely apply to only one of the boards, */
 	/* since the DDR memories run at different frequencies. */
+
+
 #if defined VAR_DELAY && VAR_DELAY==_GDT_
 	/* --- Configure the Gaussian Delay Tables (GTD) --- */
 	sleep(1);
@@ -280,7 +365,99 @@ void clocks_emulate(void)
 //	delay0[2] = 6*(T_SRAM_W+T_TRANS)           - 52; delay0[4] = 6*(T_SRAM_R+T_TRANS)           - 69; /* .16 ns per count */
 //	delay1[2] = 6*(T_DRAM_W+T_QUEUE_W+T_TRANS) - 52; delay1[4] = 6*(T_DRAM_R+T_QUEUE_R+T_TRANS) - 69;
 //	printf("Slot 0 - CPU_SRAM_B:%u CPU_SRAM_R:%u CPU_DRAM_B:%u CPU_DRAM_R:%u\n", delay0[2], delay0[4], delay1[2], delay1[4]);
-#endif
+#elif defined VAR_DELAY && ((VAR_DELAY==_PWCLT106W85R_) || (VAR_DELAY==_PWCLT400W200R_)) && defined STD
+	int *pwclt_0_0_b = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_0_0_r = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_0_1_b = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_0_1_r = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_1_0_b = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_1_0_r = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_1_1_b = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_1_1_r = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + sizeof(int));
+	int *pwclt_cal_0_0_b = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + 2*sizeof(int));
+    int *pwclt_cal_0_0_r = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + 3*sizeof(int));
+    int *pwclt_cal_0_1_b = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + 2*sizeof(int));
+    int *pwclt_cal_0_1_r = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + 3*sizeof(int));
+    int *pwclt_cal_1_0_b = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + 2*sizeof(int));
+    int *pwclt_cal_1_0_r = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + 3*sizeof(int));
+    int *pwclt_cal_1_1_b = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + 2*sizeof(int));
+    int *pwclt_cal_1_1_r = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + 3*sizeof(int));
+	int pwclt_std;
+
+	#if STD == _MUDIVBY4_
+		pwclt_std = PWCLT_STD_MUDIVBY4;
+	#elif STD == _MUDIVBY8_
+		pwclt_std = PWCLT_STD_MUDIVBY8;
+	#elif STD == _MUDIVBY16_
+		pwclt_std = PWCLT_STD_MUDIVBY16;
+	#elif STD == _MUDIVBY32_
+		pwclt_std = PWCLT_STD_MUDIVBY32;
+	#else
+		pwclt_std = PWCLT_STD_MUDIVBY4;
+	#endif
+
+	#if VAR_DELAY == _PWCLT106W85R_
+		*pwclt_0_0_b = (PWCLT_MU216 | pwclt_std);
+		*pwclt_0_0_r = (PWCLT_MU216 | pwclt_std);
+		*pwclt_0_1_b = (PWCLT_MU636 | pwclt_std);
+		*pwclt_0_1_r = (PWCLT_MU510 | pwclt_std);
+		*pwclt_1_0_b = (PWCLT_MU72  | pwclt_std);
+		*pwclt_1_0_r = (PWCLT_MU72  | pwclt_std);
+		*pwclt_1_1_b = (PWCLT_MU492 | pwclt_std);
+		*pwclt_1_1_r = (PWCLT_MU366 | pwclt_std);
+		*pwclt_cal_0_0_b = (1875*cpu_sram_wr_lat)/3000; // CPU SRAM write calibration offset
+		*pwclt_cal_0_0_r = (1875*cpu_sram_rd_lat)/3000; // CPU SRAM read calibration offset
+		*pwclt_cal_0_1_b = (1875*cpu_dram_wr_lat)/3000; // CPU DRAM write calibration offset
+		*pwclt_cal_0_1_r = (1875*cpu_dram_rd_lat)/3000; // CPU DRAM read calibration offset
+		*pwclt_cal_1_0_b = (1875*acc_sram_wr_lat)/3000; // Accererator SRAM write calibration offset
+		*pwclt_cal_1_0_r = (1875*acc_sram_rd_lat)/3000; // Accererator SRAM read calibration offset
+		*pwclt_cal_1_1_b = (1875*acc_dram_wr_lat)/3000; // Accererator DRAM write calibration offset
+		*pwclt_cal_1_1_r = (1875*acc_dram_rd_lat)/3000; // Accererator DRAM read calibration offset	
+		sleep(1);
+		printf("PWCLT configured with t_W=106ns and t_R=85ns mean gaussians (REGVAL=0x%08x).\n",*pwclt_0_1_r);
+	#elif VAR_DELAY == _PWCLT400W200R_
+		*pwclt_0_0_b = PWCLT_MU216 | pwclt_std;
+		*pwclt_0_0_r = PWCLT_MU216 | pwclt_std;
+		*pwclt_0_1_b = PWCLT_MU2400 | pwclt_std;
+		*pwclt_0_1_r = PWCLT_MU1200 | pwclt_std;
+		*pwclt_1_0_b = PWCLT_MU72 | pwclt_std;
+		*pwclt_1_0_r = PWCLT_MU72 | pwclt_std;
+		*pwclt_1_1_b = PWCLT_MU2256 | pwclt_std;
+		*pwclt_1_1_r = PWCLT_MU1056 | pwclt_std;
+		*pwclt_cal_0_0_b = (1875*cpu_sram_wr_lat)/3000; // CPU SRAM write calibration offset
+		*pwclt_cal_0_0_r = (1875*cpu_sram_rd_lat)/3000; // CPU SRAM read calibration offset
+		*pwclt_cal_0_1_b = (1875*cpu_dram_wr_lat)/3000; // CPU DRAM write calibration offset
+		*pwclt_cal_0_1_r = (1875*cpu_dram_rd_lat)/3000; // CPU DRAM read calibration offset
+		*pwclt_cal_1_0_b = (1875*acc_sram_wr_lat)/3000; // Accererator SRAM write calibration offset
+		*pwclt_cal_1_0_r = (1875*acc_sram_rd_lat)/3000; // Accererator SRAM read calibration offset
+		*pwclt_cal_1_1_b = (1875*acc_dram_wr_lat)/3000; // Accererator DRAM write calibration offset
+		*pwclt_cal_1_1_r = (1875*acc_dram_rd_lat)/3000; // Accererator DRAM read calibration offset	
+		sleep(1);
+		printf("PWCLT configured with t_W=400ns and t_R=200ns mean gaussians (REGVAL=0x%08x).\n",*pwclt_0_1_r);
+	#else
+		/* --- Configure the Gaussian Delay Tables (GTD) --- */
+		config_gdt();
+		sleep(1);
+		*pwclt_0_0_b = DISABLE_PWCLT; // CPU SRAM write response
+		*pwclt_0_0_r = DISABLE_PWCLT; // CPU SRAM read response
+		*pwclt_0_1_b = DISABLE_PWCLT; // CPU DRAM write response
+		*pwclt_0_1_r = DISABLE_PWCLT; // CPU DRAM read response
+		*pwclt_1_0_b = DISABLE_PWCLT; // Accererator SRAM write response
+		*pwclt_1_0_r = DISABLE_PWCLT; // Accererator SRAM read response
+		*pwclt_1_1_b = DISABLE_PWCLT; // Accererator DRAM write response
+		*pwclt_1_1_r = DISABLE_PWCLT; // Accererator DRAM read response
+		*pwclt_cal_0_0_b = 0; // CPU SRAM write calibration offset
+		*pwclt_cal_0_0_r = 0; // CPU SRAM read calibration offset
+		*pwclt_cal_0_1_b = 0; // CPU DRAM write calibration offset
+		*pwclt_cal_0_1_r = 0; // CPU DRAM read calibration offset
+		*pwclt_cal_1_0_b = 0; // Accererator SRAM write calibration offset
+		*pwclt_cal_1_0_r = 0; // Accererator SRAM read calibration offset
+		*pwclt_cal_1_1_b = 0; // Accererator DRAM write calibration offset
+		*pwclt_cal_1_1_r = 0; // Accererator DRAM read calibration offset	
+	#endif
+	sleep(1);
+
+
 
 //#if defined(XPAR_DELAY_1_AXI_DELAY_0_BASEADDR)
 //	volatile unsigned int *delay2 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR; /* slot 1, ACC SRAM W, R */
@@ -288,7 +465,7 @@ void clocks_emulate(void)
 //	delay2[2] = 6*(T_SRAM_W)                   - 48; delay2[4] = 6*(T_SRAM_R)                   - 66;
 //	delay3[2] = 6*(T_DRAM_W+T_QUEUE_W)         - 48; delay3[4] = 6*(T_DRAM_R+T_QUEUE_R)         - 66;
 //	printf("Slot 1 - ACC_SRAM_B:%u ACC_SRAM_R:%u ACC_DRAM_B:%u ACC_DRAM_R:%u\n", delay2[2], delay2[4], delay3[2], delay3[4]);
-//#endif
+#endif
 }
 
 void clocks_normal(void)
@@ -327,6 +504,40 @@ void clocks_normal(void)
 //	volatile unsigned int *delay2 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_0_BASEADDR; /* slot 1, ACC SRAM W, R */
 //	volatile unsigned int *delay3 = (unsigned int *)XPAR_DELAY_1_AXI_DELAY_1_BASEADDR; /* slot 1, ACC DRAM W, R */
 //	delay2[2] = 0; delay2[4] = 0; delay3[2] = 0; delay3[4] = 0;
+#elif defined VAR_DELAY && (VAR_DELAY==_PWCLT106W85R_ || VAR_DELAY==_PWCLT400W200R_) && defined STD
+	int *pwclt_0_0_b = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_0_0_r = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_0_1_b = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_0_1_r = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_1_0_b = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_1_0_r = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + sizeof(int));
+    int *pwclt_1_1_b = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET);
+    int *pwclt_1_1_r = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + sizeof(int));
+	int *pwclt_cal_0_0_b = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + 2*sizeof(int));
+    int *pwclt_cal_0_0_r = (int *) (XPAR_DELAY_0_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + 3*sizeof(int));
+    int *pwclt_cal_0_1_b = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + 2*sizeof(int));
+    int *pwclt_cal_0_1_r = (int *) (XPAR_DELAY_0_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + 3*sizeof(int));
+    int *pwclt_cal_1_0_b = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + 2*sizeof(int));
+    int *pwclt_cal_1_0_r = (int *) (XPAR_DELAY_1_AXI_DELAY_0_BASEADDR + PWCLT_OFFSET + 3*sizeof(int));
+    int *pwclt_cal_1_1_b = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + 2*sizeof(int));
+    int *pwclt_cal_1_1_r = (int *) (XPAR_DELAY_1_AXI_DELAY_1_BASEADDR + PWCLT_OFFSET + 3*sizeof(int));
+	*pwclt_0_0_b = DISABLE_PWCLT; // CPU SRAM write response
+	*pwclt_0_0_r = DISABLE_PWCLT; // CPU SRAM read response
+	*pwclt_0_1_b = DISABLE_PWCLT; // CPU DRAM write response
+	*pwclt_0_1_r = DISABLE_PWCLT; // CPU DRAM read response
+	*pwclt_1_0_b = DISABLE_PWCLT; // Accererator SRAM write response
+	*pwclt_1_0_r = DISABLE_PWCLT; // Accererator SRAM read response
+	*pwclt_1_1_b = DISABLE_PWCLT; // Accererator DRAM write response
+	*pwclt_1_1_r = DISABLE_PWCLT; // Accererator DRAM read response
+	*pwclt_cal_0_0_b = 0; // CPU SRAM write calibration offset
+	*pwclt_cal_0_0_r = 0; // CPU SRAM read calibration offset
+	*pwclt_cal_0_1_b = 0; // CPU DRAM write calibration offset
+	*pwclt_cal_0_1_r = 0; // CPU DRAM read calibration offset
+	*pwclt_cal_1_0_b = 0; // Accererator SRAM write calibration offset
+	*pwclt_cal_1_0_r = 0; // Accererator SRAM read calibration offset
+	*pwclt_cal_1_1_b = 0; // Accererator DRAM write calibration offset
+	*pwclt_cal_1_1_r = 0; // Accererator DRAM read calibration offset	
+	printf("PWCLT configuration cleared.\n");
 #endif
 }
 

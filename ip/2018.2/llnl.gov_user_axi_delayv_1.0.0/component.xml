@@ -3362,6 +3362,21 @@
         <spirit:userFileType>CHECKSUM_6df20a58</spirit:userFileType>
         <spirit:logicalName>axi_delay_lib</spirit:logicalName>
       </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/grng_pwclt8.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>axi_delay_lib</spirit:logicalName>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/urng_w119.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>axi_delay_lib</spirit:logicalName>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/rng_n119_r119_t5_k0_s16a6.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>axi_delay_lib</spirit:logicalName>
+      </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:name>

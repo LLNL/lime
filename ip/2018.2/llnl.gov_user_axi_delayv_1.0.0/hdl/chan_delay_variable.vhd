@@ -102,7 +102,10 @@ port (
     gdt_wren_i    : in  std_logic_vector(0 downto 0);
     gdt_addr_i    : in  std_logic_vector(15 downto 0); 
     gdt_wdata_i   : in  std_logic_vector(23 downto 0);
-    gdt_rdata_o   : out std_logic_vector(23 downto 0)
+    gdt_rdata_o   : out std_logic_vector(23 downto 0);
+    pwclt_reg     : in std_logic_vector(23 downto 0);
+    pwclt_calib_reg     : in std_logic_vector(23 downto 0);
+    grng_output   : in std_logic_vector(17-1 downto 0)
 );
 
 end chan_delay_variable;
@@ -122,6 +125,31 @@ constant CTR_PTR_WIDTH     : integer := MINIBUF_IDX_WIDTH + log2rp(NUM_EVENTS_PE
 
 constant C_ZERO    : std_logic_vector(1023 downto 0) := (others => '0');
 constant C_ZERO_16 : std_logic_vector(15 downto 0) := (others => '0');
+
+constant C_SIGN_FACTOR                      : std_logic_vector(17 downto 0) := "001000000000000000";
+constant C_ONE_BOOL                         : std_logic := '1';
+constant C_ZERO_BOOL                        : std_logic := '0';
+-- After 187.5/300 clock scaling
+constant C_TRUNCATION_FACTOR_DIV4_MU_72     : std_logic_vector(19 downto 0) := x"002D0";
+constant C_TRUNCATION_FACTOR_DIV4_MU_216    : std_logic_vector(19 downto 0) := x"00870";
+constant C_TRUNCATION_FACTOR_DIV4_MU_366    : std_logic_vector(19 downto 0) := x"00E50";
+constant C_TRUNCATION_FACTOR_DIV4_MU_492    : std_logic_vector(19 downto 0) := x"01340";
+constant C_TRUNCATION_FACTOR_DIV4_MU_510    : std_logic_vector(19 downto 0) := x"013F0";
+constant C_TRUNCATION_FACTOR_DIV4_MU_636    : std_logic_vector(19 downto 0) := x"018E0";
+constant C_TRUNCATION_FACTOR_DIV4_MU_1056   : std_logic_vector(19 downto 0) := x"02940";
+constant C_TRUNCATION_FACTOR_DIV4_MU_1200   : std_logic_vector(19 downto 0) := x"02EE0";
+constant C_TRUNCATION_FACTOR_DIV4_MU_2256   : std_logic_vector(19 downto 0) := x"05050";
+constant C_TRUNCATION_FACTOR_DIV4_MU_2400   : std_logic_vector(19 downto 0) := x"05DC0";
+constant C_MU_72                            : std_logic_vector(31 downto 0) := x"005B0000";
+constant C_MU_216                           : std_logic_vector(31 downto 0) := x"010F0000";
+constant C_MU_366                           : std_logic_vector(31 downto 0) := x"01CB0000";
+constant C_MU_492                           : std_logic_vector(31 downto 0) := x"02690000";
+constant C_MU_510                           : std_logic_vector(31 downto 0) := x"027F0000";
+constant C_MU_636                           : std_logic_vector(31 downto 0) := x"031D0000";
+constant C_MU_1056                          : std_logic_vector(31 downto 0) := x"05290000";
+constant C_MU_1200                          : std_logic_vector(31 downto 0) := x"05DD0000";
+constant C_MU_2256                          : std_logic_vector(31 downto 0) := x"0A0B0000";
+constant C_MU_2400                          : std_logic_vector(31 downto 0) := x"0BB90000";
 
 --******************************************************************************
 --Signal Definitions
@@ -177,6 +205,17 @@ signal pq_dout            : std_logic_vector(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_
 signal pq_dout_valid      : std_logic;
 signal pq_dout_ready      : std_logic;
 signal pq_data_sr         : std_logic_vector(PRIORITY_QUEUE_WIDTH*(DELAY_WIDTH+C_AXI_ID_WIDTH+MINIBUF_IDX_WIDTH)-1 downto 0);
+
+signal grng_output_m      : std_logic_vector(37-1 downto 0);
+signal grng_output_a      : std_logic_vector(37-1 downto 0);
+
+signal random_dly_gdt     : std_logic_vector(DELAY_WIDTH-1 downto 0);
+signal random_dly_pwclt_0 : std_logic_vector(DELAY_WIDTH-1 downto 0);
+signal random_dly_pwclt_1 : std_logic_vector(DELAY_WIDTH-1 downto 0);
+signal random_dly_pwclt_2 : std_logic_vector(DELAY_WIDTH-1 downto 0);
+signal addition_factor    : std_logic_vector(32-1 downto 0);
+signal truncation_factor  : std_logic_vector(20-1 downto 0);
+signal random_dly_clip    : std_logic_vector(DELAY_WIDTH-1 downto 0);
 
 --------------------------------------------------------------------------------
 -- attribute mark_debug : string;
@@ -428,8 +467,65 @@ port map (
     gdt_rdata_o      => gdt_rdata_o,
     
     random_dly_req_i => mc_valid, --pq_en,
-    random_dly_o     => random_dly
+    random_dly_o     => random_dly_gdt
 );
+
+process(m_axi_aclk)
+begin
+    if rising_edge(m_axi_aclk) then
+        case (pwclt_reg(3 downto 0)) is
+            when x"1"    => 
+                truncation_factor <= std_logic_vector(shift_right(signed(C_TRUNCATION_FACTOR_DIV4_MU_72),  to_integer(unsigned(pwclt_reg(7 downto 4)))));
+                addition_factor <= C_MU_72;
+            when x"2"    => 
+                truncation_factor <= std_logic_vector(shift_right(signed(C_TRUNCATION_FACTOR_DIV4_MU_216), to_integer(unsigned(pwclt_reg(7 downto 4)))));
+                addition_factor <= C_MU_216;
+            when x"3"    => 
+                truncation_factor <= std_logic_vector(shift_right(signed(C_TRUNCATION_FACTOR_DIV4_MU_366), to_integer(unsigned(pwclt_reg(7 downto 4)))));
+                addition_factor <= C_MU_366;
+            when x"4"    => 
+                truncation_factor <= std_logic_vector(shift_right(signed(C_TRUNCATION_FACTOR_DIV4_MU_492), to_integer(unsigned(pwclt_reg(7 downto 4)))));
+                addition_factor <= C_MU_492;
+            when x"5"    => 
+                truncation_factor <= std_logic_vector(shift_right(signed(C_TRUNCATION_FACTOR_DIV4_MU_510), to_integer(unsigned(pwclt_reg(7 downto 4)))));
+                addition_factor <= C_MU_510;
+            when x"6"    => 
+                truncation_factor <= std_logic_vector(shift_right(signed(C_TRUNCATION_FACTOR_DIV4_MU_636), to_integer(unsigned(pwclt_reg(7 downto 4)))));
+                addition_factor <= C_MU_636;
+            when x"7"    => 
+                truncation_factor <= std_logic_vector(shift_right(signed(C_TRUNCATION_FACTOR_DIV4_MU_1056),to_integer(unsigned(pwclt_reg(7 downto 4)))));
+                addition_factor <= C_MU_1056;
+            when x"8"    => 
+                truncation_factor <= std_logic_vector(shift_right(signed(C_TRUNCATION_FACTOR_DIV4_MU_1200),to_integer(unsigned(pwclt_reg(7 downto 4)))));
+                addition_factor <= C_MU_1200;
+            when x"9"    => 
+                truncation_factor <= std_logic_vector(shift_right(signed(C_TRUNCATION_FACTOR_DIV4_MU_2256),to_integer(unsigned(pwclt_reg(7 downto 4)))));
+                addition_factor <= C_MU_2256;
+            when x"A"    => 
+                truncation_factor <= std_logic_vector(shift_right(signed(C_TRUNCATION_FACTOR_DIV4_MU_2400),to_integer(unsigned(pwclt_reg(7 downto 4)))));
+                addition_factor <= C_MU_2400;
+            when others 	=> 
+                truncation_factor <= (others => '0');
+                addition_factor <= (others => '0');
+        end case;
+
+        grng_output_m <= std_logic_vector(signed(grng_output)*signed(truncation_factor));
+        grng_output_a <= std_logic_vector(signed(grng_output_m)+resize(signed(addition_factor),37)) ;
+        
+        if pwclt_reg = x"000000" then
+            random_dly_clip <= random_dly_gdt;
+            random_dly <= random_dly_clip;
+        else
+            random_dly_clip <= (grng_output_a(36) & grng_output_a(36) & grng_output_a(36) & grng_output_a(36) & grng_output_a(36 downto 17));
+            if signed(random_dly_clip) >= signed(pwclt_calib_reg) then
+                random_dly <= std_logic_vector(signed(random_dly_clip) - signed(pwclt_calib_reg));
+            else
+                random_dly <= (others => '0');
+            end if;
+        end if;
+
+    end if ;
+end process;
 
 ---------------------------------------
 -- Priority Queue

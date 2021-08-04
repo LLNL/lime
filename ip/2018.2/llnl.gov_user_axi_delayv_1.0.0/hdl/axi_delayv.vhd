@@ -213,6 +213,8 @@ constant NREG           : integer := 5;
 constant REG_ADDR_WIDTH : integer := log2rp(NREG);
 constant WORD_LSB       : integer := log2rp(C_AXI_LITE_DATA_WIDTH/8);
 constant CAM_WIDTH      : integer := C_AXI_ID_WIDTH; -- maximum width of axi_id input.
+constant C_ONE_BOOL     : std_logic := '1';
+constant C_ZERO_BOOL    : std_logic := '0';
 
 -- Note: assuming maximum width defined by C_AXI_ID_WIDTH = 16 and C_AXI_DATA_WIDTH = 128 (C_AXI_DATA_WIDTH/8 = 16) and misc (32) = 192
 constant AXI_INFO_WIDTH    : integer := C_AXI_ID_WIDTH + C_AXI_DATA_WIDTH + C_AXI_ADDR_WIDTH + C_AXI_DATA_WIDTH/8 + 
@@ -284,6 +286,24 @@ signal gdt_r_wdata     : std_logic_vector(23 downto 0);
 signal gdt_r_raddr     : std_logic_vector(15 downto 0);
 signal gdt_r_rdata     : std_logic_vector(23 downto 0);
 signal gdt_r_addr      : std_logic_vector(15 downto 0);
+
+signal pwclt_wren      : std_logic_vector(0 downto 0);
+signal pwclt_waddr     : std_logic_vector(15 downto 0);
+signal pwclt_wdata     : std_logic_vector(23 downto 0);
+signal pwclt_raddr     : std_logic_vector(15 downto 0);
+signal pwclt_rdata     : std_logic_vector(23 downto 0);
+signal pwclt_addr      : std_logic_vector(15 downto 0);
+
+-- PwCLT registers
+signal pwclt_b_reg     : std_logic_vector(23 downto 0);
+signal pwclt_r_reg     : std_logic_vector(23 downto 0);
+signal pwclt_b_reg_cdc : std_logic_vector(23 downto 0);
+signal pwclt_r_reg_cdc : std_logic_vector(23 downto 0);
+signal pwclt_b_calib_reg     : std_logic_vector(23 downto 0);
+signal pwclt_r_calib_reg     : std_logic_vector(23 downto 0);
+signal pwclt_b_calib_reg_cdc : std_logic_vector(23 downto 0);
+signal pwclt_r_calib_reg_cdc : std_logic_vector(23 downto 0);
+signal grng_output     : std_logic_vector(16 downto 0);
 
 --------------------------------------------------------------------------------
 -- attribute mark_debug : string;
@@ -385,7 +405,7 @@ begin
 --  r/w_chipsel(0) : 0x00000 - 0x0FFFF -- control/status registers
 --  r/w_chipsel(1) : 0x10000 - 0x1FFFF -- gaussian delay table (B Channel)
 --  r/w_chipsel(2) : 0x20000 - 0x2FFFF -- gaussian delay table (R Channel)
---  r/w_chipsel(3) : 0x30000 - 0x3FFFF -- spare
+--  r/w_chipsel(3) : 0x30000 - 0x3FFFF -- PwCLT Gaussian delay registers
 
 ---------------------------------------
 ----- Chip select decoding - logic for decoding the chip selects for read and write processes
@@ -400,6 +420,7 @@ begin
 		when "00"   => r_chipsel <= B"0001";
 		when "01"   => r_chipsel <= B"0010";
 		when "10"   => r_chipsel <= B"0100";
+		when "11"   => r_chipsel <= B"1000";
 		when others => r_chipsel <= B"0000";
 	end case;
 end process;
@@ -411,6 +432,7 @@ begin
 		when "00"   => w_chipsel <= B"0001";
 		when "01"   => w_chipsel <= B"0010";
 		when "10"   => w_chipsel <= B"0100";
+		when "11"   => w_chipsel <= B"1000";
 		when others => w_chipsel <= B"0000";
 	end case;
 end process;
@@ -465,63 +487,159 @@ end process;
 ----- AXI-Lite slave memory write (register and BRAM) process
 ---------------------------------------
 
-	s_axil_wr: process(s_axi_lite_aclk)
-		variable rsel : reg_rng;
-	begin
-		if rising_edge(s_axi_lite_aclk) then
-			if (s_axi_lite_aresetn = '0') then
-				for i in reg_rng loop
-					slv_reg(i) <= (others => '0');
-				end loop;
+s_axil_wr: process(s_axi_lite_aclk)
+variable rsel : reg_rng;
+begin
+if rising_edge(s_axi_lite_aclk) then
+	if (s_axi_lite_aresetn = '0') then
+		for i in reg_rng loop
+			slv_reg(i) <= (others => '0');
+		end loop;
 
-                s_axi_lite_bvalid_r <= '0';
-    			gdt_r_wren   <= (others => '0');
-	    		gdt_r_waddr  <= (others => '0');
-		    	gdt_r_wdata  <= (others => '0');
-			    gdt_b_wren   <= (others => '0');
-			    gdt_b_waddr  <= (others => '0');
-			    gdt_b_wdata  <= (others => '0');
+		s_axi_lite_bvalid_r <= '0';
+		gdt_r_wren   <= (others => '0');
+		gdt_r_waddr  <= (others => '0');
+		gdt_r_wdata  <= (others => '0');
+		gdt_b_wren   <= (others => '0');
+		gdt_b_waddr  <= (others => '0');
+		gdt_b_wdata  <= (others => '0');
+		pwclt_wren   <= (others => '0');
+		pwclt_waddr  <= (others => '0');
+		pwclt_wdata  <= (others => '0');
 
-			else 
-                s_axi_lite_bvalid_r <= s_axi_lite_bvalid_i;
-    			gdt_r_wren   <= (others => '0');
-	    		gdt_r_waddr  <= (others => '0');
-		    	gdt_r_wdata  <= (others => '0');
-			    gdt_b_wren   <= (others => '0');
-			    gdt_b_waddr  <= (others => '0');
-			    gdt_b_wdata  <= (others => '0');
+	else 
+		s_axi_lite_bvalid_r <= s_axi_lite_bvalid_i;
+		gdt_r_wren   <= (others => '0');
+		gdt_r_waddr  <= (others => '0');
+		gdt_r_wdata  <= (others => '0');
+		gdt_b_wren   <= (others => '0');
+		gdt_b_waddr  <= (others => '0');
+		gdt_b_wdata  <= (others => '0');
+		pwclt_wren   <= (others => '0');
+		pwclt_waddr  <= (others => '0');
+		pwclt_wdata  <= (others => '0');
 
-				if (s_axi_lite_bvalid_i = '1') then
+		if (s_axi_lite_bvalid_i = '1') then
 
-                    if (w_chipsel(0) = '1') then
-                        rsel := to_integer(unsigned(s_axi_lite_awaddr_r(reg_addr_rng)));
-                        case rsel is
-                        when reg_rng'low to reg_rng'high =>
-                            for bsel in 0 to (C_AXI_LITE_DATA_WIDTH/8-1) loop
-                                if (s_axi_lite_wstrb_r(bsel) = '1') then
-                                    slv_reg(rsel)(bsel*8+7 downto bsel*8) <= s_axi_lite_wdata_r(bsel*8+7 downto bsel*8);
-                                end if;
-                            end loop;
-                        when others => null;
-                        end case;
-					end if;
-					
-					if (w_chipsel(1) = '1') then
-						gdt_b_wren   <= (others => '1');
-                        gdt_b_waddr  <= s_axi_lite_awaddr_r(15 downto 0);
-						gdt_b_wdata  <= s_axi_lite_wdata_r(23 downto 0);
-					end if;
-
-					if (w_chipsel(2) = '1') then
-						gdt_r_wren   <= (others => '1');
-                        gdt_r_waddr  <= s_axi_lite_awaddr_r(15 downto 0);
-						gdt_r_wdata  <= s_axi_lite_wdata_r(23 downto 0);
-					end if;
-
-				end if;
+			if (w_chipsel(0) = '1') then
+				rsel := to_integer(unsigned(s_axi_lite_awaddr_r(reg_addr_rng)));
+				case rsel is
+				when reg_rng'low to reg_rng'high =>
+					for bsel in 0 to (C_AXI_LITE_DATA_WIDTH/8-1) loop
+						if (s_axi_lite_wstrb_r(bsel) = '1') then
+							slv_reg(rsel)(bsel*8+7 downto bsel*8) <= s_axi_lite_wdata_r(bsel*8+7 downto bsel*8);
+						end if;
+					end loop;
+				when others => null;
+				end case;
 			end if;
+			
+			if (w_chipsel(1) = '1') then
+				gdt_b_wren   <= (others => '1');
+				gdt_b_waddr  <= s_axi_lite_awaddr_r(15 downto 0);
+				gdt_b_wdata  <= s_axi_lite_wdata_r(23 downto 0);
+			end if;
+
+			if (w_chipsel(2) = '1') then
+				gdt_r_wren   <= (others => '1');
+				gdt_r_waddr  <= s_axi_lite_awaddr_r(15 downto 0);
+				gdt_r_wdata  <= s_axi_lite_wdata_r(23 downto 0);
+			end if;
+
+			if (w_chipsel(3) = '1') then
+				pwclt_wren   <= (others => '1');
+				pwclt_waddr  <= s_axi_lite_awaddr_r(15 downto 0);
+				pwclt_wdata  <= s_axi_lite_wdata_r(23 downto 0);
+			end if;
+
 		end if;
-	end process;
+	end if;
+end if;
+end process;
+
+---------------------------------------
+----- AXI-Lite slave PwCLT register write process
+---------------------------------------
+
+proc_pwclt_write : process(s_axi_lite_aclk)
+begin
+	if rising_edge(s_axi_lite_aclk) then
+		if s_axi_lite_aresetn = '0' then
+			pwclt_b_reg <= (others => '0');
+			pwclt_r_reg <= (others => '0');
+			pwclt_b_calib_reg <= (others => '0');
+			pwclt_r_calib_reg <= (others => '0');
+		elsif pwclt_wren = "1" then
+			case  pwclt_waddr is
+				when x"0000"	=> pwclt_b_reg <= pwclt_wdata;
+				when x"0004"	=> pwclt_r_reg <= pwclt_wdata;
+				when x"0008"	=> pwclt_b_calib_reg <= pwclt_wdata;
+				when x"000C"	=> pwclt_r_calib_reg <= pwclt_wdata;
+				when others 	=> null;
+			end case;
+		end if;
+	end if;
+end process; 
+
+xpm_cdc_array_single_inst_b : xpm_cdc_array_single
+generic map (
+   DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
+   INIT_SYNC_FF => 0,   -- DECIMAL; 0=disable simulation init values, 1=enable simulation init values
+   SIM_ASSERT_CHK => 0, -- DECIMAL; 0=disable simulation messages, 1=enable simulation messages
+   SRC_INPUT_REG => 1,  -- DECIMAL; 0=do not register input, 1=register input
+   WIDTH => 24           -- DECIMAL; range: 1-1024
+)
+port map (
+   dest_out => pwclt_b_reg_cdc, 
+   dest_clk => m_axi_aclk,
+   src_clk => s_axi_lite_aclk,
+   src_in => pwclt_b_reg 
+);
+
+xpm_cdc_array_single_inst_r : xpm_cdc_array_single
+generic map (
+   DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
+   INIT_SYNC_FF => 0,   -- DECIMAL; 0=disable simulation init values, 1=enable simulation init values
+   SIM_ASSERT_CHK => 0, -- DECIMAL; 0=disable simulation messages, 1=enable simulation messages
+   SRC_INPUT_REG => 1,  -- DECIMAL; 0=do not register input, 1=register input
+   WIDTH => 24           -- DECIMAL; range: 1-1024
+)
+port map (
+   dest_out => pwclt_r_reg_cdc, 
+   dest_clk => m_axi_aclk,
+   src_clk => s_axi_lite_aclk,
+   src_in => pwclt_r_reg 
+);
+
+xpm_cdc_array_single_inst_b_calib : xpm_cdc_array_single
+generic map (
+   DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
+   INIT_SYNC_FF => 0,   -- DECIMAL; 0=disable simulation init values, 1=enable simulation init values
+   SIM_ASSERT_CHK => 0, -- DECIMAL; 0=disable simulation messages, 1=enable simulation messages
+   SRC_INPUT_REG => 1,  -- DECIMAL; 0=do not register input, 1=register input
+   WIDTH => 24           -- DECIMAL; range: 1-1024
+)
+port map (
+   dest_out => pwclt_b_calib_reg_cdc, 
+   dest_clk => m_axi_aclk,
+   src_clk => s_axi_lite_aclk,
+   src_in => pwclt_b_calib_reg 
+);
+
+xpm_cdc_array_single_inst_r_calib : xpm_cdc_array_single
+generic map (
+   DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
+   INIT_SYNC_FF => 0,   -- DECIMAL; 0=disable simulation init values, 1=enable simulation init values
+   SIM_ASSERT_CHK => 0, -- DECIMAL; 0=disable simulation messages, 1=enable simulation messages
+   SRC_INPUT_REG => 1,  -- DECIMAL; 0=do not register input, 1=register input
+   WIDTH => 24           -- DECIMAL; range: 1-1024
+)
+port map (
+   dest_out => pwclt_r_calib_reg_cdc, 
+   dest_clk => m_axi_aclk,
+   src_clk => s_axi_lite_aclk,
+   src_in => pwclt_r_calib_reg 
+);
 
 ---------------------------------------
 ----- AXI-Lite slave memory read (register and BRAM) process
@@ -560,7 +678,7 @@ end process;
         end if;
     end process;    
 
-    c_axil_rr: process(s_axi_lite_rvalid_i, s_axi_lite_araddr_r, slv_reg, r_chipsel, gdt_b_rdata, gdt_r_rdata)
+    c_axil_rr: process(s_axi_lite_rvalid_i, s_axi_lite_araddr_r, slv_reg, r_chipsel, gdt_b_rdata, gdt_r_rdata, pwclt_rdata)
         variable rsel : reg_rng;  begin
         s_axi_lite_rdata_i <= (others => '0');
         if (s_axi_lite_rvalid_i = '1') then
@@ -575,7 +693,9 @@ end process;
             elsif (r_chipsel(1) = '1') then
                 s_axi_lite_rdata_i <= x"00" & gdt_b_rdata;
             elsif (r_chipsel(2) = '1') then
-                s_axi_lite_rdata_i <= x"00" & gdt_r_rdata;			
+				s_axi_lite_rdata_i <= x"00" & gdt_r_rdata;			
+			elsif (r_chipsel(3) = '1') then
+				s_axi_lite_rdata_i <= x"00" & pwclt_rdata;		
             else
                 s_axi_lite_rdata_i <= (others=>'0');
             end if;
@@ -585,7 +705,29 @@ end process;
 
     gdt_b_raddr <= s_axi_lite_araddr_r(15 downto 0);
     gdt_r_raddr <= s_axi_lite_araddr_r(15 downto 0);
-    
+	pwclt_raddr <= s_axi_lite_araddr_r(15 downto 0);
+
+	---------------------------------------
+	----- AXI-Lite slave PwCLT register read process
+	---------------------------------------
+
+	proc_pwclt_read : process(s_axi_lite_aclk)
+	begin
+		if rising_edge(s_axi_lite_aclk) then
+			if s_axi_lite_aresetn = '0' then
+				pwclt_rdata <= (others => '0');
+			else
+				case pwclt_raddr is
+					when x"0000"	=> pwclt_rdata <= pwclt_b_reg;
+					when x"0004"	=> pwclt_rdata <= pwclt_r_reg;
+					when x"0008"	=> pwclt_rdata <= pwclt_b_calib_reg;
+					when x"000C"	=> pwclt_rdata <= pwclt_r_calib_reg;
+					when others 	=> pwclt_rdata <= (others => '0');
+				end case;
+			end if;
+		end if;
+	end process; 
+	
 	-- wrap-around counter
 
 	s_counter: process(s_axi_aclk)
@@ -613,6 +755,7 @@ end process;
 
     gdt_r_addr <= gdt_r_waddr when (s_axi_lite_bvalid_r = '1') else gdt_r_raddr;
     gdt_b_addr <= gdt_b_waddr when (s_axi_lite_bvalid_r = '1') else gdt_b_raddr;
+	pwclt_addr <= pwclt_waddr when (s_axi_lite_bvalid_r = '1') else pwclt_raddr;
 
 ---------------------------------------
 -- AW AXI Channel
@@ -839,7 +982,11 @@ port map (
     gdt_wren_i       => gdt_b_wren,
     gdt_addr_i       => gdt_b_addr,
     gdt_wdata_i      => gdt_b_wdata,
-    gdt_rdata_o      => gdt_b_rdata
+    gdt_rdata_o      => gdt_b_rdata,
+
+	pwclt_reg		 => pwclt_b_reg_cdc,
+	pwclt_calib_reg	 => pwclt_b_calib_reg_cdc,
+	grng_output		 => grng_output
 );
 
 ---------------------------------------
@@ -1032,7 +1179,24 @@ port map (
     gdt_wren_i       => gdt_r_wren,
     gdt_addr_i       => gdt_r_addr,
     gdt_wdata_i      => gdt_r_wdata,
-    gdt_rdata_o      => gdt_r_rdata
+    gdt_rdata_o      => gdt_r_rdata,
+
+	pwclt_reg		 => pwclt_r_reg_cdc,
+	pwclt_calib_reg	 => pwclt_r_calib_reg_cdc,
+	grng_output		 => grng_output
+);
+
+---------------------------------------
+-- PwCLT-8 Gaussian Random Number Generator
+---------------------------------------
+
+grng_pwclt8_inst : entity axi_delay_lib.grng_pwclt8
+port map(
+    iClk                => m_axi_aclk,
+    iCE                 => C_ONE_BOOL,
+    iLoadEn             => C_ZERO_BOOL,
+    iLoadData           => C_ZERO_BOOL,
+    oRes                => grng_output
 );
 
 end behavioral;

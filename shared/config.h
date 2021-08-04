@@ -15,6 +15,18 @@
 #define _TALL_  2 // all AXI events
 // defined(TRACE)  : enable trace capture, =_TADDR_, =_TALL_
 
+// PWCLT
+#define _PWCLT106W85R_     1 
+#define _PWCLT400W200R_    2 
+// #define _MU106W85R_     1 
+// #define _MU400W200R_    2 
+
+// STD if PWCLT is defined
+#define _MUDIVBY4_   0 
+#define _MUDIVBY8_   1 
+#define _MUDIVBY16_  2 
+#define _MUDIVBY32_  3 
+
 // defined(ENTIRE) : flush/invalidate entire cache
 #define _Z7_ 2 // Zynq-7000
 #define _ZU_ 3 // Zynq UltraScale+
