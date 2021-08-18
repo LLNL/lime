@@ -32,8 +32,6 @@
 #define T_QUEUE_W (T_W - T_DRAM_W - T_TRANS) // 00 20 40
 #define T_QUEUE_R (T_R - T_DRAM_R - T_TRANS) // 00 20 40
 
-#define PWCLT_OFFSET 0x00030000
-
 #define DISABLE_PWCLT   0x00000000
 
 #define PWCLT_MU72      0x00000001

@@ -19,6 +19,12 @@
 #define NUM_GDTS 4
 #define NUM_TX_TYPES 2 //Read and Write
 #define NUM_REGS_PER_BLOCK B_OFFSET //NUM_GDTS x REG_BLOCK_SIZE is the total number of registers available for GDT
+#elif defined VAR_DELAY && (VAR_DELAY==_PWCLT106W85R_ || VAR_DELAY==_PWCLT400W200R_) && defined STD
+#include <stdbool.h>
+#include "gdt.h"
+#define NUM_GDTS 4
+#define NUM_TX_TYPES 2 //Read and Write
+#define NUM_REGS_PER_BLOCK B_OFFSET //NUM_GDTS x REG_BLOCK_SIZE is the total number of registers available for GDT
 #else
 #define NUM_REGS_PER_BLOCK 4096
 #endif
@@ -48,6 +54,12 @@
 
 /* TODO: make clocks_init() and clocks_finish() functions (like monitor_ln.c) */
 
+// The order is delay_0_axi_delay_1, delay_1_axi_delay_0, delay_1_axi_delay_1, delay_0_axi_delay_0
+// const int calib_lats[4][2] = {{62,79},{62,79},{48,66},{60,78}};
+const int calib_lats[4][2] = {{62,79},{48,66},{60,78},{62,79}};
+int gdt_n0[1024] = {
+	#include "gdt_data_n0.txt"
+	};
 
 static void *dev_smmap(const char *name, int inst, int pgidx)
 {
@@ -56,7 +68,7 @@ static void *dev_smmap(const char *name, int inst, int pgidx)
 	int found = dev_search(DEV_TREE, name, inst, "reg", &reg, sizeof(reg));
 	if(found == inst){ 
           if(offset < reg.len){
-            return dev_mmap(reg.addr + offset);
+			return dev_mmap(reg.addr + offset);
           }
         }else{
           printf("Couldn't find device tree record for %s,inst %d, page index %d\n",name, inst, pgidx);
@@ -64,6 +76,25 @@ static void *dev_smmap(const char *name, int inst, int pgidx)
         return MAP_FAILED;
 }
 #if defined VAR_DELAY && VAR_DELAY==_GDT_
+// The order is delay_0_axi_delay_1, delay_1_axi_delay_0, delay_1_axi_delay_1, delay_0_axi_delay_0
+int gdt_inputs[4][2][1024] = {{{
+	#include "gdt_data_acc_dram_write.txt"  // Accererator DRAM write response; fixed delay (before compensation) = 492 clocks
+	},{
+	#include "gdt_data_acc_dram_read.txt"  // Accererator DRAM read response; fixed delay (before compensation) = 366 clocks
+	}},{{
+	#include "gdt_data_cpu_sram_write.txt"  // CPU SRAM write response; fixed delay (before compensation) = 216 clocks
+	},{
+	#include "gdt_data_cpu_sram_read.txt"  // CPU SRAM read response; fixed delay (before compensation) = 216 clocks
+	}},{{
+	#include "gdt_data_cpu_dram_write.txt"  // CPU DRAM write response; fixed delay (before compensation) = 636 clocks
+	},{
+	#include "gdt_data_cpu_dram_read.txt"  // CPU DRAM read response; fixed delay (before compensation) = 510 clocks
+	}},{{
+	#include "gdt_data_acc_sram_write.txt"  // Accererator SRAM write response; fixed delay (before compensation) = 72 clocks
+	},{
+	#include "gdt_data_acc_sram_read.txt"  // Accererator SRAM read response; fixed delay (before compensation) = 72 clocks
+	}}};
+
 void operate_gdt(bool fill){
         int i,p;
         for(i = 1;i <= NUM_GDTS; i++){
@@ -71,9 +102,9 @@ void operate_gdt(bool fill){
             volatile unsigned int *delay = (unsigned int *)dev_smmap("axi_delayv",i,p);
             if(delay != MAP_FAILED){
               if(fill){
-                config_gdt(delay);
+                config_gdt(delay,calib_lats[i-1][p-1],gdt_inputs[i-1][p-1]);
               }else{
-                clear_gdt(delay);
+                clear_gdt(delay, gdt_n0);
               }
               dev_munmap((void *)delay);
             }else{
@@ -82,6 +113,69 @@ void operate_gdt(bool fill){
             }
           }
         }
+}
+#elif defined VAR_DELAY && (VAR_DELAY==_PWCLT106W85R_ || VAR_DELAY==_PWCLT400W200R_) && defined STD
+void operate_pwclt(bool fill){
+	
+	int pwclt_std;
+	#if STD == _MUDIVBY4_
+		pwclt_std = PWCLT_STD_MUDIVBY4;
+		printf("Configuring PwCLT with STD=MUDIVBY4\n");
+	#elif STD == _MUDIVBY8_
+		pwclt_std = PWCLT_STD_MUDIVBY8;
+		printf("Configuring PwCLT with STD=MUDIVBY8\n");
+	#elif STD == _MUDIVBY16_
+		pwclt_std = PWCLT_STD_MUDIVBY16;
+		printf("Configuring PwCLT with STD=MUDIVBY16\n");
+	#elif STD == _MUDIVBY32_
+		pwclt_std = PWCLT_STD_MUDIVBY32;
+		printf("Configuring PwCLT with STD=MUDIVBY32\n");
+	#else
+		pwclt_std = DISABLE_PWCLT;
+		printf("Wrong configuration, PwCLT is disabled and GDT is enabled\n");
+	#endif
+	
+	// The order is delay_0_axi_delay_1, delay_1_axi_delay_0, delay_1_axi_delay_1, delay_0_axi_delay_0
+	#if VAR_DELAY == _PWCLT106W85R_
+		// int pwclt_lat[NUM_GDTS][NUM_TX_TYPES] = {{PWCLT_MU216, PWCLT_MU216}, {PWCLT_MU636, PWCLT_MU510}, {PWCLT_MU72, PWCLT_MU72},{PWCLT_MU492, PWCLT_MU366}};
+		int pwclt_lat[NUM_GDTS][NUM_TX_TYPES] = {{PWCLT_MU636, PWCLT_MU510}, {PWCLT_MU72, PWCLT_MU72},{PWCLT_MU492, PWCLT_MU366},{PWCLT_MU216, PWCLT_MU216}};
+		printf("Configuring PwCLT with PWCLT106W85R\n");
+	#elif VAR_DELAY == _PWCLT400W200R_
+		// int pwclt_lat[NUM_GDTS][NUM_TX_TYPES] = {{PWCLT_MU216, PWCLT_MU216}, {PWCLT_MU2400, PWCLT_MU1200}, {PWCLT_MU72, PWCLT_MU72},{PWCLT_MU2256, PWCLT_MU1056}};
+		int pwclt_lat[NUM_GDTS][NUM_TX_TYPES] = {{PWCLT_MU2400, PWCLT_MU1200}, {PWCLT_MU72, PWCLT_MU72},{PWCLT_MU2256, PWCLT_MU1056},{PWCLT_MU216, PWCLT_MU216}};
+		printf("Configuring PwCLT with PWCLT400W200R\n");
+	#else
+		int pwclt_lat[NUM_GDTS][NUM_TX_TYPES] = {{DISABLE_PWCLT, DISABLE_PWCLT}, {DISABLE_PWCLT, DISABLE_PWCLT}, {DISABLE_PWCLT, DISABLE_PWCLT},{DISABLE_PWCLT, DISABLE_PWCLT}};
+		printf("Wrong configuration, PwCLT is disabled and GDT is enabled\n");
+	#endif
+
+	int i;
+	for(i = 1;i <= NUM_GDTS; i++){	
+		volatile unsigned int *delay = (unsigned int *)dev_smmap("axi_delayv",i,3);
+		if(delay != MAP_FAILED){
+			// printf("Mapped dev i=%d addresses: 0x%08x 0x%08x 0x%08x 0x%08x\n",i,delay,(delay + 1),(delay + 2),(delay + 3));
+			volatile int *pwclt_b = (int *) (delay);
+			volatile int *pwclt_r = (int *) (delay + 1);
+			volatile int *pwclt_cal_b = (int *) (delay + 2);
+			volatile int *pwclt_cal_r = (int *) (delay + 3);
+			if(fill){
+				*pwclt_b = (pwclt_lat[i-1][0] | pwclt_std);
+				*pwclt_r = (pwclt_lat[i-1][1] | pwclt_std);
+				*pwclt_cal_b = (1875*calib_lats[i-1][0])/3000; // CPU SRAM write calibration offset
+				*pwclt_cal_r = (1875*calib_lats[i-1][1])/3000; // CPU SRAM read calibration offset
+			}else{
+				*pwclt_b = DISABLE_PWCLT;
+				*pwclt_r = DISABLE_PWCLT;
+				*pwclt_cal_b = DISABLE_PWCLT; // CPU SRAM write calibration offset
+				*pwclt_cal_r = DISABLE_PWCLT; // CPU SRAM read calibration offset
+			}
+			// printf("PwCLT regvals: 0x%08x 0x%08x 0x%08x 0x%08x \n",*pwclt_b, *pwclt_r, *pwclt_cal_b, *pwclt_cal_r);
+			dev_munmap((void *)delay);
+		}else{
+			printf("Failed mapping delay table address region\n");
+			exit(-1);
+		}
+	}
 }
 #endif
 
@@ -125,6 +219,9 @@ void clocks_emulate(void)
 	/* --- Configure the Gaussian Delay Tables (GTD) --- */
         #pragma message "Compiling " __FILE__ "with VAR_DELAY"
         operate_gdt(true);
+#elif defined VAR_DELAY && (VAR_DELAY==_PWCLT106W85R_ || VAR_DELAY==_PWCLT400W200R_) && defined STD
+	#pragma message "Compiling " __FILE__ "with VAR_DELAY PWCLT"
+ 	operate_pwclt(true);
 #else
 	/* TODO: Make two sets of delay calibration values, */
 	/* one for the zcu102 and the other for the sidewinder */
@@ -179,6 +276,8 @@ void clocks_normal(void)
 #if defined VAR_DELAY && VAR_DELAY==_GDT_
 	/* --- Configure the Gaussian Delay Tables (GTD) --- */
         operate_gdt(false);
+#elif defined VAR_DELAY && (VAR_DELAY==_PWCLT106W85R_ || VAR_DELAY==_PWCLT400W200R_) && defined STD
+ 	operate_pwclt(false);
 #else
 	volatile unsigned int *delay0 = (unsigned int *)dev_smmap("axi_delayv",1,0); /* slot 0, CPU SRAM W, R */
 	volatile unsigned int *delay1 = (unsigned int *)dev_smmap("axi_delayv",2,0); /* slot 0, CPU DRAM W, R */
