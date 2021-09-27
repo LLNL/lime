@@ -2946,6 +2946,7 @@ static void XFsbl_DdrcRegsWrite(XFsbl_DimmParams *PDimmPtr, u32 *DdrCfg)
 	Val =  ((0x4FU & 0x7ffU) << 0U);
 	Xil_Out32(XFSBL_DDRC_BASE_ADDR + 0x810U, Val);
 
+	/*PATCH START*/
 	Xil_Out32(XFSBL_DDRC_BASE_ADDR + 0xF04U, 0x00000010U);
 	//Xil_Out32(XFSBL_DDRC_BASE_ADDR + 0xF04U, 0x0U);
 
@@ -2958,6 +2959,7 @@ static void XFsbl_DdrcRegsWrite(XFsbl_DimmParams *PDimmPtr, u32 *DdrCfg)
 	//Val =  ((0xFU & 0xffU) << 0U);
 	Val =  0x00000003U;
 	Xil_Out32(XFSBL_DDRC_BASE_ADDR + 0xF10U, Val);
+	/*PATCH END*/
 
 	Val =  ((0x7U & 0x1fU) << 24U)
 		+ ((0x1U) << 23U)
