@@ -79,3 +79,55 @@ void clocks_normal(void);
 #endif /* end CLOCKS */
 
 #endif /* end CLOCKS_H_ */
+
+/******************************************************************************
+
+Description of Values Printed from clocks_emulate()
+
+The memory model currently used by LiME is similar to the HMC with 
+extensions for near-memory components that reside on a base-die of a 3-D 
+memory stack. The SRAM_X and DRAM_X numbers represent the average on-die 
+latencies for SRAM and DRAM technology. For example, on the HMC, a DRAM 
+vault can access a memory location in 45 ns. After queue delay at the vault, 
+on-chip routing, and serdes link overhead, the off-chip latency is typically 
+around 85 ns for a read. The listing below describes the memory timing values.
+
+SRAM_X: On-chip latency at the point of access (e.g. SRAM on base-die)
+DRAM_X: On-chip latency at the point of access (e.g. DRAM vault in HMC)
+QUEUE_X: Delay caused by transactions waiting in a queue
+TRANS: Transport delay through link from memory subsystem (e.g. serdes link)
+W: Total write latency for host processor = DRAM_W + QUEUE_W + TRANS
+R: Total read latency for host processor = DRAM_R + QUEUE_R + TRANS
+
+The ARM_*, DDR_*, IO_*, and FPGA* values show the contents of clock control 
+registers in the Zynq processor. These registers and their function are too 
+detailed to document here, but a full description can be found in the Zynq 
+technical reference manual. In a nutshell, these values can be used to 
+verify and document that the clocks have been properly shifted when entering 
+emulation mode.
+
+The numbers printed for Slot 0 and Slot 1 show register values for the 
+fixed-delay unit. They indicate the extra number of delay cycles added by 
+the unit. Slot 0 is the AXI loopback path that originates with the ARM 
+cores, loops through the programmable logic, and connects back into ports 
+going to the system DRAM. Slot 1 is the AXI data path from the accelerator 
+in programmable logic to a separate set of ports going to system DRAM. Each 
+slot has two delay units that are useful in emulating two different memory 
+technologies (e.g. SRAM and DRAM) in separate address ranges. Each of the 
+fixed delay units has five separate delays, one for each AXI subchannel. 
+Only two (B and R) are currently used during emulation. The B channel is for 
+write responses and the R channel is for read responses and data.
+
+Slot 0
+CPU_SRAM_B: CPU SRAM write delay in cycles
+CPU_SRAM_R: CPU SRAM read delay in cycles
+CPU_DRAM_B: CPU DRAM write delay in cycles
+CPU_DRAM_R: CPU DRAM read delay in cycles
+
+Slot 1
+ACC_SRAM_B: Accelerator SRAM write delay in cycles
+ACC_SRAM_R: Accelerator SRAM read delay in cycles
+ACC_DRAM_B: Accelerator DRAM write delay in cycles
+ACC_DRAM_R: Accelerator DRAM read delay in cycles
+
+******************************************************************************/

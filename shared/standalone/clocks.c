@@ -277,28 +277,36 @@ int gdt_n0[1024] = {
 //Files named gdt_data_cxxx.txt are filled with constants of value xxx and are used for calibration.
 //Files named gdt_data_gxxx.txt are filled with Gaussians where the median is xxx.
 int gdt_0_0_b[1024] = {
-	#include "gdt_data_cpu_sram_write.txt"  // CPU SRAM write response; fixed delay (before compensation) = 216 clocks
+	//#include "gdt_data_cpu_sram_write.txt"  // CPU SRAM write response; fixed delay (before compensation) = 216 clocks
+	#include "gdt_data_g216.txt";
 	};
 int gdt_0_0_r[1024] = {
-	#include "gdt_data_cpu_sram_read.txt"  // CPU SRAM read response; fixed delay (before compensation) = 216 clocks
+	//#include "gdt_data_cpu_sram_read.txt"  // CPU SRAM read response; fixed delay (before compensation) = 216 clocks
+	#include "gdt_data_g216.txt";
 	};
 int gdt_0_1_b[1024] = {
-	#include "gdt_data_cpu_dram_write.txt"  // CPU DRAM write response; fixed delay (before compensation) = 636 clocks
+	//#include "gdt_data_cpu_dram_write.txt"  // CPU DRAM write response; fixed delay (before compensation) = 636 clocks
+	#include "gdt_data_g636.txt";
 	};
 int gdt_0_1_r[1024] = {
-	#include "gdt_data_cpu_dram_read.txt"  // CPU DRAM read response; fixed delay (before compensation) = 510 clocks
+	//#include "gdt_data_cpu_dram_read.txt"  // CPU DRAM read response; fixed delay (before compensation) = 510 clocks
+	#include "gdt_data_g510.txt";
 	};
 int gdt_1_0_b[1024] = {
-	#include "gdt_data_acc_sram_write.txt"  // Accererator SRAM write response; fixed delay (before compensation) = 72 clocks
+	//#include "gdt_data_acc_sram_write.txt"  // Accererator SRAM write response; fixed delay (before compensation) = 72 clocks
+	#include "gdt_data_g72.txt";
 	};
 int gdt_1_0_r[1024] = {
-	#include "gdt_data_acc_sram_read.txt"  // Accererator SRAM read response; fixed delay (before compensation) = 72 clocks
+	//#include "gdt_data_acc_sram_read.txt"  // Accererator SRAM read response; fixed delay (before compensation) = 72 clocks
+	#include "gdt_data_g72.txt";
 	};
 int gdt_1_1_b[1024] = {
-	#include "gdt_data_acc_dram_write.txt"  // Accererator DRAM write response; fixed delay (before compensation) = 492 clocks
+	//#include "gdt_data_acc_dram_write.txt"  // Accererator DRAM write response; fixed delay (before compensation) = 492 clocks
+	#include "gdt_data_g492.txt";
 	};
 int gdt_1_1_r[1024] = {
-	#include "gdt_data_acc_dram_read.txt"  // Accererator DRAM read response; fixed delay (before compensation) = 366 clocks
+	//#include "gdt_data_acc_dram_read.txt"  // Accererator DRAM read response; fixed delay (before compensation) = 366 clocks
+	#include "gdt_data_g366.txt";
 	};
 
 void clocks_emulate(void)
