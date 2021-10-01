@@ -71,5 +71,5 @@ generated files must be coordinated with the names expected by clocks.c. For exa
 In the above example, "gxxx" indicates that the file contains a Gaussian with a Mean Delay of xxx; the file named gdt_data_g216.txt therefore contains a Gaussian with a Mean Delay of 216 clocks.
 These file names have been manually edited to conform to this naming convention, and all corresponding files are saved in the repository.
 
-The latest version of gaussian_delay.py, however, will automatically generate all files with a slightly different naming convention:  gdt_data_gxxx_mu_divyyy.zzza, where xxx is the Mean Delay and yyy is the divider.
+The latest version of gaussian_delay.py, however, will automatically generate all files with a slightly different naming convention as mentioned previously:  gdt_data_gxxx_mu_divyyy.zzz, where xxx is the Mean Delay and yyy is the divider.
 To maintain filename coordination between newly generated GDT files and clocks.c, the user must either edit clocks.c to reference the new filenames, or manually change the filenames to match clocks.c.
