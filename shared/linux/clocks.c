@@ -58,7 +58,7 @@
 // const int calib_lats[4][2] = {{62,79},{62,79},{48,66},{60,78}};
 const int calib_lats[4][2] = {{62,79},{48,66},{60,78},{62,79}};
 int gdt_n0[1024] = {
-	#include "gdt_data/gdt_data_n0.txt"
+	#include "gdt_data_n0.txt"
 	};
 
 static void *dev_smmap(const char *name, int inst, int pgidx)
@@ -78,21 +78,21 @@ static void *dev_smmap(const char *name, int inst, int pgidx)
 #if defined VAR_DELAY && VAR_DELAY==_GDT_
 // The order is delay_0_axi_delay_1, delay_1_axi_delay_0, delay_1_axi_delay_1, delay_0_axi_delay_0
 int gdt_inputs[4][2][1024] = {{{
-	#include "gdt_data/gdt_data_cpu_dram_write.txt"  // Accererator DRAM write response; fixed delay (before compensation) = 492 clocks
+	#include "gdt_data_cpu_dram_write.txt"  // Accererator DRAM write response; fixed delay (before compensation) = 492 clocks
 	},{
-	#include "gdt_data/gdt_data_cpu_dram_read.txt"  // Accererator DRAM read response; fixed delay (before compensation) = 366 clocks
+	#include "gdt_data_cpu_dram_read.txt"  // Accererator DRAM read response; fixed delay (before compensation) = 366 clocks
 	}},{{
-	#include "gdt_data/gdt_data_acc_sram_write.txt"  // CPU SRAM write response; fixed delay (before compensation) = 216 clocks
+	#include "gdt_data_acc_sram_write.txt"  // CPU SRAM write response; fixed delay (before compensation) = 216 clocks
 	},{
-	#include "gdt_data/gdt_data_acc_sram_read.txt"  // CPU SRAM read response; fixed delay (before compensation) = 216 clocks
+	#include "gdt_data_acc_sram_read.txt"  // CPU SRAM read response; fixed delay (before compensation) = 216 clocks
 	}},{{
-	#include "gdt_data/gdt_data_acc_dram_write.txt"  // CPU DRAM write response; fixed delay (before compensation) = 636 clocks
+	#include "gdt_data_acc_dram_write.txt"  // CPU DRAM write response; fixed delay (before compensation) = 636 clocks
 	},{
-	#include "gdt_data/gdt_data_acc_dram_read.txt"  // CPU DRAM read response; fixed delay (before compensation) = 510 clocks
+	#include "gdt_data_acc_dram_read.txt"  // CPU DRAM read response; fixed delay (before compensation) = 510 clocks
 	}},{{
-	#include "gdt_data/gdt_data_cpu_sram_write.txt"  // Accererator SRAM write response; fixed delay (before compensation) = 72 clocks
+	#include "gdt_data_cpu_sram_write.txt"  // Accererator SRAM write response; fixed delay (before compensation) = 72 clocks
 	},{
-	#include "gdt_data/gdt_data_cpu_sram_read.txt"  // Accererator SRAM read response; fixed delay (before compensation) = 72 clocks
+	#include "gdt_data_cpu_sram_read.txt"  // Accererator SRAM read response; fixed delay (before compensation) = 72 clocks
 	}}};
 
 void operate_gdt(bool fill){
