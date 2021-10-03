@@ -39,7 +39,7 @@ coe_filename   = "bram_del_table.coe"  ## coe file format
 mem_filename   = "../bram_del_table.mem"  ## mem file format
 
 # path to lime-apps
-txt_filepath   = "../../../../../shared/"  ## use for local test code
+txt_filepath   = "../../../../../shared/gdt_data"  ## use for local test code
 #txt_filepath   = "../../../../../../lime-apps/shared/" ## use for lime-apps test code (change path as needed)
 
 ## Width of address bus input to BRAM table. This MUST match the FPGA's BRAM address width.
