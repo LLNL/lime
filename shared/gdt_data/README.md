@@ -1,13 +1,12 @@
 #  Delay Tables
 ## Pre-generated tables
 
-This directory contains a collection of delay tables that have been previously generated. The tables in this location are used by lime/shared/standalone/clocks.c and lime/shared/linux/clocks.c. The tables hold clock delay values corresponding to a Gaussian Distribution for 
+This directory contains a collection of delay tables that have been previously generated. The tables in this location are used by lime/shared/standalone/clocks.c and lime/shared/linux/clocks.c. The tables hold clock delay values corresponding to a Gaussian Distribution.
 
 
 ## File naming
 
-clocks.c loads eight GDT files at run-time (one for each of the eight VLD instantiations). When generating new GDT files for loading at run-time, the basename of the 
-generated files must be coordinated with the names expected by clocks.c. For example, the following snippet from clocks.c loads the eight GDTs: 
+clocks.c in lime/shared/standalone and lime/shared/linux loads eight GDT files at run-time (one for each of the eight VLD instantiations). For example, the following code (in lime/shared/standalone/clocks.c) loads the eight GDTs: 
 
 &nbsp;&nbsp;&nbsp;&nbsp; int gdt_0_0_b[1024] = {  
 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; #include "gdt_data_g216.txt";  
@@ -42,7 +41,8 @@ generated files must be coordinated with the names expected by clocks.c. For exa
 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; };
 
 In the above example, "gxxx" indicates that the file contains a Gaussian with a Mean Delay of xxx; the file named gdt_data_g216.txt therefore contains a Gaussian with a Mean Delay of 216 clocks.
-These file names have been manually edited to conform to this naming convention, and all corresponding files are saved in the repository.
+These file names have been manually edited to conform to this naming convention, and all corresponding files are saved in the repository. When generating new GDT files for loading at run-time, the basename of the 
+generated files must be coordinated with the names expected by clocks.c.
 
 ## Generating Gaussian Delay Table (GDT) Files
 
