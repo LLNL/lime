@@ -6,7 +6,7 @@ This directory contains a collection of delay tables that have been previously g
 
 ## File naming
 
-clocks.c in lime/shared/standalone and lime/shared/linux loads eight GDT files at run-time (one for each of the eight VLD instantiations). For example, the following code (in lime/shared/standalone/clocks.c) loads the eight GDTs: 
+clocks.c in lime/shared/standalone and lime/shared/linux loads eight GDT files at run-time (one for each of the eight VLD instantiations). For example, the following code (in lime/shared/standalone/clocks.c) initializes arrays to hold the eight GDTs. At runtime, these tables are loaded to BRAM, and accesses to each channel (read or write of CPU or accelerator to "SRAM" or "DRAM") will be delayed according to the profile loaded in the corresponding table.
 
 &nbsp;&nbsp;&nbsp;&nbsp; int gdt_0_0_b[1024] = {  
 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; #include "gdt_data_g216.txt";  
