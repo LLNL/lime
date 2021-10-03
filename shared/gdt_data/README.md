@@ -1,13 +1,11 @@
 #  Delay Tables
 ## Pre-generated tables
 
-This directory contains a collection of delay tables that have been previously generated. The tables in this location are used by lime/shared/standalone/clocks.c and lime/shared/linux/clocks.c. The tables hold clock delay values corresponding to a Gaussian Distribution.
-
+This directory contains delay tables that have been previously generated. The tables in this location are used by lime/shared/standalone/clocks.c and lime/shared/linux/clocks.c. The tables hold clock delay values corresponding to a Gaussian Distribution. At runtime, these tables are loaded to BRAM, and accesses to each channel (read or write of CPU or accelerator to "SRAM" or "DRAM") will be delayed according to the profile loaded in the corresponding table.
 
 ## File naming
 
-clocks.c in lime/shared/standalone and lime/shared/linux loads eight GDT files at run-time (one for each of the eight VLD instantiations). For example, the following code (in lime/shared/standalone/clocks.c) initializes arrays to hold the eight GDTs. At runtime, these tables are loaded to BRAM, and accesses to each channel (read or write of CPU or accelerator to "SRAM" or "DRAM") will be delayed according to the profile loaded in the corresponding table.
-
+clocks.c in lime/shared/standalone and lime/shared/linux loads eight GDT files at run-time (one for each of the eight VLD instantiations). For example, the following code (in lime/shared/standalone/clocks.c) initializes arrays to hold the eight GDTs. 
 &nbsp;&nbsp;&nbsp;&nbsp; int gdt_0_0_b[1024] = {  
 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; #include "gdt_data_g216.txt";  
 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; };
@@ -40,7 +38,7 @@ clocks.c in lime/shared/standalone and lime/shared/linux loads eight GDT files a
 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; #include "gdt_data_g366.txt";  
 &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; };
 
-In the above example, "gxxx" indicates that the file contains a Gaussian with a Mean Delay of xxx; the file named gdt_data_g216.txt therefore contains a Gaussian with a Mean Delay of 216 clocks.
+In the above example, "gxxx" indicates that the file contains delay cycles for a Gaussian distribution with a Mean Delay of xxx; the file named gdt_data_g216.txt therefore contains a Gaussian with a Mean Delay of 216 clocks.
 These file names have been manually edited to conform to this naming convention, and all corresponding files are saved in the repository. When generating new GDT files for loading at run-time, the basename of the 
 generated files must be coordinated with the names expected by clocks.c.
 
@@ -54,7 +52,7 @@ The purpose of this script is to create files that can be used to initialize a X
 lookup table is randomized such that the values will be read out with the programmed gaussian distribution.
 
 When the script is run, table files in several formats are created, some of which are not used in the current development environment. 
-The generated files are listed below. All files will be generated with the base filename of gdt_data_gxxx_mu_divyyy.zzz, where xxx is the Mean Delay and yyy is the divider (see below for a detailed description), and zzz is the appropirate extension.
+The generated files are listed below. All files will be generated with the base filename of gdt_data_gxxx_mu_divyyy.zzz, where xxx is the Mean Delay and yyy is the divider (see below for a detailed description), and zzz is the appropriate extension.
 
 -	mem_filename   = .mem file format, to be loaded into the FPGA during the FPGA build process. Since this file is used at FPGA build time, the values are persistent (i.e. non-volatile); however, the GDT can be updated at run-time via software 
 		(see lime/shared/standalong/clocks.c). This .mem file is saved in lime/ip/2018.2/llnl.gov_user_axi_delayv_1.0.0/hdl/
@@ -77,5 +75,5 @@ divider:  Determines the standard deviation (sigma), where
 
 &nbsp;&nbsp;&nbsp;&nbsp; sigma = mu/divider
 
-The latest version of gaussian_delay.py, will automatically generate all files with the naming convention:  gdt_data_gxxx_mu_divyyy.zzz, where xxx is the Mean Delay and yyy is the divider.
+gaussian_delay.py, will automatically generate all files with the naming convention:  gdt_data_gxxx_mu_divyyy.zzz, where xxx is the Mean Delay and yyy is the divider.
 To maintain filename coordination between newly generated GDT files and clocks.c, the user must either edit clocks.c to reference the new filenames, or manually change the filenames to match clocks.c.
