@@ -15,7 +15,7 @@
 #include "devtree.h"
 #if defined VAR_DELAY && VAR_DELAY==_GDT_
 #include <stdbool.h>
-#include "gdt.h"
+#include "gdt_data/gdt.h"
 #define NUM_GDTS 4
 #define NUM_TX_TYPES 2 //Read and Write
 #define NUM_REGS_PER_BLOCK B_OFFSET //NUM_GDTS x REG_BLOCK_SIZE is the total number of registers available for GDT
