@@ -9,9 +9,10 @@
 
 #include <stdio.h> /* printf */
 #include "clocks.h"
-#if defined VAR_DELAY && VAR_DELAY==_GDT_
-#include "gdt_data/gdt.h"
-#endif
+//#include "gdt.h"
+//#if defined VAR_DELAY && VAR_DELAY==_GDT_
+#include "gdt.h"
+//#endif
 
 #if defined(ZYNQ) && ZYNQ == _Z7_
 /* Zynq-7000 Device */
