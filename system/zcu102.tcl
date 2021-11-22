@@ -105,7 +105,7 @@ set cproj [current_project]
 # Set project properties
 # BOARD: board_part
 #set_property board_part xilinx.com:zcu102_es2:part0:2.4 $cproj
-set_property board_part xilinx.com:zcu102:part0:3.3 $cproj
+set_property board_part xilinx.com:zcu102:part0:3.4 $cproj
 set_property default_lib xil_defaultlib $cproj
 set_property xpm_libraries "XPM_CDC XPM_MEMORY" $cproj
 set_property ip_repo_paths  "$ip_dir $lime_dir/ip/hls" $cproj
@@ -415,7 +415,7 @@ proc cr_bd_main {parentCell} {
 	# BOARD: sysclk
 	set_property -dict [list \
 		CONFIG.C0_CLOCK_BOARD_INTERFACE {user_si570_sysclk} \
-		CONFIG.C0_DDR4_BOARD_INTERFACE {ddr4_sdram} \
+		CONFIG.C0_DDR4_BOARD_INTERFACE {ddr4_sdram_062} \
 		CONFIG.RESET_BOARD_INTERFACE {reset} \
 	] [get_bd_cells trace_0/ddr_0]
 
