@@ -1,0 +1,501 @@
+/*
+
+Xilinx Vivado v2018.2 (64-bit) [Major: 2018, Minor: 2]
+SW Build: 2258646 on Thu Jun 14 20:02:38 MDT 2018
+IP Build: 2256618 on Thu Jun 14 22:10:49 MDT 2018
+
+Process ID: 152003
+License: Customer
+
+Current time: 	Wed Dec 09 16:15:06 PST 2020
+Time zone: 	Pacific Standard Time (America/Los_Angeles)
+
+OS: Red Hat Enterprise Linux Workstation release 7.9 (Maipo)
+OS Version: 3.10.0-1127.19.1.el7.x86_64
+OS Architecture: amd64
+Available processors (cores): 48
+
+Display: 10.248.145.254:10.0
+Screen size: 1920x1080
+Screen resolution (DPI): 96
+Available screens: 1
+Available disk space: 102 GB
+Default font: family=Dialog,name=Dialog,style=plain,size=12
+
+Java version: 	1.8.0_112 64-bit
+Java home: 	/opt/Xilinx/Vivado/2018.2/tps/lnx64/jre
+Java executable location: 	/opt/Xilinx/Vivado/2018.2/tps/lnx64/jre/bin/java
+Java initial memory (-Xms): 	128 MB
+Java maximum memory (-Xmx):	 2 GB
+
+
+User name: 	bhardwaj2
+User home directory: /home/bhardwaj2
+User working directory: /home2/bhardwaj2/lime/ip/2018.2
+User country: 	US
+User language: 	en
+User locale: 	en_US
+
+RDI_BASEROOT: /opt/Xilinx/Vivado
+HDI_APPROOT: /opt/Xilinx/Vivado/2018.2
+RDI_DATADIR: /opt/Xilinx/Vivado/2018.2/data
+RDI_BINDIR: /opt/Xilinx/Vivado/2018.2/bin
+
+Vivado preferences file location: /home/bhardwaj2/.Xilinx/Vivado/2018.2/vivado.xml
+Vivado preferences directory: /home/bhardwaj2/.Xilinx/Vivado/2018.2/
+Vivado layouts directory: /home/bhardwaj2/.Xilinx/Vivado/2018.2/layouts
+PlanAhead jar file location: 	/opt/Xilinx/Vivado/2018.2/lib/classes/planAhead.jar
+Vivado log file location: 	/home2/bhardwaj2/lime/ip/2018.2/vivado.log
+Vivado journal file location: 	/home2/bhardwaj2/lime/ip/2018.2/vivado.jou
+Engine tmp dir: 	./.Xil/Vivado-152003-tux421.llnl.gov
+
+Xilinx Environment Variables
+----------------------------
+XILINX: /opt/Xilinx/Vivado/2018.2/ids_lite/ISE
+XILINXD_LICENSE_FILE: 2100@tux421
+XILINX_DSP: /opt/Xilinx/Vivado/2018.2/ids_lite/ISE
+XILINX_PLANAHEAD: /opt/Xilinx/Vivado/2018.2
+XILINX_SDK: /opt/Xilinx/SDK/2018.2
+XILINX_VIVADO: /opt/Xilinx/Vivado/2018.2
+XILINX_VIVADO_HLS: /opt/Xilinx/Vivado/2018.2
+
+
+GUI allocated memory:	150 MB
+GUI max memory:		3,052 MB
+Engine allocated memory: 5,076 MB
+
+Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+
+*/
+
+// TclEventType: START_GUI
+// Tcl Message: start_gui 
+// [GUI Memory]: 60 MB (+60398kb) [00:00:07]
+// [Engine Memory]: 5,071 MB (+5165681kb) [00:00:07]
+selectButton(PAResourceEtoH.GettingStartedView_OPEN_PROJECT, "Open Project"); // x (w, ck)
+// Run Command: PAResourceCommand.PACommandNames_OPEN_PROJECT
+// HMemoryUtils.trashcanNow. Engine heap size: 5,083 MB. GUI used memory: 38 MB. Current time: 12/9/20 4:15:09 PM PST
+// Elapsed time: 11 seconds
+setFileChooser("/home2/bhardwaj2/lime/system/zcu102/proj.xpr");
+// Opening Vivado Project: /home2/bhardwaj2/lime/system/zcu102/proj.xpr. Version: Vivado v2018.2 
+// bx (ck):  Open Project : addNotify
+// Tcl Message: open_project /home2/bhardwaj2/lime/system/zcu102/proj.xpr 
+// TclEventType: DEBUG_PROBE_SET_CHANGE
+// TclEventType: MSGMGR_MOVEMSG
+// TclEventType: FILESET_TARGET_UCF_CHANGE
+// TclEventType: FILE_SET_NEW
+// TclEventType: RUN_COMPLETED
+// TclEventType: FILESET_TARGET_UCF_CHANGE
+// TclEventType: RUN_COMPLETED
+// TclEventType: FILESET_TARGET_UCF_CHANGE
+// TclEventType: RUN_CURRENT
+// TclEventType: MSGMGR_REFRESH_MSG
+// HMemoryUtils.trashcanNow. Engine heap size: 5,113 MB. GUI used memory: 35 MB. Current time: 12/9/20 4:15:24 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,382 MB. GUI used memory: 35 MB. Current time: 12/9/20 4:15:39 PM PST
+// TclEventType: FILE_SET_CHANGE
+// TclEventType: IP_LOCK_CHANGE
+// TclEventType: FILE_SET_CHANGE
+// [Engine Memory]: 5,559 MB (+246455kb) [00:00:45]
+// TclEventType: FILE_SET_CHANGE
+// TclEventType: IP_LOCK_CHANGE
+// TclEventType: FILE_SET_CHANGE
+// TclEventType: IP_LOCK_CHANGE
+// TclEventType: FILE_SET_CHANGE
+// TclEventType: PROJECT_NEW
+// [GUI Memory]: 111 MB (+50429kb) [00:00:52]
+// [GUI Memory]: 118 MB (+1891kb) [00:00:55]
+// Tcl Message: open_project /home2/bhardwaj2/lime/system/zcu102/proj.xpr 
+// Tcl Message: Scanning sources... Finished scanning sources 
+// Tcl Message: INFO: [IP_Flow 19-234] Refreshing IP repositories INFO: [IP_Flow 19-1700] Loaded user IP repository '/home2/bhardwaj2/lime/ip/2018.2'. INFO: [IP_Flow 19-1700] Loaded user IP repository '/home2/bhardwaj2/lime/ip/hls'. INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/opt/Xilinx/Vivado/2018.2/data/ip'. 
+// HMemoryUtils.trashcanNow. Engine heap size: 5,589 MB. GUI used memory: 97 MB. Current time: 12/9/20 4:15:55 PM PST
+// Tcl Message: open_project: Time (s): cpu = 00:01:01 ; elapsed = 00:00:36 . Memory (MB): peak = 6750.852 ; gain = 510.633 ; free physical = 5691 ; free virtual = 30723 
+// Project name: proj; location: /home2/bhardwaj2/lime/system/zcu102; part: xczu9eg-ffvb1156-2-i-es2
+// 'i' command handler elapsed time: 50 seconds
+// [GUI Memory]: 131 MB (+6996kb) [00:01:00]
+// Elapsed time: 39 seconds
+dismissDialog("Open Project"); // bx (ck)
+// TclEventType: DG_ANALYSIS_MSG_RESET
+// TclEventType: DG_GRAPH_GENERATED
+// [GUI Memory]: 141 MB (+3491kb) [00:01:05]
+// TclEventType: FILE_SET_CHANGE
+// TclEventType: DG_GRAPH_STALE
+// Tcl Message: update_compile_order -fileset sources_1 
+// TclEventType: DG_ANALYSIS_MSG_RESET
+// [Engine Memory]: 5,996 MB (+165895kb) [00:01:07]
+// TclEventType: DG_GRAPH_GENERATED
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, system_wrapper (system_wrapper.v)]", 1, true); // B (D, ck) - Node
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, system_wrapper (system_wrapper.v)]", 1, true); // B (D, ck) - Node
+// [GUI Memory]: 148 MB (+62kb) [00:01:16]
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, system_wrapper (system_wrapper.v)]", 1, true); // B (D, ck) - Node
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, system_wrapper (system_wrapper.v)]", 1, true, false, false, false, false, true); // B (D, ck) - Double Click - Node
+// Elapsed time: 17 seconds
+selectCodeEditor("system_wrapper.v", 42, 183); // ce (w, ck)
+selectCodeEditor("system_wrapper.v", 42, 183, false, false, false, false, true); // ce (w, ck) - Double Click
+selectCodeEditor("system_wrapper.v", 98, 186); // ce (w, ck)
+selectCodeEditor("system_wrapper.v", 98, 186, false, false, false, false, true); // ce (w, ck) - Double Click
+selectCodeEditor("system_wrapper.v", 98, 186); // ce (w, ck)
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, system_wrapper (system_wrapper.v), system_i : system (system.bd), system (system.v)]", 3, true); // B (D, ck) - Node
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, system_wrapper (system_wrapper.v), system_i : system (system.bd), system (system.v), delay_1 : delay_1_imp_1WEHQQQ (system.v)]", 6, true, false, false, false, false, true); // B (D, ck) - Double Click - Node
+// HMemoryUtils.trashcanNow. Engine heap size: 5,644 MB. GUI used memory: 102 MB. Current time: 12/9/20 4:16:44 PM PST
+// Elapsed time: 709 seconds
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, system_wrapper (system_wrapper.v), system_i : system (system.bd)]", 2, true); // B (D, ck) - Node
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, system_wrapper (system_wrapper.v), system_i : system (system.bd)]", 2, true, false, false, false, false, true); // B (D, ck) - Double Click - Node
+// bx (ck):  Open Block Design : addNotify
+// TclEventType: LOAD_FEATURE
+// Tcl Message: open_bd_design {/home2/bhardwaj2/lime/system/zcu102/proj.srcs/sources_1/bd/system/system.bd} 
+// TclEventType: RSB_CHANGE_CURRENT_DIAGRAM
+// TclEventType: RSB_PROPERTY_CHANGE
+// TclEventType: LOAD_FEATURE
+// TclEventType: RSB_PROPERTY_CHANGE
+// TclEventType: RSB_OPEN_DIAGRAM
+// Tcl Message: INFO: [xilinx.com:ip:fifo_generator:13.2-5968] /engine_0/fifo_generator_0Executing the post_config_ip from bd 
+// TclEventType: RSB_OPEN_DIAGRAM
+// TclEventType: RSB_CONNECTION_CHANGE
+// TclEventType: RSB_LOCK_CHANGE
+// TclEventType: RSB_CHANGE_CURRENT_DIAGRAM
+// TclEventType: RSB_LOCK_CHANGE
+// TclEventType: RSB_CHANGE_CURRENT_DIAGRAM
+// TclEventType: RSB_LOCK_CHANGE
+// TclEventType: RSB_CHANGE_CURRENT_DIAGRAM
+// Tcl Message: open_bd_design: Time (s): cpu = 00:00:12 ; elapsed = 00:00:08 . Memory (MB): peak = 7922.418 ; gain = 0.000 ; free physical = 5538 ; free virtual = 30639 
+dismissDialog("Open Block Design"); // bx (ck)
+selectButton(PAResourceCommand.PACommandNames_ZOOM_IN, "System_zoom_in"); // B (f, ck)
+// Run Command: PAResourceCommand.PACommandNames_ZOOM_IN
+selectButton(PAResourceCommand.PACommandNames_ZOOM_IN, "System_zoom_in"); // B (f, ck)
+// Run Command: PAResourceCommand.PACommandNames_ZOOM_IN
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 108 MB. Current time: 12/9/20 4:46:44 PM PST
+// [GUI Memory]: 156 MB (+601kb) [00:33:23]
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_interconnect_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /reset_1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk1_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_clk1 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /rst_pl_clk0_peripheral_aresetn 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// CommandFailedException: ERROR: [BD 41-113] Interface Net not found: /zynq_ps_0_pl_resetn0 
+// [GUI Memory]: 164 MB (+199kb) [00:50:23]
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 106 MB. Current time: 12/9/20 5:16:44 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 5:46:44 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 6:16:44 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 6:46:44 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 7:16:44 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 7:46:44 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 8:16:44 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 8:46:45 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 9:16:45 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 9:46:45 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 10:16:45 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 10:46:45 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 11:16:45 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/9/20 11:46:45 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 12:16:45 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 106 MB. Current time: 12/10/20 12:46:45 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 1:16:46 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 1:46:46 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 2:16:46 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 2:46:46 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 3:16:46 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 3:46:46 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 4:16:46 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 4:46:46 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 5:16:47 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 5:46:47 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 6:16:47 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 6:46:47 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 7:16:47 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 7:46:47 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 8:16:47 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 8:46:48 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 106 MB. Current time: 12/10/20 9:16:48 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 9:46:48 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 10:16:48 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 105 MB. Current time: 12/10/20 10:46:48 AM PST
+// WARNING: HTimer (ActiveMsgMonitor Process Messages Timer) is taking 706ms to process. Increasing delay to 2000 ms.
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 106 MB. Current time: 12/10/20 11:16:48 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 104 MB. Current time: 12/10/20 11:46:48 AM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,649 MB. GUI used memory: 104 MB. Current time: 12/10/20 12:16:48 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,713 MB. GUI used memory: 104 MB. Current time: 12/10/20 12:22:28 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,713 MB. GUI used memory: 104 MB. Current time: 12/10/20 12:52:29 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,713 MB. GUI used memory: 105 MB. Current time: 12/10/20 1:22:29 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,713 MB. GUI used memory: 104 MB. Current time: 12/10/20 1:52:29 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,713 MB. GUI used memory: 104 MB. Current time: 12/10/20 2:22:29 PM PST
+// WARNING: HTimer (ActiveMsgMonitor Process Messages Timer) is taking 574ms to process. Increasing delay to 3000 ms.
+// HMemoryUtils.trashcanNow. Engine heap size: 5,713 MB. GUI used memory: 104 MB. Current time: 12/10/20 2:52:29 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,713 MB. GUI used memory: 104 MB. Current time: 12/10/20 3:22:29 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,713 MB. GUI used memory: 105 MB. Current time: 12/10/20 3:52:29 PM PST
+// HMemoryUtils.trashcanNow. Engine heap size: 5,713 MB. GUI used memory: 105 MB. Current time: 12/10/20 4:22:29 PM PST

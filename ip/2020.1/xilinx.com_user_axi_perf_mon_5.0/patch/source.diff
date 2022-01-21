@@ -1,0 +1,1394 @@
+diff -Naur -x Makefile -x patch axi_perf_mon_v5_0/component.xml xilinx.com_user_axi_perf_mon_5.0/component.xml
+--- axi_perf_mon_v5_0/component.xml	2018-06-15 03:56:16.000000000 +0000
++++ xilinx.com_user_axi_perf_mon_5.0/component.xml	2020-01-09 00:42:35.563168300 +0000
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <spirit:component xmlns:xilinx="http://www.xilinx.com" xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <spirit:vendor>xilinx.com</spirit:vendor>
+-  <spirit:library>ip</spirit:library>
++  <spirit:library>user</spirit:library>
+   <spirit:name>axi_perf_mon</spirit:name>
+   <spirit:version>5.0</spirit:version>
+   <spirit:busInterfaces>
+@@ -26175,12 +26175,12 @@
+       <spirit:modelParameter spirit:dataType="integer">
+         <spirit:name>C_FIFO_AXIS_TDATA_WIDTH</spirit:name>
+         <spirit:displayName>C Fifo Axis Tdata Width</spirit:displayName>
+-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_FIFO_AXIS_TDATA_WIDTH">56</spirit:value>
++        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_FIFO_AXIS_TDATA_WIDTH">256</spirit:value>
+       </spirit:modelParameter>
+       <spirit:modelParameter spirit:dataType="integer">
+         <spirit:name>C_AXIS_DWIDTH_ROUND_TO_32</spirit:name>
+         <spirit:displayName>C Fifo Width rounded</spirit:displayName>
+-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_AXIS_DWIDTH_ROUND_TO_32">64</spirit:value>
++        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_AXIS_DWIDTH_ROUND_TO_32">256</spirit:value>
+       </spirit:modelParameter>
+       <spirit:modelParameter spirit:dataType="integer">
+         <spirit:name>C_FIFO_AXIS_TID_WIDTH</spirit:name>
+@@ -26203,6 +26203,11 @@
+         <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_SHOW_AXI_LEN">0</spirit:value>
+       </spirit:modelParameter>
+       <spirit:modelParameter spirit:dataType="integer">
++        <spirit:name>C_SHOW_AXI_DATA</spirit:name>
++        <spirit:displayName>Show AXI DATA In Log Data</spirit:displayName>
++        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_SHOW_AXI_DATA">0</spirit:value>
++      </spirit:modelParameter>
++      <spirit:modelParameter spirit:dataType="integer">
+         <spirit:name>C_SHOW_AXIS_TID</spirit:name>
+         <spirit:displayName>Show AXI Streaming TID In Log Data</spirit:displayName>
+         <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_SHOW_AXIS_TID">0</spirit:value>
+@@ -27584,6 +27589,30 @@
+       </spirit:vendorExtensions>
+     </spirit:parameter>
+     <spirit:parameter>
++      <spirit:name>C_FIFO_AXIS_TDATA_WIDTH</spirit:name>
++      <spirit:displayName>C Fifo Axis Tdata Width</spirit:displayName>
++      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.C_FIFO_AXIS_TDATA_WIDTH" spirit:choiceRef="choice_list_ebf31b68" spirit:order="2500">256</spirit:value>
++      <spirit:vendorExtensions>
++        <xilinx:parameterInfo>
++          <xilinx:enablement>
++            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PARAM_ENABLEMENT.C_FIFO_AXIS_TDATA_WIDTH">true</xilinx:isEnabled>
++          </xilinx:enablement>
++        </xilinx:parameterInfo>
++      </spirit:vendorExtensions>
++    </spirit:parameter>
++    <spirit:parameter>
++      <spirit:name>C_AXIS_DWIDTH_ROUND_TO_32</spirit:name>
++      <spirit:displayName>C Fifo Width rounded</spirit:displayName>
++      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.C_AXIS_DWIDTH_ROUND_TO_32" spirit:choiceRef="choice_list_ebf31b68" spirit:order="2600">256</spirit:value>
++      <spirit:vendorExtensions>
++        <xilinx:parameterInfo>
++          <xilinx:enablement>
++            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PARAM_ENABLEMENT.C_AXIS_DWIDTH_ROUND_TO_32">true</xilinx:isEnabled>
++          </xilinx:enablement>
++        </xilinx:parameterInfo>
++      </spirit:vendorExtensions>
++    </spirit:parameter>
++    <spirit:parameter>
+       <spirit:name>C_NUM_OF_COUNTERS</spirit:name>
+       <spirit:displayName>Number of Counters</spirit:displayName>
+       <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.C_NUM_OF_COUNTERS" spirit:order="2300" spirit:minimum="1" spirit:maximum="10" spirit:rangeType="long">1</spirit:value>
+@@ -27665,6 +27694,18 @@
+           </xilinx:enablement>
+         </xilinx:parameterInfo>
+       </spirit:vendorExtensions>
++    </spirit:parameter>
++    <spirit:parameter>
++      <spirit:name>C_SHOW_AXI_DATA</spirit:name>
++      <spirit:displayName>Show AXI DATA in Log Data</spirit:displayName>
++      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.C_SHOW_AXI_DATA" spirit:choiceRef="choice_pairs_4873554b" spirit:order="1750">0</spirit:value>
++      <spirit:vendorExtensions>
++        <xilinx:parameterInfo>
++          <xilinx:enablement>
++            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PARAM_ENABLEMENT.C_SHOW_AXI_DATA">true</xilinx:isEnabled>
++          </xilinx:enablement>
++        </xilinx:parameterInfo>
++      </spirit:vendorExtensions>
+     </spirit:parameter>
+     <spirit:parameter>
+       <spirit:name>C_SHOW_AXIS_TID</spirit:name>
+diff -Naur -x Makefile -x patch axi_perf_mon_v5_0/hdl/axi_perf_mon_v5_0_rfs.v xilinx.com_user_axi_perf_mon_5.0/hdl/axi_perf_mon_v5_0_rfs.v
+--- axi_perf_mon_v5_0/hdl/axi_perf_mon_v5_0_rfs.v	2018-06-15 03:56:16.000000000 +0000
++++ xilinx.com_user_axi_perf_mon_5.0/hdl/axi_perf_mon_v5_0_rfs.v	2020-01-09 00:42:35.573199600 +0000
+@@ -3206,6 +3206,7 @@
+    parameter C_AXIS_TUSER_WIDTH       = 1,
+    parameter C_SHOW_AXI_IDS           = 1,
+    parameter C_SHOW_AXI_LEN           = 1,
++   parameter C_SHOW_AXI_DATA          = 1,
+    parameter C_SHOW_AXIS_TID          = 1,
+    parameter C_SHOW_AXIS_TDEST        = 1,
+    parameter C_SHOW_AXIS_TUSER        = 1,
+@@ -3217,7 +3218,7 @@
+ 
+    input [C_MON_FIFO_DATA_WIDTH-1:0]      Data_In,
+    input                                  Data_Valid,
+-   input [6:0]                            Flag_Enable_Reg,    
++   input [8:0]                            Flag_Enable_Reg,    
+    input                                  Ext_Trig,
+    input                                  Ext_Trig_Stop,
+    input                                  Use_Ext_Trig_Log,
+@@ -3238,7 +3239,8 @@
+ //-------------------------------------------------------------------
+ localparam RST_ACTIVE = 1'b0;
+ localparam LOG_DATA_WIDTH = (C_AXI_PROTOCOL == "AXI4")?  
+-                            (4*C_AXI_ID_WIDTH + 16): (C_AXIS_TID_WIDTH +C_AXIS_TDEST_WIDTH + C_AXIS_TUSER_WIDTH);
++                            (2*C_AXI_ADDR_WIDTH + 4*C_AXI_ID_WIDTH + 16): 
++                            (C_AXIS_TID_WIDTH +C_AXIS_TDEST_WIDTH + C_AXIS_TUSER_WIDTH);
+ 
+ 
+ //-------------------------------------------------------------------
+@@ -3249,6 +3251,7 @@
+  reg                                Read_going_on;    
+  reg [LOG_DATA_WIDTH-1:0]           Log_Data_int; 
+  reg [LOG_DATA_WIDTH-1:0]           Log_Data_int1; 
++ reg [C_AXI_DATA_WIDTH*2-1:0]       Log_Data_aux;
+  reg [C_FLAG_WIDTH-1:0]             Flags;  
+  reg [C_FLAG_WIDTH-1:0]             Flags1;  
+  reg                                Ext_Trig_log_en;
+@@ -3258,8 +3261,10 @@
+  wire [1:0] Ext_Triggers_Sync;
+  wire Ext_Trig_Sync_Out;
+  wire Ext_Trig_Stop_Sync_Out;
+-    wire [C_AXI_ADDR_WIDTH-1:0] AWADDR;
+-    wire [C_AXI_ADDR_WIDTH-1:0] ARADDR; 
++ wire [C_AXI_ADDR_WIDTH-1:0] AWADDR;
++ wire [C_AXI_ADDR_WIDTH-1:0] ARADDR; 
++ wire [C_AXI_DATA_WIDTH-1:0] WDATA;
++ wire [C_AXI_DATA_WIDTH-1:0] RDATA;
+  wire AWVALID,ARVALID;
+ wire Rd_Addr_Lat_Flag,Wr_Addr_Lat_Flag;
+ //-------------------------------------------------------------------
+@@ -3362,15 +3367,22 @@
+     wire [C_AXI_ID_WIDTH-1:0] AWID   
+     = Data_In[((2*C_AXI_ADDR_WIDTH)+(C_AXI_DATA_WIDTH/8)+(4*C_AXI_ID_WIDTH)+41):((2*C_AXI_ADDR_WIDTH)+(C_AXI_DATA_WIDTH/8)+(3*C_AXI_ID_WIDTH)+42)];
+ 
++    //----- Read and Write Data Channel -----
++    assign RDATA = Data_In[((  C_AXI_DATA_WIDTH)+(2*C_AXI_ADDR_WIDTH)+(C_AXI_DATA_WIDTH/8)+(4*C_AXI_ID_WIDTH)+41):
++       ((2*C_AXI_ADDR_WIDTH)+(C_AXI_DATA_WIDTH/8)+(4*C_AXI_ID_WIDTH)+42)];
++    assign WDATA = Data_In[((2*C_AXI_DATA_WIDTH)+(2*C_AXI_ADDR_WIDTH)+(C_AXI_DATA_WIDTH/8)+(4*C_AXI_ID_WIDTH)+41):
++       ((C_AXI_DATA_WIDTH)+(2*C_AXI_ADDR_WIDTH)+(C_AXI_DATA_WIDTH/8)+(4*C_AXI_ID_WIDTH)+42)];
+ 
+     //-- Flags generation
+     assign Wr_Addr_Lat_Flag = AWREADY && AWVALID && Data_Valid;
+-    wire First_Write_Flag = WVALID && WREADY && (!Write_going_on) && Data_Valid;
+-    wire Last_Write_Flag  = WLAST && WVALID && WREADY && Data_Valid;
+-    wire Response_Flag    = BVALID && BREADY && Data_Valid;
++    wire   First_Write_Flag = WVALID && WREADY && (!Write_going_on) && Data_Valid;
++    wire   Mid_Write_Flag   = WVALID && WREADY && Data_Valid && Write_going_on && !WLAST;
++    wire   Last_Write_Flag  = WLAST && WVALID && WREADY && Data_Valid;
++    wire   Response_Flag    = BVALID && BREADY && Data_Valid;
+     assign Rd_Addr_Lat_Flag = ARREADY && ARVALID && Data_Valid;
+-    wire First_Read_Flag  = RVALID && RREADY && (!Read_going_on) && Data_Valid;
+-    wire Last_Read_Flag   = RLAST && RVALID && RREADY && Data_Valid;
++    wire   First_Read_Flag  = RVALID && RREADY && (!Read_going_on) && Data_Valid;
++    wire   Mid_Read_Flag    = RVALID && RREADY && Data_Valid && Read_going_on && !RLAST;
++    wire   Last_Read_Flag   = RLAST && RVALID && RREADY && Data_Valid;
+ 
+     //-- Write_going_on for First_Write_Flag generation
+     always @(posedge clk) begin 
+@@ -3415,9 +3427,9 @@
+   end
+   else begin
+     if (C_EN_AXI_DEBUG == 0 )
+-    Flags <= Flag_Enable_Reg & {Last_Read_Flag,First_Read_Flag,Rd_Addr_Lat_Flag,Response_Flag,Last_Write_Flag,First_Write_Flag,Wr_Addr_Lat_Flag};
++    Flags <= Flag_Enable_Reg & {Mid_Read_Flag,Mid_Write_Flag,Last_Read_Flag,First_Read_Flag,Rd_Addr_Lat_Flag,Response_Flag,Last_Write_Flag,First_Write_Flag,Wr_Addr_Lat_Flag};
+     else
+-    Flags <= Flag_Enable_Reg & {Last_Read_Flag,1'b0,Rd_Addr_Lat_Flag,Response_Flag,1'b0,1'b0,Wr_Addr_Lat_Flag};
++    Flags <= Flag_Enable_Reg & {Mid_Read_Flag,Mid_Write_Flag,Last_Read_Flag,1'b0,Rd_Addr_Lat_Flag,Response_Flag,1'b0,1'b0,Wr_Addr_Lat_Flag};
+   end
+ end 
+ 
+@@ -3426,9 +3438,11 @@
+     always @(posedge clk) begin
+        if (rst_n == RST_ACTIVE) begin
+            Log_Data_int <= 0;
++           Log_Data_aux <= 0;
+        end
+        else begin
+-           Log_Data_int <= {AWID, BID, ARID, RID, AWLEN, ARLEN};
++           Log_Data_aux <= {WDATA, RDATA};
++           Log_Data_int <= {AWADDR, ARADDR, AWID, BID, ARID, RID, AWLEN, ARLEN};
+        end
+     end 
+ 
+@@ -3577,18 +3591,30 @@
+    assign Log_Data = {AWADDR_d2,Log_Data_int1[15:8],Flags1[0],Flags1[3],ARADDR_d2,Log_Data_int1[7:0],Flags1[4],Flags1[6]};
+ end
+ // for performance trace purpose 
+-else if (C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_IDS == 1 && C_SHOW_AXI_LEN == 1) begin : GEN_LOGS_AXI4
++else if (C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 0 && C_SHOW_AXI_IDS == 1 && C_SHOW_AXI_LEN == 1) begin : GEN_LOGS_AXI4
+    assign Log_Data = {Log_Data_int,Flags};
+ end
+-else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_IDS == 1 && C_SHOW_AXI_LEN == 0) begin :GEN_SHOW_IDS
++else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 0 && C_SHOW_AXI_IDS == 1 && C_SHOW_AXI_LEN == 0) begin :GEN_SHOW_IDS
+    assign Log_Data = {Log_Data_int[LOG_DATA_WIDTH-1:16],Flags};
+ end
+-else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_IDS == 0 && C_SHOW_AXI_LEN == 1) begin :GEN_SHOW_LEN
++else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 0 && C_SHOW_AXI_IDS == 0 && C_SHOW_AXI_LEN == 1) begin :GEN_SHOW_LEN
+    assign Log_Data = {Log_Data_int[15:0],Flags};
+ end
+-else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_IDS == 0 && C_SHOW_AXI_LEN == 0) begin :GEN_NO_LOG_DATA
++else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 0 && C_SHOW_AXI_IDS == 0 && C_SHOW_AXI_LEN == 0) begin :GEN_NO_LOG_DATA
+    assign Log_Data = Flags;
+ end
++else if (C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 1 && C_SHOW_AXI_IDS == 1 && C_SHOW_AXI_LEN == 1) begin : GEN_LOGS_AXI4_AND_DATA
++   assign Log_Data = {Log_Data_aux,Log_Data_int,Flags};
++end
++else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 1 && C_SHOW_AXI_IDS == 1 && C_SHOW_AXI_LEN == 0) begin :GEN_SHOW_IDS_AND_DATA
++   assign Log_Data = {Log_Data_aux,Log_Data_int[LOG_DATA_WIDTH-1:16],Flags};
++end
++else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 1 && C_SHOW_AXI_IDS == 0 && C_SHOW_AXI_LEN == 1) begin :GEN_SHOW_LEN_AND_DATA
++   assign Log_Data = {Log_Data_aux,Log_Data_int[15:0],Flags};
++end
++else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 1 && C_SHOW_AXI_IDS == 0 && C_SHOW_AXI_LEN == 0) begin :GEN_LOGS_DATA_ONLY
++   assign Log_Data = {Log_Data_aux,Flags};
++end
+ else if(C_AXI_PROTOCOL == "AXI4S" && C_SHOW_AXIS_TID == 1 && C_SHOW_AXIS_TDEST == 1 && C_SHOW_AXIS_TUSER == 1) 
+   begin : GEN_LOGS_AXI4S
+    assign Log_Data = {Log_Data_int,Flags};
+@@ -9269,7 +9295,7 @@
+    output     [31:0]                                 Range_Reg_9,    
+ 
+    // Event Log Registers - in axi clk domain
+-   output     [6:0]                                  Flag_Enable_Reg,    
++   output     [8:0]                                  Flag_Enable_Reg,    
+    output                                            SW_Data_Log_En, 
+    output     [2:0]                                  Ext_Event_Flag_En,   
+ 
+@@ -10933,7 +10959,7 @@
+ generate
+     if(C_ENABLE_EVENT_LOG == 1) begin :GEN_LOG_DATA_REG
+      
+-       reg [6:0]                          Flag_Enable_Reg_CDC;    
++       reg [8:0]                          Flag_Enable_Reg_CDC;    
+        reg                                SW_Data_Log_En_CDC; 
+        reg [2:0]                          Ext_Event_Flag_En_CDC;   
+        reg                                Global_Clk_Cnt_Ovf_En_int;
+@@ -10953,7 +10979,7 @@
+           end
+           else begin
+               if ((Event_Log_Set_Wr_En == 1'b1) && (Addr_3downto0_is_0x0 == 1'b1)) begin
+-                  Flag_Enable_Reg_CDC          <= Bus2IP_Data[6:0];
++                  Flag_Enable_Reg_CDC          <= Bus2IP_Data[8:0];
+                   SW_Data_Log_En_CDC           <= Bus2IP_Data[16];
+                   Ext_Event_Flag_En_CDC        <= Bus2IP_Data[19:17];
+                   Global_Clk_Cnt_Ovf_En_int    <= Bus2IP_Data[20];
+@@ -11412,7 +11438,7 @@
+            else if (Lat_Event_Log_Set_Rd_En == 1'b1) begin
+                if (Lat_Addr_3downto0_is_0x0 == 1'b1) begin
+                    IP2Bus_Data     <= {Metric_Cnt_Ovf_En,Sample_Metric_Cnt_Ovf_En,Global_Clk_Cnt_Ovf_En
+-                                     ,Ext_Event_Flag_En, SW_Data_Log_En, {9{1'b0}}, Flag_Enable_Reg};   
++                                     ,Ext_Event_Flag_En, SW_Data_Log_En, {7{1'b0}}, Flag_Enable_Reg};   
+                end
+                else if (Lat_Addr_3downto0_is_0x4 == 1'b1) begin
+                    IP2Bus_Data     <= SW_Data;   
+@@ -12247,20 +12273,23 @@
+ // Parameter Declaration
+ //-------------------------------------------------------------------
+ localparam RST_ACTIVE = 1'b0;
+-localparam TIME_DIFF_LOAD_VALUE = 16'h0001;
++localparam TIME_DIFF_COUNT_WIDTH = 30;
++localparam [TIME_DIFF_COUNT_WIDTH-1:0]
++  TIME_DIFF_ZERO = 0,
++  TIME_DIFF_ONE = 1;
+ 
+ //-------------------------------------------------------------------
+ // Signal Declaration
+ //-------------------------------------------------------------------
+ //wire
+-wire [15:0]                         Time_Diff;    
++wire [TIME_DIFF_COUNT_WIDTH-1:0]    Time_Diff;    
+ wire                                over_flow;    
+ //FIFO WIDTH-(16bit timestamp+1bit loopevent+1bitlog id)
+-wire [C_FIFO_AXIS_TDATA_WIDTH-19:0] mon_wr_data_int;
++wire [C_FIFO_AXIS_TDATA_WIDTH-TIME_DIFF_COUNT_WIDTH-2-1:0] mon_wr_data_int;
+ 
+ //reg
+ reg                                 Mon_Wr_En;    
+-reg [C_FIFO_AXIS_TDATA_WIDTH-19:0]  Mon_Wr_Data;
++reg [C_FIFO_AXIS_TDATA_WIDTH-TIME_DIFF_COUNT_WIDTH-2-1:0]  Mon_Wr_Data;
+ reg                                 Event_Log_En_D1;    
+ reg                                 over_flow_cap;   
+ reg [C_FIFO_AXIS_TDATA_WIDTH-1:0]   Fifo_Reg_Data; 
+@@ -12375,13 +12404,13 @@
+ axi_perf_mon_v5_0_24_counter 
+   #(
+        .C_FAMILY             (C_FAMILY),
+-       .C_NUM_BITS           (16),
++       .C_NUM_BITS           (TIME_DIFF_COUNT_WIDTH),
+        .COUNTER_LOAD_VALUE   (32'h00000000)
+    ) counter_inst 
+    (
+        .clk                  (clk),
+        .rst_n                (rst_n),
+-       .Load_In              (TIME_DIFF_LOAD_VALUE),
++       .Load_In              (TIME_DIFF_ONE),
+        .Count_Enable         (Event_Log_En),
+        .Count_Load           (Count_Reset),
+        .Count_Down           (1'b0),
+@@ -12451,7 +12480,7 @@
+                Fifo_Wr_En     <= 1'b1;
+                Fifo_Wr_Data   <= { 6'b0, SW_Data, over_flow_cap, Time_Diff,1'b1};
+                if(Mon_Wr_En == 1'b1) begin
+-                 Fifo_Reg_Data  <= { Mon_Wr_Data, over_flow_cap, 16'b0,1'b0}; //Time diff 0
++                 Fifo_Reg_Data  <= { Mon_Wr_Data, over_flow_cap, TIME_DIFF_ZERO,1'b0}; //Time diff 0
+                  Fifo_Reg_Wr_En <= 1'b1;
+                end
+                else begin
+@@ -12463,7 +12492,7 @@
+                Fifo_Wr_Data <= Fifo_Reg_Data;
+                Fifo_Wr_En   <= 1'b1; 
+                if(Mon_Wr_En == 1'b1) begin
+-                 Fifo_Reg_Data  <= { Mon_Wr_Data, over_flow_cap, 16'b0,1'b0}; //Time diff 0
++                 Fifo_Reg_Data  <= { Mon_Wr_Data, over_flow_cap, TIME_DIFF_ZERO,1'b0}; //Time diff 0
+                  Fifo_Reg_Wr_En <= 1'b1;
+                end
+                else begin
+@@ -13237,6 +13266,7 @@
+     parameter C_FIFO_AXIS_SYNC                = 0,   // 1=Sync FIFO, 0=ASYNC FIFO
+     parameter C_SHOW_AXI_IDS                  = 1,
+     parameter C_SHOW_AXI_LEN                  = 1,
++    parameter C_SHOW_AXI_DATA                 = 1,
+     parameter C_SHOW_AXIS_TID                 = 1,
+     parameter C_SHOW_AXIS_TDEST               = 1,
+     parameter C_SHOW_AXIS_TUSER               = 1,
+@@ -13826,55 +13856,78 @@
+   localparam C_SLOT_N_FLAG_WIDTH = 7;
+  
+   localparam C_MON_FIFO_DWIDTH_S0 = (C_SLOT_0_AXI_PROTOCOL == "AXI4") 
+-             ?(C_SLOT_0_AXI_ID_WIDTH*4 +C_SLOT_0_AXI_ADDR_WIDTH*2 +(C_SLOT_0_AXI_DATA_WIDTH/8)+42)
++             ?(C_SLOT_0_AXI_DATA_WIDTH*2 + C_SLOT_0_AXI_ID_WIDTH*4 +C_SLOT_0_AXI_ADDR_WIDTH*2 +(C_SLOT_0_AXI_DATA_WIDTH/8)+42)
+                                     :((C_SLOT_0_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_0_AXIS_TID_WIDTH
+                                      + C_SLOT_0_AXIS_TDEST_WIDTH+C_SLOT_0_AXIS_TUSER_WIDTH+3);
+   localparam C_MON_FIFO_DWIDTH_S1 = (C_SLOT_1_AXI_PROTOCOL == "AXI4") 
+-             ?(C_SLOT_1_AXI_ID_WIDTH*4 +C_SLOT_1_AXI_ADDR_WIDTH*2 +(C_SLOT_1_AXI_DATA_WIDTH/8)+42)
++             ?(C_SLOT_1_AXI_DATA_WIDTH*2 + C_SLOT_1_AXI_ID_WIDTH*4 +C_SLOT_1_AXI_ADDR_WIDTH*2 +(C_SLOT_1_AXI_DATA_WIDTH/8)+42)
+                                     :((C_SLOT_1_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_1_AXIS_TID_WIDTH
+                                     +C_SLOT_1_AXIS_TDEST_WIDTH+C_SLOT_1_AXIS_TUSER_WIDTH+3);
+   localparam C_MON_FIFO_DWIDTH_S2 = (C_SLOT_2_AXI_PROTOCOL == "AXI4") 
+-             ?(C_SLOT_2_AXI_ID_WIDTH*4 +C_SLOT_2_AXI_ADDR_WIDTH*2 +(C_SLOT_2_AXI_DATA_WIDTH/8)+42)
++             ?(C_SLOT_2_AXI_DATA_WIDTH*2 + C_SLOT_2_AXI_ID_WIDTH*4 +C_SLOT_2_AXI_ADDR_WIDTH*2 +(C_SLOT_2_AXI_DATA_WIDTH/8)+42)
+                                     :((C_SLOT_2_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_2_AXIS_TID_WIDTH
+                                     +C_SLOT_2_AXIS_TDEST_WIDTH+C_SLOT_2_AXIS_TUSER_WIDTH+3);
+   localparam C_MON_FIFO_DWIDTH_S3 = (C_SLOT_3_AXI_PROTOCOL == "AXI4") 
+-             ?C_SLOT_3_AXI_ID_WIDTH*4 +C_SLOT_3_AXI_ADDR_WIDTH*2 +(C_SLOT_3_AXI_DATA_WIDTH/8)+42
+-                                    :(C_SLOT_3_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_3_AXIS_TID_WIDTH
++             ?(C_SLOT_3_AXI_DATA_WIDTH*2 + C_SLOT_3_AXI_ID_WIDTH*4 +C_SLOT_3_AXI_ADDR_WIDTH*2 +(C_SLOT_3_AXI_DATA_WIDTH/8)+42)
++                                    :(C_SLOT_3_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_3_AXIS_TID_WIDTH 
+                                     +C_SLOT_3_AXIS_TDEST_WIDTH + C_SLOT_3_AXIS_TUSER_WIDTH+3;
+   localparam C_MON_FIFO_DWIDTH_S4 = (C_SLOT_4_AXI_PROTOCOL == "AXI4") 
+-            ?(C_SLOT_4_AXI_ID_WIDTH*4 +C_SLOT_4_AXI_ADDR_WIDTH*2 +(C_SLOT_4_AXI_DATA_WIDTH/8)+42)
++             ?(C_SLOT_4_AXI_DATA_WIDTH*2 + C_SLOT_4_AXI_ID_WIDTH*4 +C_SLOT_4_AXI_ADDR_WIDTH*2 +(C_SLOT_4_AXI_DATA_WIDTH/8)+42)
+                                     :((C_SLOT_4_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_4_AXIS_TID_WIDTH
+                                     + C_SLOT_4_AXIS_TDEST_WIDTH+C_SLOT_4_AXIS_TUSER_WIDTH+3);
+   localparam C_MON_FIFO_DWIDTH_S5 = (C_SLOT_5_AXI_PROTOCOL == "AXI4") 
+-            ?(C_SLOT_5_AXI_ID_WIDTH*4 +C_SLOT_5_AXI_ADDR_WIDTH*2 +(C_SLOT_5_AXI_DATA_WIDTH/8)+42)
++             ?(C_SLOT_5_AXI_DATA_WIDTH*2 + C_SLOT_5_AXI_ID_WIDTH*4 +C_SLOT_5_AXI_ADDR_WIDTH*2 +(C_SLOT_5_AXI_DATA_WIDTH/8)+42)
+                                     :((C_SLOT_5_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_5_AXIS_TID_WIDTH
+                                     +C_SLOT_5_AXIS_TDEST_WIDTH+C_SLOT_5_AXIS_TUSER_WIDTH+3);
+   localparam C_MON_FIFO_DWIDTH_S6 = (C_SLOT_6_AXI_PROTOCOL == "AXI4") 
+-           ?(C_SLOT_6_AXI_ID_WIDTH*4 +C_SLOT_6_AXI_ADDR_WIDTH*2 +(C_SLOT_6_AXI_DATA_WIDTH/8)+42)
++             ?(C_SLOT_6_AXI_DATA_WIDTH*2 + C_SLOT_6_AXI_ID_WIDTH*4 +C_SLOT_6_AXI_ADDR_WIDTH*2 +(C_SLOT_6_AXI_DATA_WIDTH/8)+42)
+                                     :((C_SLOT_6_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_6_AXIS_TID_WIDTH
+                                     +C_SLOT_6_AXIS_TDEST_WIDTH+C_SLOT_6_AXIS_TUSER_WIDTH+3);
+   localparam C_MON_FIFO_DWIDTH_S7 = (C_SLOT_7_AXI_PROTOCOL == "AXI4") 
+-           ?C_SLOT_7_AXI_ID_WIDTH*4 +C_SLOT_7_AXI_ADDR_WIDTH*2 +(C_SLOT_7_AXI_DATA_WIDTH/8)+42
++             ?(C_SLOT_7_AXI_DATA_WIDTH*2 + C_SLOT_7_AXI_ID_WIDTH*4 +C_SLOT_7_AXI_ADDR_WIDTH*2 +(C_SLOT_7_AXI_DATA_WIDTH/8)+42)
+                                     :(C_SLOT_7_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_7_AXIS_TID_WIDTH
+                                     +C_SLOT_7_AXIS_TDEST_WIDTH + C_SLOT_7_AXIS_TUSER_WIDTH+3;
+   
+   //-- Flag widths for each monitor slot  
+-  localparam C_SLOT_0_FLAG_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_1_FLAG_WIDTH = (C_SLOT_1_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_2_FLAG_WIDTH = (C_SLOT_2_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_3_FLAG_WIDTH = (C_SLOT_3_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_4_FLAG_WIDTH = (C_SLOT_4_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_5_FLAG_WIDTH = (C_SLOT_5_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_6_FLAG_WIDTH = (C_SLOT_6_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_7_FLAG_WIDTH = (C_SLOT_7_AXI_PROTOCOL == "AXI4") ? 7 : 2;
++  localparam C_SLOT_0_FLAG_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_1_FLAG_WIDTH = (C_SLOT_1_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_2_FLAG_WIDTH = (C_SLOT_2_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_3_FLAG_WIDTH = (C_SLOT_3_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_4_FLAG_WIDTH = (C_SLOT_4_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_5_FLAG_WIDTH = (C_SLOT_5_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_6_FLAG_WIDTH = (C_SLOT_6_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_7_FLAG_WIDTH = (C_SLOT_7_AXI_PROTOCOL == "AXI4") ? 9 : 2;
+ 
+   //-- Log Data widths for each monitor slot  
+-   localparam C_SLOT_0_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? (C_SLOT_0_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_0_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))): ((C_SLOT_0_AXIS_TID_WIDTH * C_SHOW_AXIS_TID) + (C_SLOT_0_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_0_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
+-  localparam C_SLOT_1_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? (C_SLOT_1_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_1_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : ((C_SLOT_1_AXIS_TID_WIDTH*C_SHOW_AXIS_TID) + (C_SLOT_1_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_1_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
+-  localparam C_SLOT_2_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? (C_SLOT_2_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_2_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : ((C_SLOT_2_AXIS_TID_WIDTH*C_SHOW_AXIS_TID) + (C_SLOT_2_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_2_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
+-  localparam C_SLOT_3_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? (C_SLOT_3_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_3_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : (C_SLOT_3_AXIS_TID_WIDTH*C_SHOW_AXIS_TID  + C_SLOT_3_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST + C_SLOT_3_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER);  
+-  localparam C_SLOT_4_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? (C_SLOT_4_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_4_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : ((C_SLOT_4_AXIS_TID_WIDTH*C_SHOW_AXIS_TID)  + (C_SLOT_4_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_4_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
+-  localparam C_SLOT_5_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? (C_SLOT_5_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_5_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : ((C_SLOT_5_AXIS_TID_WIDTH*C_SHOW_AXIS_TID) + (C_SLOT_5_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) +(C_SLOT_5_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
++   localparam C_SLOT_0_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? 
++      ((C_EN_AXI_DEBUG) ? (C_SLOT_0_AXI_ADDR_WIDTH*2 +16+4+4) : 
++      ((2*C_SLOT_0_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_0_AXI_ADDR_WIDTH) + (4*C_SLOT_0_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))): 
++      ((C_SLOT_0_AXIS_TID_WIDTH * C_SHOW_AXIS_TID) + (C_SLOT_0_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_0_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
++
++   localparam C_SLOT_1_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? 
++      ((C_EN_AXI_DEBUG) ? (C_SLOT_1_AXI_ADDR_WIDTH*2 +16+4+4) : 
++      ((2*C_SLOT_1_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_1_AXI_ADDR_WIDTH) + (4*C_SLOT_1_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : 
++      ((C_SLOT_1_AXIS_TID_WIDTH*C_SHOW_AXIS_TID) + (C_SLOT_1_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_1_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
++
++   localparam C_SLOT_2_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? 
++      ((C_EN_AXI_DEBUG) ? (C_SLOT_2_AXI_ADDR_WIDTH*2 +16+4+4) : 
++      ((2*C_SLOT_2_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_2_AXI_ADDR_WIDTH) + (4*C_SLOT_2_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : 
++      ((C_SLOT_2_AXIS_TID_WIDTH*C_SHOW_AXIS_TID) + (C_SLOT_2_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_2_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
++
++   localparam C_SLOT_3_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? 
++      ((C_EN_AXI_DEBUG) ? (C_SLOT_3_AXI_ADDR_WIDTH*2 +16+4+4) :  
++      ((2*C_SLOT_3_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_3_AXI_ADDR_WIDTH) + (4*C_SLOT_3_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : 
++      (C_SLOT_3_AXIS_TID_WIDTH*C_SHOW_AXIS_TID  + C_SLOT_3_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST + C_SLOT_3_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER);  
++
++   localparam C_SLOT_4_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? 
++      ((2*C_SLOT_4_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_4_AXI_ADDR_WIDTH) + C_SLOT_4_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_4_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : 
++      ((C_SLOT_4_AXIS_TID_WIDTH*C_SHOW_AXIS_TID)  + (C_SLOT_4_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_4_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
++
++   localparam C_SLOT_5_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? 
++      (C_SLOT_5_AXI_ADDR_WIDTH*2 +16+4+4) : 
++      ((2*C_SLOT_5_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_5_AXI_ADDR_WIDTH) + (4*C_SLOT_5_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : 
++      ((C_SLOT_5_AXIS_TID_WIDTH*C_SHOW_AXIS_TID) + (C_SLOT_5_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) +(C_SLOT_5_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
++
+   //localparam C_SLOT_6_LOG_DATA_WIDTH = (4*C_SLOT_6_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN);  
+   //localparam C_SLOT_7_LOG_DATA_WIDTH = (4*C_SLOT_7_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN);  
+ 
+@@ -13909,12 +13962,12 @@
+ //         (C_SLOT_5_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));
+ // 
+  localparam C_SLOT_6_LOG_DATA_WIDTH = (C_SLOT_6_AXI_PROTOCOL == "AXI4")  
+-                                       ? ((4*C_SLOT_6_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN)):
++         ? ((2*C_SLOT_6_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_6_AXI_ADDR_WIDTH) + (4*C_SLOT_6_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN)):
+          ((C_SLOT_6_AXIS_TID_WIDTH*C_SHOW_AXIS_TID)  + (C_SLOT_6_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + 
+          (C_SLOT_6_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));
+                                         
+  localparam C_SLOT_7_LOG_DATA_WIDTH = (C_SLOT_7_AXI_PROTOCOL == "AXI4")  
+-                                       ? ((4*C_SLOT_7_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN)):
++         ? ((2*C_SLOT_7_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_7_AXI_ADDR_WIDTH) + (4*C_SLOT_7_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN)):
+          ((C_SLOT_7_AXIS_TID_WIDTH*C_SHOW_AXIS_TID)  + (C_SLOT_7_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + 
+          (C_SLOT_7_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));
+  
+@@ -14016,7 +14069,7 @@
+   wire [31:0]                          Range_Reg_7;    
+   wire [31:0]                          Range_Reg_8;    
+   wire [31:0]                          Range_Reg_9;    
+-  wire [6:0]                           Flag_Enable_Reg;    
++  wire [8:0]                           Flag_Enable_Reg;    
+   wire                                 SW_Data_Log_En;    
+   wire [C_SW_SYNC_DATA_WIDTH-1:0]      SW_Data;    
+   wire                                 SW_Data_Wr_En;    
+@@ -14343,7 +14396,8 @@
+   generate if(C_SLOT_0_AXI_PROTOCOL == "AXI4") begin :GEN_SLOT_0_AXI4
+     assign SLOT_0_clk    = slot_0_axi_aclk;
+     assign SLOT_0_Arst_n = slot_0_axi_aresetn;
+-    assign Slot_0_Data_In = {slot_0_axi_awid,slot_0_axi_awaddr,slot_0_axi_awlen,slot_0_axi_awsize,
++    assign Slot_0_Data_In = {slot_0_axi_wdata, slot_0_axi_rdata, //write data, read data
++                            slot_0_axi_awid,slot_0_axi_awaddr,slot_0_axi_awlen,slot_0_axi_awsize,
+                             slot_0_axi_awburst,slot_0_axi_awvalid,slot_0_axi_awready,
+                             slot_0_axi_wstrb,slot_0_axi_wlast,slot_0_axi_wvalid,slot_0_axi_wready,
+                             slot_0_axi_bid,slot_0_axi_bresp,slot_0_axi_bvalid,slot_0_axi_bready,
+@@ -14363,7 +14417,8 @@
+   generate if(C_SLOT_1_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 1) begin :GEN_SLOT_1_AXI4
+     assign SLOT_1_clk    = slot_1_axi_aclk;
+     assign SLOT_1_Arst_n = slot_1_axi_aresetn;
+-    assign Slot_1_Data_In = {slot_1_axi_awid,slot_1_axi_awaddr,slot_1_axi_awlen,slot_1_axi_awsize,
++    assign Slot_1_Data_In = {slot_1_axi_wdata, slot_1_axi_rdata, //write data, read data
++                            slot_1_axi_awid,slot_1_axi_awaddr,slot_1_axi_awlen,slot_1_axi_awsize,
+                             slot_1_axi_awburst,slot_1_axi_awvalid,slot_1_axi_awready,
+                             slot_1_axi_wstrb,slot_1_axi_wlast,slot_1_axi_wvalid,slot_1_axi_wready,
+                             slot_1_axi_bid,slot_1_axi_bresp,slot_1_axi_bvalid,slot_1_axi_bready,
+@@ -14384,7 +14439,8 @@
+   generate if(C_SLOT_2_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 2) begin :GEN_SLOT_2_AXI4
+     assign SLOT_2_clk    = slot_2_axi_aclk;
+     assign SLOT_2_Arst_n = slot_2_axi_aresetn;
+-    assign Slot_2_Data_In = {slot_2_axi_awid,slot_2_axi_awaddr,slot_2_axi_awlen,slot_2_axi_awsize,
++    assign Slot_2_Data_In = {slot_2_axi_wdata, slot_2_axi_rdata, //write data, read data
++                            slot_2_axi_awid,slot_2_axi_awaddr,slot_2_axi_awlen,slot_2_axi_awsize,
+                             slot_2_axi_awburst,slot_2_axi_awvalid,slot_2_axi_awready,
+                             slot_2_axi_wstrb,slot_2_axi_wlast,slot_2_axi_wvalid,slot_2_axi_wready,
+                             slot_2_axi_bid,slot_2_axi_bresp,slot_2_axi_bvalid,slot_2_axi_bready,
+@@ -14404,7 +14460,8 @@
+   generate if(C_SLOT_3_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 3) begin :GEN_SLOT_3_AXI4
+     assign SLOT_3_clk    = slot_3_axi_aclk;
+     assign SLOT_3_Arst_n = slot_3_axi_aresetn;
+-    assign Slot_3_Data_In = {slot_3_axi_awid,slot_3_axi_awaddr,slot_3_axi_awlen,slot_3_axi_awsize,
++    assign Slot_3_Data_In = {slot_3_axi_wdata, slot_3_axi_rdata, //write data, read data
++                            slot_3_axi_awid,slot_3_axi_awaddr,slot_3_axi_awlen,slot_3_axi_awsize,
+                             slot_3_axi_awburst,slot_3_axi_awvalid,slot_3_axi_awready,
+                             slot_3_axi_wstrb,slot_3_axi_wlast,slot_3_axi_wvalid,slot_3_axi_wready,
+                             slot_3_axi_bid,slot_3_axi_bresp,slot_3_axi_bvalid,slot_3_axi_bready,
+@@ -14425,7 +14482,8 @@
+   generate if(C_SLOT_4_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 4) begin :GEN_SLOT_4_AXI4
+     assign SLOT_4_clk    = slot_4_axi_aclk;
+     assign SLOT_4_Arst_n = slot_4_axi_aresetn;
+-    assign Slot_4_Data_In = {slot_4_axi_awid,slot_4_axi_awaddr,slot_4_axi_awlen,slot_4_axi_awsize,
++    assign Slot_4_Data_In = {slot_4_axi_wdata, slot_4_axi_rdata, //write data, read data
++                            slot_4_axi_awid,slot_4_axi_awaddr,slot_4_axi_awlen,slot_4_axi_awsize,
+                             slot_4_axi_awburst,slot_4_axi_awvalid,slot_4_axi_awready,
+                             slot_4_axi_wstrb,slot_4_axi_wlast,slot_4_axi_wvalid,slot_4_axi_wready,
+                             slot_4_axi_bid,slot_4_axi_bresp,slot_4_axi_bvalid,slot_4_axi_bready,
+@@ -14445,7 +14503,8 @@
+   generate if(C_SLOT_5_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 5) begin :GEN_SLOT_5_AXI4
+     assign SLOT_5_clk    = slot_5_axi_aclk;
+     assign SLOT_5_Arst_n = slot_5_axi_aresetn;
+-    assign Slot_5_Data_In = {slot_5_axi_awid,slot_5_axi_awaddr,slot_5_axi_awlen,slot_5_axi_awsize,
++    assign Slot_5_Data_In = {slot_5_axi_wdata, slot_5_axi_rdata, //write data, read data
++                            slot_5_axi_awid,slot_5_axi_awaddr,slot_5_axi_awlen,slot_5_axi_awsize,
+                             slot_5_axi_awburst,slot_5_axi_awvalid,slot_5_axi_awready,
+                             slot_5_axi_wstrb,slot_5_axi_wlast,slot_5_axi_wvalid,slot_5_axi_wready,
+                             slot_5_axi_bid,slot_5_axi_bresp,slot_5_axi_bvalid,slot_5_axi_bready,
+@@ -14466,7 +14525,8 @@
+   generate if(C_SLOT_6_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 6) begin :GEN_SLOT_6_AXI4
+     assign SLOT_6_clk    = slot_6_axi_aclk;
+     assign SLOT_6_Arst_n = slot_6_axi_aresetn;
+-    assign Slot_6_Data_In = {slot_6_axi_awid,slot_6_axi_awaddr,slot_6_axi_awlen,slot_6_axi_awsize,
++    assign Slot_6_Data_In = {slot_6_axi_wdata, slot_6_axi_rdata, //write data, read data
++                            slot_6_axi_awid,slot_6_axi_awaddr,slot_6_axi_awlen,slot_6_axi_awsize,
+                             slot_6_axi_awburst,slot_6_axi_awvalid,slot_6_axi_awready,
+                             slot_6_axi_wstrb,slot_6_axi_wlast,slot_6_axi_wvalid,slot_6_axi_wready,
+                             slot_6_axi_bid,slot_6_axi_bresp,slot_6_axi_bvalid,slot_6_axi_bready,
+@@ -14488,7 +14548,8 @@
+   generate if(C_SLOT_7_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 7) begin :GEN_SLOT_7_AXI4
+     assign SLOT_7_clk    = slot_7_axi_aclk;
+     assign SLOT_7_Arst_n = slot_7_axi_aresetn;
+-    assign Slot_7_Data_In = {slot_7_axi_awid,slot_7_axi_awaddr,slot_7_axi_awlen,slot_7_axi_awsize,
++    assign Slot_7_Data_In = {slot_7_axi_wdata, slot_7_axi_rdata, //write data, read data
++                            slot_7_axi_awid,slot_7_axi_awaddr,slot_7_axi_awlen,slot_7_axi_awsize,
+                             slot_7_axi_awburst,slot_7_axi_awvalid,slot_7_axi_awready,
+                             slot_7_axi_wstrb,slot_7_axi_wlast,slot_7_axi_wvalid,slot_7_axi_wready,
+                             slot_7_axi_bid,slot_7_axi_bresp,slot_7_axi_bvalid,slot_7_axi_bready,
+@@ -15004,6 +15065,7 @@
+        .C_AXIS_TUSER_WIDTH        (C_SLOT_0_AXIS_TUSER_WIDTH),
+        .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+        .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++       .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+        .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+        .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+        .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -15148,7 +15210,7 @@
+          .C_AXI_PROTOCOL            (C_SLOT_0_AXI_PROTOCOL), 
+          .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS)
+       )
+-		triggerMarker_slot0 (
++      triggerMarker_slot0 (
+ 			    // Outputs
+ 			    .Log_Data_Marked	(Slot_0_Log_Marked),
+ 			    .Log_en_out		(Slot_0_Log_En_Marked),
+@@ -15331,6 +15393,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_1_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -15557,6 +15620,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_2_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -15783,6 +15847,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_3_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -16009,6 +16074,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_4_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -16235,6 +16301,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_5_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -16462,6 +16529,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_6_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -16655,6 +16723,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_7_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -24544,6 +24613,7 @@
+     parameter C_FIFO_AXIS_SYNC                = 0,  // 1=Sync FIFO, 0=ASYNC FIFO
+     parameter C_SHOW_AXI_IDS                  = 0,
+     parameter C_SHOW_AXI_LEN                  = 0,
++    parameter C_SHOW_AXI_DATA                 = 0,
+     parameter C_SHOW_AXIS_TID                 = 0,
+     parameter C_SHOW_AXIS_TDEST               = 0,
+     parameter C_SHOW_AXIS_TUSER               = 0,
+@@ -25397,6 +25467,7 @@
+     .C_FIFO_AXIS_SYNC              (C_FIFO_AXIS_SYNC), 
+     .C_SHOW_AXI_IDS                (C_SHOW_AXI_IDS),
+     .C_SHOW_AXI_LEN                (C_SHOW_AXI_LEN),
++    .C_SHOW_AXI_DATA               (C_SHOW_AXI_DATA),
+     .C_SHOW_AXIS_TID               (C_SHOW_AXIS_TID),
+     .C_SHOW_AXIS_TDEST             (C_SHOW_AXIS_TDEST),
+     .C_SHOW_AXIS_TUSER             (C_SHOW_AXIS_TUSER),
+diff -Naur -x Makefile -x patch axi_perf_mon_v5_0/hdl/axi_perf_mon_v5_0_syn_rfs.v xilinx.com_user_axi_perf_mon_5.0/hdl/axi_perf_mon_v5_0_syn_rfs.v
+--- axi_perf_mon_v5_0/hdl/axi_perf_mon_v5_0_syn_rfs.v	2018-06-15 03:56:16.000000000 +0000
++++ xilinx.com_user_axi_perf_mon_5.0/hdl/axi_perf_mon_v5_0_syn_rfs.v	2020-01-09 00:42:35.593166100 +0000
+@@ -3691,6 +3691,7 @@
+    parameter C_AXIS_TUSER_WIDTH       = 1,
+    parameter C_SHOW_AXI_IDS           = 1,
+    parameter C_SHOW_AXI_LEN           = 1,
++   parameter C_SHOW_AXI_DATA          = 1,
+    parameter C_SHOW_AXIS_TID          = 1,
+    parameter C_SHOW_AXIS_TDEST        = 1,
+    parameter C_SHOW_AXIS_TUSER        = 1,
+@@ -3702,7 +3703,7 @@
+ 
+    input [C_MON_FIFO_DATA_WIDTH-1:0]      Data_In,
+    input                                  Data_Valid,
+-   input [6:0]                            Flag_Enable_Reg,    
++   input [8:0]                            Flag_Enable_Reg,    
+    input                                  Ext_Trig,
+    input                                  Ext_Trig_Stop,
+    input                                  Use_Ext_Trig_Log,
+@@ -3723,7 +3724,8 @@
+ //-------------------------------------------------------------------
+ localparam RST_ACTIVE = 1'b0;
+ localparam LOG_DATA_WIDTH = (C_AXI_PROTOCOL == "AXI4")?  
+-                            (4*C_AXI_ID_WIDTH + 16): (C_AXIS_TID_WIDTH +C_AXIS_TDEST_WIDTH + C_AXIS_TUSER_WIDTH);
++                            (2*C_AXI_ADDR_WIDTH + 4*C_AXI_ID_WIDTH + 16): 
++                            (C_AXIS_TID_WIDTH +C_AXIS_TDEST_WIDTH + C_AXIS_TUSER_WIDTH);
+ 
+ 
+ //-------------------------------------------------------------------
+@@ -3734,6 +3736,7 @@
+  reg                                Read_going_on;    
+  reg [LOG_DATA_WIDTH-1:0]           Log_Data_int; 
+  reg [LOG_DATA_WIDTH-1:0]           Log_Data_int1; 
++ reg [C_AXI_DATA_WIDTH*2-1:0]       Log_Data_aux;
+  reg [C_FLAG_WIDTH-1:0]             Flags;  
+  reg [C_FLAG_WIDTH-1:0]             Flags1;  
+  reg                                Ext_Trig_log_en;
+@@ -3743,8 +3746,10 @@
+  wire [1:0] Ext_Triggers_Sync;
+  wire Ext_Trig_Sync_Out;
+  wire Ext_Trig_Stop_Sync_Out;
+-    wire [C_AXI_ADDR_WIDTH-1:0] AWADDR;
+-    wire [C_AXI_ADDR_WIDTH-1:0] ARADDR; 
++ wire [C_AXI_ADDR_WIDTH-1:0] AWADDR;
++ wire [C_AXI_ADDR_WIDTH-1:0] ARADDR; 
++ wire [C_AXI_DATA_WIDTH-1:0] WDATA;
++ wire [C_AXI_DATA_WIDTH-1:0] RDATA;
+  wire AWVALID,ARVALID;
+ wire Rd_Addr_Lat_Flag,Wr_Addr_Lat_Flag;
+ //-------------------------------------------------------------------
+@@ -3847,15 +3852,22 @@
+     wire [C_AXI_ID_WIDTH-1:0] AWID   
+     = Data_In[((2*C_AXI_ADDR_WIDTH)+(C_AXI_DATA_WIDTH/8)+(4*C_AXI_ID_WIDTH)+41):((2*C_AXI_ADDR_WIDTH)+(C_AXI_DATA_WIDTH/8)+(3*C_AXI_ID_WIDTH)+42)];
+ 
++    //----- Read and Write Data Channel -----
++    assign RDATA = Data_In[((  C_AXI_DATA_WIDTH)+(2*C_AXI_ADDR_WIDTH)+(C_AXI_DATA_WIDTH/8)+(4*C_AXI_ID_WIDTH)+41):
++       ((2*C_AXI_ADDR_WIDTH)+(C_AXI_DATA_WIDTH/8)+(4*C_AXI_ID_WIDTH)+42)];
++    assign WDATA = Data_In[((2*C_AXI_DATA_WIDTH)+(2*C_AXI_ADDR_WIDTH)+(C_AXI_DATA_WIDTH/8)+(4*C_AXI_ID_WIDTH)+41):
++       ((C_AXI_DATA_WIDTH)+(2*C_AXI_ADDR_WIDTH)+(C_AXI_DATA_WIDTH/8)+(4*C_AXI_ID_WIDTH)+42)];
+ 
+     //-- Flags generation
+     assign Wr_Addr_Lat_Flag = AWREADY && AWVALID && Data_Valid;
+-    wire First_Write_Flag = WVALID && WREADY && (!Write_going_on) && Data_Valid;
+-    wire Last_Write_Flag  = WLAST && WVALID && WREADY && Data_Valid;
+-    wire Response_Flag    = BVALID && BREADY && Data_Valid;
++    wire   First_Write_Flag = WVALID && WREADY && (!Write_going_on) && Data_Valid;
++    wire   Mid_Write_Flag   = WVALID && WREADY && Data_Valid && Write_going_on && !WLAST;
++    wire   Last_Write_Flag  = WLAST && WVALID && WREADY && Data_Valid;
++    wire   Response_Flag    = BVALID && BREADY && Data_Valid;
+     assign Rd_Addr_Lat_Flag = ARREADY && ARVALID && Data_Valid;
+-    wire First_Read_Flag  = RVALID && RREADY && (!Read_going_on) && Data_Valid;
+-    wire Last_Read_Flag   = RLAST && RVALID && RREADY && Data_Valid;
++    wire   First_Read_Flag  = RVALID && RREADY && (!Read_going_on) && Data_Valid;
++    wire   Mid_Read_Flag    = RVALID && RREADY && Data_Valid && Read_going_on && !RLAST;
++    wire   Last_Read_Flag   = RLAST && RVALID && RREADY && Data_Valid;
+ 
+     //-- Write_going_on for First_Write_Flag generation
+     always @(posedge clk) begin 
+@@ -3900,9 +3912,9 @@
+   end
+   else begin
+     if (C_EN_AXI_DEBUG == 0 )
+-    Flags <= Flag_Enable_Reg & {Last_Read_Flag,First_Read_Flag,Rd_Addr_Lat_Flag,Response_Flag,Last_Write_Flag,First_Write_Flag,Wr_Addr_Lat_Flag};
++    Flags <= Flag_Enable_Reg & {Mid_Read_Flag,Mid_Write_Flag,Last_Read_Flag,First_Read_Flag,Rd_Addr_Lat_Flag,Response_Flag,Last_Write_Flag,First_Write_Flag,Wr_Addr_Lat_Flag};
+     else
+-    Flags <= Flag_Enable_Reg & {Last_Read_Flag,1'b0,Rd_Addr_Lat_Flag,Response_Flag,1'b0,1'b0,Wr_Addr_Lat_Flag};
++    Flags <= Flag_Enable_Reg & {Mid_Read_Flag,Mid_Write_Flag,Last_Read_Flag,1'b0,Rd_Addr_Lat_Flag,Response_Flag,1'b0,1'b0,Wr_Addr_Lat_Flag};
+   end
+ end 
+ 
+@@ -3911,9 +3923,11 @@
+     always @(posedge clk) begin
+        if (rst_n == RST_ACTIVE) begin
+            Log_Data_int <= 0;
++           Log_Data_aux <= 0;
+        end
+        else begin
+-           Log_Data_int <= {AWID, BID, ARID, RID, AWLEN, ARLEN};
++           Log_Data_aux <= {WDATA, RDATA};
++           Log_Data_int <= {AWADDR, ARADDR, AWID, BID, ARID, RID, AWLEN, ARLEN};
+        end
+     end 
+ 
+@@ -4062,18 +4076,30 @@
+    assign Log_Data = {AWADDR_d2,Log_Data_int1[15:8],Flags1[0],Flags1[3],ARADDR_d2,Log_Data_int1[7:0],Flags1[4],Flags1[6]};
+ end
+ // for performance trace purpose 
+-else if (C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_IDS == 1 && C_SHOW_AXI_LEN == 1) begin : GEN_LOGS_AXI4
++else if (C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 0 && C_SHOW_AXI_IDS == 1 && C_SHOW_AXI_LEN == 1) begin : GEN_LOGS_AXI4
+    assign Log_Data = {Log_Data_int,Flags};
+ end
+-else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_IDS == 1 && C_SHOW_AXI_LEN == 0) begin :GEN_SHOW_IDS
++else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 0 && C_SHOW_AXI_IDS == 1 && C_SHOW_AXI_LEN == 0) begin :GEN_SHOW_IDS
+    assign Log_Data = {Log_Data_int[LOG_DATA_WIDTH-1:16],Flags};
+ end
+-else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_IDS == 0 && C_SHOW_AXI_LEN == 1) begin :GEN_SHOW_LEN
++else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 0 && C_SHOW_AXI_IDS == 0 && C_SHOW_AXI_LEN == 1) begin :GEN_SHOW_LEN
+    assign Log_Data = {Log_Data_int[15:0],Flags};
+ end
+-else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_IDS == 0 && C_SHOW_AXI_LEN == 0) begin :GEN_NO_LOG_DATA
++else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 0 && C_SHOW_AXI_IDS == 0 && C_SHOW_AXI_LEN == 0) begin :GEN_NO_LOG_DATA
+    assign Log_Data = Flags;
+ end
++else if (C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 1 && C_SHOW_AXI_IDS == 1 && C_SHOW_AXI_LEN == 1) begin : GEN_LOGS_AXI4_AND_DATA
++   assign Log_Data = {Log_Data_aux,Log_Data_int,Flags};
++end
++else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 1 && C_SHOW_AXI_IDS == 1 && C_SHOW_AXI_LEN == 0) begin :GEN_SHOW_IDS_AND_DATA
++   assign Log_Data = {Log_Data_aux,Log_Data_int[LOG_DATA_WIDTH-1:16],Flags};
++end
++else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 1 && C_SHOW_AXI_IDS == 0 && C_SHOW_AXI_LEN == 1) begin :GEN_SHOW_LEN_AND_DATA
++   assign Log_Data = {Log_Data_aux,Log_Data_int[15:0],Flags};
++end
++else if(C_AXI_PROTOCOL == "AXI4" && C_SHOW_AXI_DATA == 1 && C_SHOW_AXI_IDS == 0 && C_SHOW_AXI_LEN == 0) begin :GEN_LOGS_DATA_ONLY
++   assign Log_Data = {Log_Data_aux,Flags};
++end
+ else if(C_AXI_PROTOCOL == "AXI4S" && C_SHOW_AXIS_TID == 1 && C_SHOW_AXIS_TDEST == 1 && C_SHOW_AXIS_TUSER == 1) 
+   begin : GEN_LOGS_AXI4S
+    assign Log_Data = {Log_Data_int,Flags};
+@@ -4991,7 +5017,7 @@
+    output     [31:0]                                 Range_Reg_9,    
+ 
+    // Event Log Registers - in axi clk domain
+-   output     [6:0]                                  Flag_Enable_Reg,    
++   output     [8:0]                                  Flag_Enable_Reg,    
+    output                                            SW_Data_Log_En, 
+    output     [2:0]                                  Ext_Event_Flag_En,   
+ 
+@@ -6655,7 +6681,7 @@
+ generate
+     if(C_ENABLE_EVENT_LOG == 1) begin :GEN_LOG_DATA_REG
+      
+-       reg [6:0]                          Flag_Enable_Reg_CDC;    
++       reg [8:0]                          Flag_Enable_Reg_CDC;    
+        reg                                SW_Data_Log_En_CDC; 
+        reg [2:0]                          Ext_Event_Flag_En_CDC;   
+        reg                                Global_Clk_Cnt_Ovf_En_int;
+@@ -6675,7 +6701,7 @@
+           end
+           else begin
+               if ((Event_Log_Set_Wr_En == 1'b1) && (Addr_3downto0_is_0x0 == 1'b1)) begin
+-                  Flag_Enable_Reg_CDC          <= Bus2IP_Data[6:0];
++                  Flag_Enable_Reg_CDC          <= Bus2IP_Data[8:0];
+                   SW_Data_Log_En_CDC           <= Bus2IP_Data[16];
+                   Ext_Event_Flag_En_CDC        <= Bus2IP_Data[19:17];
+                   Global_Clk_Cnt_Ovf_En_int    <= Bus2IP_Data[20];
+@@ -7134,7 +7160,7 @@
+            else if (Lat_Event_Log_Set_Rd_En == 1'b1) begin
+                if (Lat_Addr_3downto0_is_0x0 == 1'b1) begin
+                    IP2Bus_Data     <= {Metric_Cnt_Ovf_En,Sample_Metric_Cnt_Ovf_En,Global_Clk_Cnt_Ovf_En
+-                                     ,Ext_Event_Flag_En, SW_Data_Log_En, {9{1'b0}}, Flag_Enable_Reg};   
++                                     ,Ext_Event_Flag_En, SW_Data_Log_En, {7{1'b0}}, Flag_Enable_Reg};   
+                end
+                else if (Lat_Addr_3downto0_is_0x4 == 1'b1) begin
+                    IP2Bus_Data     <= SW_Data;   
+@@ -7969,20 +7995,23 @@
+ // Parameter Declaration
+ //-------------------------------------------------------------------
+ localparam RST_ACTIVE = 1'b0;
+-localparam TIME_DIFF_LOAD_VALUE = 16'h0001;
++localparam TIME_DIFF_COUNT_WIDTH = 30;
++localparam [TIME_DIFF_COUNT_WIDTH-1:0]
++  TIME_DIFF_ZERO = 0,
++  TIME_DIFF_ONE = 1;
+ 
+ //-------------------------------------------------------------------
+ // Signal Declaration
+ //-------------------------------------------------------------------
+ //wire
+-wire [15:0]                         Time_Diff;    
++wire [TIME_DIFF_COUNT_WIDTH-1:0]    Time_Diff;    
+ wire                                over_flow;    
+ //FIFO WIDTH-(16bit timestamp+1bit loopevent+1bitlog id)
+-wire [C_FIFO_AXIS_TDATA_WIDTH-19:0] mon_wr_data_int;
++wire [C_FIFO_AXIS_TDATA_WIDTH-TIME_DIFF_COUNT_WIDTH-2-1:0] mon_wr_data_int;
+ 
+ //reg
+ reg                                 Mon_Wr_En;    
+-reg [C_FIFO_AXIS_TDATA_WIDTH-19:0]  Mon_Wr_Data;
++reg [C_FIFO_AXIS_TDATA_WIDTH-TIME_DIFF_COUNT_WIDTH-2-1:0]  Mon_Wr_Data;
+ reg                                 Event_Log_En_D1;    
+ reg                                 over_flow_cap;   
+ reg [C_FIFO_AXIS_TDATA_WIDTH-1:0]   Fifo_Reg_Data; 
+@@ -8097,13 +8126,13 @@
+ axi_perf_mon_v5_0_24_counter 
+   #(
+        .C_FAMILY             (C_FAMILY),
+-       .C_NUM_BITS           (16),
++       .C_NUM_BITS           (TIME_DIFF_COUNT_WIDTH),
+        .COUNTER_LOAD_VALUE   (32'h00000000)
+    ) counter_inst 
+    (
+        .clk                  (clk),
+        .rst_n                (rst_n),
+-       .Load_In              (TIME_DIFF_LOAD_VALUE),
++       .Load_In              (TIME_DIFF_ONE),
+        .Count_Enable         (Event_Log_En),
+        .Count_Load           (Count_Reset),
+        .Count_Down           (1'b0),
+@@ -8173,7 +8202,7 @@
+                Fifo_Wr_En     <= 1'b1;
+                Fifo_Wr_Data   <= { 6'b0, SW_Data, over_flow_cap, Time_Diff,1'b1};
+                if(Mon_Wr_En == 1'b1) begin
+-                 Fifo_Reg_Data  <= { Mon_Wr_Data, over_flow_cap, 16'b0,1'b0}; //Time diff 0
++                 Fifo_Reg_Data  <= { Mon_Wr_Data, over_flow_cap, TIME_DIFF_ZERO,1'b0}; //Time diff 0
+                  Fifo_Reg_Wr_En <= 1'b1;
+                end
+                else begin
+@@ -8185,7 +8214,7 @@
+                Fifo_Wr_Data <= Fifo_Reg_Data;
+                Fifo_Wr_En   <= 1'b1; 
+                if(Mon_Wr_En == 1'b1) begin
+-                 Fifo_Reg_Data  <= { Mon_Wr_Data, over_flow_cap, 16'b0,1'b0}; //Time diff 0
++                 Fifo_Reg_Data  <= { Mon_Wr_Data, over_flow_cap, TIME_DIFF_ZERO,1'b0}; //Time diff 0
+                  Fifo_Reg_Wr_En <= 1'b1;
+                end
+                else begin
+@@ -13237,6 +13266,7 @@
+     parameter C_FIFO_AXIS_SYNC                = 0,   // 1=Sync FIFO, 0=ASYNC FIFO
+     parameter C_SHOW_AXI_IDS                  = 1,
+     parameter C_SHOW_AXI_LEN                  = 1,
++    parameter C_SHOW_AXI_DATA                 = 1,
+     parameter C_SHOW_AXIS_TID                 = 1,
+     parameter C_SHOW_AXIS_TDEST               = 1,
+     parameter C_SHOW_AXIS_TUSER               = 1,
+@@ -13826,55 +13856,78 @@
+   localparam C_SLOT_N_FLAG_WIDTH = 7;
+  
+   localparam C_MON_FIFO_DWIDTH_S0 = (C_SLOT_0_AXI_PROTOCOL == "AXI4") 
+-             ?(C_SLOT_0_AXI_ID_WIDTH*4 +C_SLOT_0_AXI_ADDR_WIDTH*2 +(C_SLOT_0_AXI_DATA_WIDTH/8)+42)
++             ?(C_SLOT_0_AXI_DATA_WIDTH*2 + C_SLOT_0_AXI_ID_WIDTH*4 +C_SLOT_0_AXI_ADDR_WIDTH*2 +(C_SLOT_0_AXI_DATA_WIDTH/8)+42)
+                                     :((C_SLOT_0_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_0_AXIS_TID_WIDTH
+                                      + C_SLOT_0_AXIS_TDEST_WIDTH+C_SLOT_0_AXIS_TUSER_WIDTH+3);
+   localparam C_MON_FIFO_DWIDTH_S1 = (C_SLOT_1_AXI_PROTOCOL == "AXI4") 
+-             ?(C_SLOT_1_AXI_ID_WIDTH*4 +C_SLOT_1_AXI_ADDR_WIDTH*2 +(C_SLOT_1_AXI_DATA_WIDTH/8)+42)
++             ?(C_SLOT_1_AXI_DATA_WIDTH*2 + C_SLOT_1_AXI_ID_WIDTH*4 +C_SLOT_1_AXI_ADDR_WIDTH*2 +(C_SLOT_1_AXI_DATA_WIDTH/8)+42)
+                                     :((C_SLOT_1_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_1_AXIS_TID_WIDTH
+                                     +C_SLOT_1_AXIS_TDEST_WIDTH+C_SLOT_1_AXIS_TUSER_WIDTH+3);
+   localparam C_MON_FIFO_DWIDTH_S2 = (C_SLOT_2_AXI_PROTOCOL == "AXI4") 
+-             ?(C_SLOT_2_AXI_ID_WIDTH*4 +C_SLOT_2_AXI_ADDR_WIDTH*2 +(C_SLOT_2_AXI_DATA_WIDTH/8)+42)
++             ?(C_SLOT_2_AXI_DATA_WIDTH*2 + C_SLOT_2_AXI_ID_WIDTH*4 +C_SLOT_2_AXI_ADDR_WIDTH*2 +(C_SLOT_2_AXI_DATA_WIDTH/8)+42)
+                                     :((C_SLOT_2_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_2_AXIS_TID_WIDTH
+                                     +C_SLOT_2_AXIS_TDEST_WIDTH+C_SLOT_2_AXIS_TUSER_WIDTH+3);
+   localparam C_MON_FIFO_DWIDTH_S3 = (C_SLOT_3_AXI_PROTOCOL == "AXI4") 
+-             ?C_SLOT_3_AXI_ID_WIDTH*4 +C_SLOT_3_AXI_ADDR_WIDTH*2 +(C_SLOT_3_AXI_DATA_WIDTH/8)+42
+-                                    :(C_SLOT_3_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_3_AXIS_TID_WIDTH
++             ?(C_SLOT_3_AXI_DATA_WIDTH*2 + C_SLOT_3_AXI_ID_WIDTH*4 +C_SLOT_3_AXI_ADDR_WIDTH*2 +(C_SLOT_3_AXI_DATA_WIDTH/8)+42)
++                                    :(C_SLOT_3_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_3_AXIS_TID_WIDTH 
+                                     +C_SLOT_3_AXIS_TDEST_WIDTH + C_SLOT_3_AXIS_TUSER_WIDTH+3;
+   localparam C_MON_FIFO_DWIDTH_S4 = (C_SLOT_4_AXI_PROTOCOL == "AXI4") 
+-            ?(C_SLOT_4_AXI_ID_WIDTH*4 +C_SLOT_4_AXI_ADDR_WIDTH*2 +(C_SLOT_4_AXI_DATA_WIDTH/8)+42)
++             ?(C_SLOT_4_AXI_DATA_WIDTH*2 + C_SLOT_4_AXI_ID_WIDTH*4 +C_SLOT_4_AXI_ADDR_WIDTH*2 +(C_SLOT_4_AXI_DATA_WIDTH/8)+42)
+                                     :((C_SLOT_4_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_4_AXIS_TID_WIDTH
+                                     + C_SLOT_4_AXIS_TDEST_WIDTH+C_SLOT_4_AXIS_TUSER_WIDTH+3);
+   localparam C_MON_FIFO_DWIDTH_S5 = (C_SLOT_5_AXI_PROTOCOL == "AXI4") 
+-            ?(C_SLOT_5_AXI_ID_WIDTH*4 +C_SLOT_5_AXI_ADDR_WIDTH*2 +(C_SLOT_5_AXI_DATA_WIDTH/8)+42)
++             ?(C_SLOT_5_AXI_DATA_WIDTH*2 + C_SLOT_5_AXI_ID_WIDTH*4 +C_SLOT_5_AXI_ADDR_WIDTH*2 +(C_SLOT_5_AXI_DATA_WIDTH/8)+42)
+                                     :((C_SLOT_5_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_5_AXIS_TID_WIDTH
+                                     +C_SLOT_5_AXIS_TDEST_WIDTH+C_SLOT_5_AXIS_TUSER_WIDTH+3);
+   localparam C_MON_FIFO_DWIDTH_S6 = (C_SLOT_6_AXI_PROTOCOL == "AXI4") 
+-           ?(C_SLOT_6_AXI_ID_WIDTH*4 +C_SLOT_6_AXI_ADDR_WIDTH*2 +(C_SLOT_6_AXI_DATA_WIDTH/8)+42)
++             ?(C_SLOT_6_AXI_DATA_WIDTH*2 + C_SLOT_6_AXI_ID_WIDTH*4 +C_SLOT_6_AXI_ADDR_WIDTH*2 +(C_SLOT_6_AXI_DATA_WIDTH/8)+42)
+                                     :((C_SLOT_6_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_6_AXIS_TID_WIDTH
+                                     +C_SLOT_6_AXIS_TDEST_WIDTH+C_SLOT_6_AXIS_TUSER_WIDTH+3);
+   localparam C_MON_FIFO_DWIDTH_S7 = (C_SLOT_7_AXI_PROTOCOL == "AXI4") 
+-           ?C_SLOT_7_AXI_ID_WIDTH*4 +C_SLOT_7_AXI_ADDR_WIDTH*2 +(C_SLOT_7_AXI_DATA_WIDTH/8)+42
++             ?(C_SLOT_7_AXI_DATA_WIDTH*2 + C_SLOT_7_AXI_ID_WIDTH*4 +C_SLOT_7_AXI_ADDR_WIDTH*2 +(C_SLOT_7_AXI_DATA_WIDTH/8)+42)
+                                     :(C_SLOT_7_AXIS_TDATA_WIDTH/8)*2 + C_SLOT_7_AXIS_TID_WIDTH
+                                     +C_SLOT_7_AXIS_TDEST_WIDTH + C_SLOT_7_AXIS_TUSER_WIDTH+3;
+   
+   //-- Flag widths for each monitor slot  
+-  localparam C_SLOT_0_FLAG_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_1_FLAG_WIDTH = (C_SLOT_1_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_2_FLAG_WIDTH = (C_SLOT_2_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_3_FLAG_WIDTH = (C_SLOT_3_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_4_FLAG_WIDTH = (C_SLOT_4_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_5_FLAG_WIDTH = (C_SLOT_5_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_6_FLAG_WIDTH = (C_SLOT_6_AXI_PROTOCOL == "AXI4") ? 7 : 2;
+-  localparam C_SLOT_7_FLAG_WIDTH = (C_SLOT_7_AXI_PROTOCOL == "AXI4") ? 7 : 2;
++  localparam C_SLOT_0_FLAG_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_1_FLAG_WIDTH = (C_SLOT_1_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_2_FLAG_WIDTH = (C_SLOT_2_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_3_FLAG_WIDTH = (C_SLOT_3_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_4_FLAG_WIDTH = (C_SLOT_4_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_5_FLAG_WIDTH = (C_SLOT_5_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_6_FLAG_WIDTH = (C_SLOT_6_AXI_PROTOCOL == "AXI4") ? 9 : 2;
++  localparam C_SLOT_7_FLAG_WIDTH = (C_SLOT_7_AXI_PROTOCOL == "AXI4") ? 9 : 2;
+ 
+   //-- Log Data widths for each monitor slot  
+-   localparam C_SLOT_0_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? (C_SLOT_0_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_0_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))): ((C_SLOT_0_AXIS_TID_WIDTH * C_SHOW_AXIS_TID) + (C_SLOT_0_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_0_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
+-  localparam C_SLOT_1_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? (C_SLOT_1_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_1_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : ((C_SLOT_1_AXIS_TID_WIDTH*C_SHOW_AXIS_TID) + (C_SLOT_1_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_1_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
+-  localparam C_SLOT_2_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? (C_SLOT_2_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_2_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : ((C_SLOT_2_AXIS_TID_WIDTH*C_SHOW_AXIS_TID) + (C_SLOT_2_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_2_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
+-  localparam C_SLOT_3_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? (C_SLOT_3_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_3_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : (C_SLOT_3_AXIS_TID_WIDTH*C_SHOW_AXIS_TID  + C_SLOT_3_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST + C_SLOT_3_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER);  
+-  localparam C_SLOT_4_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? (C_SLOT_4_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_4_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : ((C_SLOT_4_AXIS_TID_WIDTH*C_SHOW_AXIS_TID)  + (C_SLOT_4_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_4_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
+-  localparam C_SLOT_5_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? (C_SLOT_5_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_5_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : ((C_SLOT_5_AXIS_TID_WIDTH*C_SHOW_AXIS_TID) + (C_SLOT_5_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) +(C_SLOT_5_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
++   localparam C_SLOT_0_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? 
++      ((C_EN_AXI_DEBUG) ? (C_SLOT_0_AXI_ADDR_WIDTH*2 +16+4+4) : 
++      ((2*C_SLOT_0_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_0_AXI_ADDR_WIDTH) + (4*C_SLOT_0_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))): 
++      ((C_SLOT_0_AXIS_TID_WIDTH * C_SHOW_AXIS_TID) + (C_SLOT_0_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_0_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
++
++   localparam C_SLOT_1_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? 
++      ((C_EN_AXI_DEBUG) ? (C_SLOT_1_AXI_ADDR_WIDTH*2 +16+4+4) : 
++      ((2*C_SLOT_1_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_1_AXI_ADDR_WIDTH) + (4*C_SLOT_1_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : 
++      ((C_SLOT_1_AXIS_TID_WIDTH*C_SHOW_AXIS_TID) + (C_SLOT_1_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_1_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
++
++   localparam C_SLOT_2_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? 
++      ((C_EN_AXI_DEBUG) ? (C_SLOT_2_AXI_ADDR_WIDTH*2 +16+4+4) : 
++      ((2*C_SLOT_2_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_2_AXI_ADDR_WIDTH) + (4*C_SLOT_2_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : 
++      ((C_SLOT_2_AXIS_TID_WIDTH*C_SHOW_AXIS_TID) + (C_SLOT_2_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_2_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
++
++   localparam C_SLOT_3_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? 
++      ((C_EN_AXI_DEBUG) ? (C_SLOT_3_AXI_ADDR_WIDTH*2 +16+4+4) :  
++      ((2*C_SLOT_3_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_3_AXI_ADDR_WIDTH) + (4*C_SLOT_3_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : 
++      (C_SLOT_3_AXIS_TID_WIDTH*C_SHOW_AXIS_TID  + C_SLOT_3_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST + C_SLOT_3_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER);  
++
++   localparam C_SLOT_4_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? 
++      ((2*C_SLOT_4_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_4_AXI_ADDR_WIDTH) + C_SLOT_4_AXI_ADDR_WIDTH*2 +16+4+4) : ((4*C_SLOT_4_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : 
++      ((C_SLOT_4_AXIS_TID_WIDTH*C_SHOW_AXIS_TID)  + (C_SLOT_4_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + (C_SLOT_4_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
++
++   localparam C_SLOT_5_LOG_DATA_WIDTH = (C_SLOT_0_AXI_PROTOCOL == "AXI4")? ((C_EN_AXI_DEBUG) ? 
++      (C_SLOT_5_AXI_ADDR_WIDTH*2 +16+4+4) : 
++      ((2*C_SLOT_5_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_5_AXI_ADDR_WIDTH) + (4*C_SLOT_5_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN))) : 
++      ((C_SLOT_5_AXIS_TID_WIDTH*C_SHOW_AXIS_TID) + (C_SLOT_5_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) +(C_SLOT_5_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));  
++
+   //localparam C_SLOT_6_LOG_DATA_WIDTH = (4*C_SLOT_6_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN);  
+   //localparam C_SLOT_7_LOG_DATA_WIDTH = (4*C_SLOT_7_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN);  
+ 
+@@ -13909,12 +13962,12 @@
+ //         (C_SLOT_5_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));
+ // 
+  localparam C_SLOT_6_LOG_DATA_WIDTH = (C_SLOT_6_AXI_PROTOCOL == "AXI4")  
+-                                       ? ((4*C_SLOT_6_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN)):
++         ? ((2*C_SLOT_6_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_6_AXI_ADDR_WIDTH) + (4*C_SLOT_6_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN)):
+          ((C_SLOT_6_AXIS_TID_WIDTH*C_SHOW_AXIS_TID)  + (C_SLOT_6_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + 
+          (C_SLOT_6_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));
+                                         
+  localparam C_SLOT_7_LOG_DATA_WIDTH = (C_SLOT_7_AXI_PROTOCOL == "AXI4")  
+-                                       ? ((4*C_SLOT_7_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN)):
++         ? ((2*C_SLOT_7_AXI_DATA_WIDTH*C_SHOW_AXI_DATA + 2*C_SLOT_7_AXI_ADDR_WIDTH) + (4*C_SLOT_7_AXI_ID_WIDTH*C_SHOW_AXI_IDS) + (16*C_SHOW_AXI_LEN)):
+          ((C_SLOT_7_AXIS_TID_WIDTH*C_SHOW_AXIS_TID)  + (C_SLOT_7_AXIS_TDEST_WIDTH*C_SHOW_AXIS_TDEST) + 
+          (C_SLOT_7_AXIS_TUSER_WIDTH*C_SHOW_AXIS_TUSER));
+  
+@@ -14016,7 +14069,7 @@
+   wire [31:0]                          Range_Reg_7;    
+   wire [31:0]                          Range_Reg_8;    
+   wire [31:0]                          Range_Reg_9;    
+-  wire [6:0]                           Flag_Enable_Reg;    
++  wire [8:0]                           Flag_Enable_Reg;    
+   wire                                 SW_Data_Log_En;    
+   wire [C_SW_SYNC_DATA_WIDTH-1:0]      SW_Data;    
+   wire                                 SW_Data_Wr_En;    
+@@ -14343,7 +14396,8 @@
+   generate if(C_SLOT_0_AXI_PROTOCOL == "AXI4") begin :GEN_SLOT_0_AXI4
+     assign SLOT_0_clk    = slot_0_axi_aclk;
+     assign SLOT_0_Arst_n = slot_0_axi_aresetn;
+-    assign Slot_0_Data_In = {slot_0_axi_awid,slot_0_axi_awaddr,slot_0_axi_awlen,slot_0_axi_awsize,
++    assign Slot_0_Data_In = {slot_0_axi_wdata, slot_0_axi_rdata, //write data, read data
++                            slot_0_axi_awid,slot_0_axi_awaddr,slot_0_axi_awlen,slot_0_axi_awsize,
+                             slot_0_axi_awburst,slot_0_axi_awvalid,slot_0_axi_awready,
+                             slot_0_axi_wstrb,slot_0_axi_wlast,slot_0_axi_wvalid,slot_0_axi_wready,
+                             slot_0_axi_bid,slot_0_axi_bresp,slot_0_axi_bvalid,slot_0_axi_bready,
+@@ -14363,7 +14417,8 @@
+   generate if(C_SLOT_1_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 1) begin :GEN_SLOT_1_AXI4
+     assign SLOT_1_clk    = slot_1_axi_aclk;
+     assign SLOT_1_Arst_n = slot_1_axi_aresetn;
+-    assign Slot_1_Data_In = {slot_1_axi_awid,slot_1_axi_awaddr,slot_1_axi_awlen,slot_1_axi_awsize,
++    assign Slot_1_Data_In = {slot_1_axi_wdata, slot_1_axi_rdata, //write data, read data
++                            slot_1_axi_awid,slot_1_axi_awaddr,slot_1_axi_awlen,slot_1_axi_awsize,
+                             slot_1_axi_awburst,slot_1_axi_awvalid,slot_1_axi_awready,
+                             slot_1_axi_wstrb,slot_1_axi_wlast,slot_1_axi_wvalid,slot_1_axi_wready,
+                             slot_1_axi_bid,slot_1_axi_bresp,slot_1_axi_bvalid,slot_1_axi_bready,
+@@ -14384,7 +14439,8 @@
+   generate if(C_SLOT_2_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 2) begin :GEN_SLOT_2_AXI4
+     assign SLOT_2_clk    = slot_2_axi_aclk;
+     assign SLOT_2_Arst_n = slot_2_axi_aresetn;
+-    assign Slot_2_Data_In = {slot_2_axi_awid,slot_2_axi_awaddr,slot_2_axi_awlen,slot_2_axi_awsize,
++    assign Slot_2_Data_In = {slot_2_axi_wdata, slot_2_axi_rdata, //write data, read data
++                            slot_2_axi_awid,slot_2_axi_awaddr,slot_2_axi_awlen,slot_2_axi_awsize,
+                             slot_2_axi_awburst,slot_2_axi_awvalid,slot_2_axi_awready,
+                             slot_2_axi_wstrb,slot_2_axi_wlast,slot_2_axi_wvalid,slot_2_axi_wready,
+                             slot_2_axi_bid,slot_2_axi_bresp,slot_2_axi_bvalid,slot_2_axi_bready,
+@@ -14404,7 +14460,8 @@
+   generate if(C_SLOT_3_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 3) begin :GEN_SLOT_3_AXI4
+     assign SLOT_3_clk    = slot_3_axi_aclk;
+     assign SLOT_3_Arst_n = slot_3_axi_aresetn;
+-    assign Slot_3_Data_In = {slot_3_axi_awid,slot_3_axi_awaddr,slot_3_axi_awlen,slot_3_axi_awsize,
++    assign Slot_3_Data_In = {slot_3_axi_wdata, slot_3_axi_rdata, //write data, read data
++                            slot_3_axi_awid,slot_3_axi_awaddr,slot_3_axi_awlen,slot_3_axi_awsize,
+                             slot_3_axi_awburst,slot_3_axi_awvalid,slot_3_axi_awready,
+                             slot_3_axi_wstrb,slot_3_axi_wlast,slot_3_axi_wvalid,slot_3_axi_wready,
+                             slot_3_axi_bid,slot_3_axi_bresp,slot_3_axi_bvalid,slot_3_axi_bready,
+@@ -14425,7 +14482,8 @@
+   generate if(C_SLOT_4_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 4) begin :GEN_SLOT_4_AXI4
+     assign SLOT_4_clk    = slot_4_axi_aclk;
+     assign SLOT_4_Arst_n = slot_4_axi_aresetn;
+-    assign Slot_4_Data_In = {slot_4_axi_awid,slot_4_axi_awaddr,slot_4_axi_awlen,slot_4_axi_awsize,
++    assign Slot_4_Data_In = {slot_4_axi_wdata, slot_4_axi_rdata, //write data, read data
++                            slot_4_axi_awid,slot_4_axi_awaddr,slot_4_axi_awlen,slot_4_axi_awsize,
+                             slot_4_axi_awburst,slot_4_axi_awvalid,slot_4_axi_awready,
+                             slot_4_axi_wstrb,slot_4_axi_wlast,slot_4_axi_wvalid,slot_4_axi_wready,
+                             slot_4_axi_bid,slot_4_axi_bresp,slot_4_axi_bvalid,slot_4_axi_bready,
+@@ -14445,7 +14503,8 @@
+   generate if(C_SLOT_5_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 5) begin :GEN_SLOT_5_AXI4
+     assign SLOT_5_clk    = slot_5_axi_aclk;
+     assign SLOT_5_Arst_n = slot_5_axi_aresetn;
+-    assign Slot_5_Data_In = {slot_5_axi_awid,slot_5_axi_awaddr,slot_5_axi_awlen,slot_5_axi_awsize,
++    assign Slot_5_Data_In = {slot_5_axi_wdata, slot_5_axi_rdata, //write data, read data
++                            slot_5_axi_awid,slot_5_axi_awaddr,slot_5_axi_awlen,slot_5_axi_awsize,
+                             slot_5_axi_awburst,slot_5_axi_awvalid,slot_5_axi_awready,
+                             slot_5_axi_wstrb,slot_5_axi_wlast,slot_5_axi_wvalid,slot_5_axi_wready,
+                             slot_5_axi_bid,slot_5_axi_bresp,slot_5_axi_bvalid,slot_5_axi_bready,
+@@ -14466,7 +14525,8 @@
+   generate if(C_SLOT_6_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 6) begin :GEN_SLOT_6_AXI4
+     assign SLOT_6_clk    = slot_6_axi_aclk;
+     assign SLOT_6_Arst_n = slot_6_axi_aresetn;
+-    assign Slot_6_Data_In = {slot_6_axi_awid,slot_6_axi_awaddr,slot_6_axi_awlen,slot_6_axi_awsize,
++    assign Slot_6_Data_In = {slot_6_axi_wdata, slot_6_axi_rdata, //write data, read data
++                            slot_6_axi_awid,slot_6_axi_awaddr,slot_6_axi_awlen,slot_6_axi_awsize,
+                             slot_6_axi_awburst,slot_6_axi_awvalid,slot_6_axi_awready,
+                             slot_6_axi_wstrb,slot_6_axi_wlast,slot_6_axi_wvalid,slot_6_axi_wready,
+                             slot_6_axi_bid,slot_6_axi_bresp,slot_6_axi_bvalid,slot_6_axi_bready,
+@@ -14488,7 +14548,8 @@
+   generate if(C_SLOT_7_AXI_PROTOCOL == "AXI4" && C_NUM_MONITOR_SLOTS > 7) begin :GEN_SLOT_7_AXI4
+     assign SLOT_7_clk    = slot_7_axi_aclk;
+     assign SLOT_7_Arst_n = slot_7_axi_aresetn;
+-    assign Slot_7_Data_In = {slot_7_axi_awid,slot_7_axi_awaddr,slot_7_axi_awlen,slot_7_axi_awsize,
++    assign Slot_7_Data_In = {slot_7_axi_wdata, slot_7_axi_rdata, //write data, read data
++                            slot_7_axi_awid,slot_7_axi_awaddr,slot_7_axi_awlen,slot_7_axi_awsize,
+                             slot_7_axi_awburst,slot_7_axi_awvalid,slot_7_axi_awready,
+                             slot_7_axi_wstrb,slot_7_axi_wlast,slot_7_axi_wvalid,slot_7_axi_wready,
+                             slot_7_axi_bid,slot_7_axi_bresp,slot_7_axi_bvalid,slot_7_axi_bready,
+@@ -15004,6 +15065,7 @@
+        .C_AXIS_TUSER_WIDTH        (C_SLOT_0_AXIS_TUSER_WIDTH),
+        .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+        .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++       .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+        .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+        .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+        .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -15148,7 +15210,7 @@
+          .C_AXI_PROTOCOL            (C_SLOT_0_AXI_PROTOCOL), 
+          .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS)
+       )
+-		triggerMarker_slot0 (
++      triggerMarker_slot0 (
+ 			    // Outputs
+ 			    .Log_Data_Marked	(Slot_0_Log_Marked),
+ 			    .Log_en_out		(Slot_0_Log_En_Marked),
+@@ -15331,6 +15393,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_1_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -15557,6 +15620,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_2_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -15783,6 +15847,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_3_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -16009,6 +16074,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_4_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -16235,6 +16301,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_5_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -16462,6 +16529,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_6_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -16655,6 +16723,7 @@
+            .C_AXIS_TUSER_WIDTH        (C_SLOT_7_AXIS_TUSER_WIDTH),
+            .C_SHOW_AXI_IDS            (C_SHOW_AXI_IDS),
+            .C_SHOW_AXI_LEN            (C_SHOW_AXI_LEN),
++           .C_SHOW_AXI_DATA           (C_SHOW_AXI_DATA),
+            .C_SHOW_AXIS_TID           (C_SHOW_AXIS_TID),
+            .C_SHOW_AXIS_TUSER         (C_SHOW_AXIS_TUSER),
+            .C_SHOW_AXIS_TDEST         (C_SHOW_AXIS_TDEST), 
+@@ -24544,6 +24613,7 @@
+     parameter C_FIFO_AXIS_SYNC                = 0,  // 1=Sync FIFO, 0=ASYNC FIFO
+     parameter C_SHOW_AXI_IDS                  = 0,
+     parameter C_SHOW_AXI_LEN                  = 0,
++    parameter C_SHOW_AXI_DATA                 = 0,
+     parameter C_SHOW_AXIS_TID                 = 0,
+     parameter C_SHOW_AXIS_TDEST               = 0,
+     parameter C_SHOW_AXIS_TUSER               = 0,
+@@ -25397,6 +25467,7 @@
+     .C_FIFO_AXIS_SYNC              (C_FIFO_AXIS_SYNC), 
+     .C_SHOW_AXI_IDS                (C_SHOW_AXI_IDS),
+     .C_SHOW_AXI_LEN                (C_SHOW_AXI_LEN),
++    .C_SHOW_AXI_DATA               (C_SHOW_AXI_DATA),
+     .C_SHOW_AXIS_TID               (C_SHOW_AXIS_TID),
+     .C_SHOW_AXIS_TDEST             (C_SHOW_AXIS_TDEST),
+     .C_SHOW_AXIS_TUSER             (C_SHOW_AXIS_TUSER),
+diff -Naur -x Makefile -x patch axi_perf_mon_v5_0/xgui/axi_perf_mon_v5_0.tcl xilinx.com_user_axi_perf_mon_5.0/xgui/axi_perf_mon_v5_0.tcl
+--- axi_perf_mon_v5_0/xgui/axi_perf_mon_v5_0.tcl	2018-06-15 03:56:16.000000000 +0000
++++ xilinx.com_user_axi_perf_mon_5.0/xgui/axi_perf_mon_v5_0.tcl	2020-01-09 00:42:35.593166100 +0000
+@@ -190,6 +190,8 @@
+         set_property tooltip "Enabling captures the AXI4 Interface slots AWID, BID, ARID and RID signals into the Event Log data" $C_SHOW_AXI_IDS
+         set C_SHOW_AXI_LEN [ipgui::add_param $IPINST -parent $tabgroup5 -name C_SHOW_AXI_LEN -widget checkBox]
+         set_property tooltip "Enabling captures the AXI4 Interface slots AWLEN, ARLEN signals into the Event Log data" $C_SHOW_AXI_LEN
++        set C_SHOW_AXI_DATA [ipgui::add_param $IPINST -parent $tabgroup5 -name C_SHOW_AXI_DATA -widget checkBox]
++        set_property tooltip "Enabling captures the AXI4 Interface slots RDATA and WDATA signals into the Event Log data" $C_SHOW_AXI_DATA
+ 	ipgui::add_row $IPINST -parent $tabgroup5
+ 	ipgui::add_row $IPINST -parent $tabgroup5
+         set C_EN_EXT_EVENTS_FLAG [ipgui::add_param $IPINST -parent $tabgroup5 -name C_EN_EXT_EVENTS_FLAG -widget checkBox]
+@@ -211,6 +213,7 @@
+ 		
+ 	set_property display_name "Enable ID's In Log Data" $C_SHOW_AXI_IDS
+ 	set_property display_name "Enable Transaction Length in Log Data" $C_SHOW_AXI_LEN
++	set_property display_name "Enable Read and Write Data Fields in Log Data" $C_SHOW_AXI_DATA
+ 	set_property display_name "Enable TDEST in Log Data" $C_SHOW_AXIS_TDEST
+ 	set_property display_name "Enable TID In Log Data" $C_SHOW_AXIS_TID
+ 	set_property display_name "Enable TUSER In Log Data" $C_SHOW_AXIS_TUSER
+@@ -235,7 +238,7 @@
+ 		ipgui::add_row $IPINST -parent $SlotPage$sync
+ 		set C_SLOT_0_AXI_DATA_WIDTH [ipgui::add_param $IPINST -parent $SlotPage$sync -name C_SLOT_$sync_AXI_DATA_WIDTH -widget comboBox]
+ 		ipgui::add_row $IPINST -parent $SlotPage$sync
+-		set C_SLOT_0_AXI_ADDR_WIDTH [ipgui::add_param $IPINST -parent $SlotPage$sync -name C_SLOT_$sync_AXI_ADDR_WIDTH]
++		set C_SLOT_0_AXI_ADDR_WIDTH [ipgui::add_param $IPINST -parent $SlotPage$sync -name C_SLOT_$sync_AXI_ADDR_WIDTH -widget comboBox]
+ 		} 0
+ 	}
+ }
+@@ -823,6 +826,13 @@
+ 
+ }
+ 
++proc validate_PARAM_VALUE.C_SHOW_AXI_DATA { PARAM_VALUE.C_SHOW_AXI_DATA} {
++
++	# Procedure called to validate C_SHOW_AXI_DATA
++	return true
++
++}
++
+ proc validate_PARAM_VALUE.C_SLOT_2_AXIS_TUSER_WIDTH { PARAM_VALUE.C_SLOT_2_AXIS_TUSER_WIDTH} {
+ 
+ 	# Procedure called to validate C_SLOT_2_AXIS_TUSER_WIDTH
+@@ -1442,7 +1452,14 @@
+   PARAM_VALUE.C_SLOT_2_AXI_ADDR_WIDTH
+   PARAM_VALUE.C_SLOT_3_AXI_ADDR_WIDTH
+   PARAM_VALUE.C_SLOT_4_AXI_ADDR_WIDTH
+-  PARAM_VALUE.C_SLOT_5_AXI_ADDR_WIDTH} {
++  PARAM_VALUE.C_SLOT_5_AXI_ADDR_WIDTH
++  PARAM_VALUE.C_SHOW_AXI_DATA
++  PARAM_VALUE.C_SLOT_0_AXI_DATA_WIDTH
++  PARAM_VALUE.C_SLOT_1_AXI_DATA_WIDTH
++  PARAM_VALUE.C_SLOT_2_AXI_DATA_WIDTH
++  PARAM_VALUE.C_SLOT_3_AXI_DATA_WIDTH
++  PARAM_VALUE.C_SLOT_4_AXI_DATA_WIDTH
++  PARAM_VALUE.C_SLOT_5_AXI_DATA_WIDTH} {
+ 
+ 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
+         set s0_a_w [ get_property value ${PARAM_VALUE.C_SLOT_0_AXI_ADDR_WIDTH} ]
+@@ -1451,6 +1468,12 @@
+         set s3_a_w [ get_property value ${PARAM_VALUE.C_SLOT_3_AXI_ADDR_WIDTH} ]
+         set s4_a_w [ get_property value ${PARAM_VALUE.C_SLOT_4_AXI_ADDR_WIDTH} ]
+         set s5_a_w [ get_property value ${PARAM_VALUE.C_SLOT_5_AXI_ADDR_WIDTH} ]
++        set s0_d_w [ get_property value ${PARAM_VALUE.C_SLOT_0_AXI_DATA_WIDTH} ]
++        set s1_d_w [ get_property value ${PARAM_VALUE.C_SLOT_1_AXI_DATA_WIDTH} ]
++        set s2_d_w [ get_property value ${PARAM_VALUE.C_SLOT_2_AXI_DATA_WIDTH} ]
++        set s3_d_w [ get_property value ${PARAM_VALUE.C_SLOT_3_AXI_DATA_WIDTH} ]
++        set s4_d_w [ get_property value ${PARAM_VALUE.C_SLOT_4_AXI_DATA_WIDTH} ]
++        set s5_d_w [ get_property value ${PARAM_VALUE.C_SLOT_5_AXI_DATA_WIDTH} ]
+         set axi_debug [ get_property value ${PARAM_VALUE.C_EN_AXI_DEBUG} ]
+         set en_trigger [ get_property value ${PARAM_VALUE.C_EN_TRIGGER} ]
+         if { $axi_debug == 1 || $en_trigger == 1} {
+@@ -1461,6 +1484,7 @@
+         set a [ get_property value ${PARAM_VALUE.C_NUM_MONITOR_SLOTS} ]
+         set show_id [ get_property value ${PARAM_VALUE.C_SHOW_AXI_IDS} ]
+         set show_len [ get_property value ${PARAM_VALUE.C_SHOW_AXI_LEN} ]
++        set show_data [ get_property value ${PARAM_VALUE.C_SHOW_AXI_DATA} ]
+         set show_tid [ get_property value ${PARAM_VALUE.C_SHOW_AXIS_TID} ]
+         set show_tdest [ get_property value ${PARAM_VALUE.C_SHOW_AXIS_TDEST} ]
+         set show_tuser [ get_property value ${PARAM_VALUE.C_SHOW_AXIS_TUSER} ]
+@@ -1469,7 +1493,6 @@
+         set slot0_tid_width [ get_property value ${PARAM_VALUE.C_SLOT_0_AXIS_TID_WIDTH} ]
+         set slot0_tdest_width [ get_property value ${PARAM_VALUE.C_SLOT_0_AXIS_TDEST_WIDTH} ]
+         set slot0_tuser_width [ get_property value ${PARAM_VALUE.C_SLOT_0_AXIS_TUSER_WIDTH} ]
+-     	
+ 
+         set slot1_protocol [ get_property value ${PARAM_VALUE.C_SLOT_1_AXI_PROTOCOL} ]
+         set slot1_id_width [ get_property value ${PARAM_VALUE.C_SLOT_1_AXI_ID_WIDTH} ]
+@@ -1513,89 +1536,97 @@
+         set slot7_tdest_width [ get_property value ${PARAM_VALUE.C_SLOT_7_AXIS_TDEST_WIDTH} ]
+         set slot7_tuser_width [ get_property value ${PARAM_VALUE.C_SLOT_7_AXIS_TUSER_WIDTH} ]
+       
++       # flag width
++       set f_w 9
++       # burst width
++       set b_w 8
+        #SLOT0       
+           if { $axi_debug == 1 && $en_trigger == 1 } {
+-             set slot0_width [expr $s0_a_w*2 + 16+ 8]
++             set slot0_width [expr $s0_a_w*2 + $b_w*2 + 8]
+           } elseif { $slot0_protocol == "AXI4" || $slot0_protocol == "AXI3" || $slot0_protocol == "AXI4LITE" } {
+-             set slot0_width [expr $show_id*$slot0_id_width*4 + $show_len*16+7]
++             set slot0_width [expr $show_data*$s0_d_w*2 + $s0_a_w*2 + $show_id*$slot0_id_width*4 + $show_len*$b_w*2+$f_w]
+           } elseif { $slot0_protocol == "AXI4S" } {
+              set slot0_width [expr $show_tid*$slot0_tid_width+ $show_tdest*$slot0_tdest_width+ $show_tuser* $slot0_tuser_width+2]
+ }
+ 
+        #SLOT1       
+           if { $axi_debug == 1 && $en_trigger == 1 } {
+-             set slot1_width [expr $s1_a_w*2 + 16 + 8]
++             set slot1_width [expr $s1_a_w*2 + $b_w*2 + 8]
+           } elseif { $slot1_protocol == "AXI4" || $slot1_protocol == "AXI3" || $slot1_protocol == "AXI4LITE"} {
+-            set slot1_width [expr $show_id*$slot1_id_width*4 + $show_len*16+7]
++            set slot1_width [expr $show_data*$s1_d_w*2 + $s1_a_w*2 + $show_id*$slot1_id_width*4 + $show_len*$b_w*2+$f_w]
+           }  elseif { $slot1_protocol == "AXI4S" } {
+             set slot1_width [expr $show_tid*$slot1_tid_width+ $show_tdest*$slot1_tdest_width+ $show_tuser* $slot1_tuser_width+2]
+          }
+ 
+         #SLOT2       
+          if { $axi_debug == 1 && $en_trigger == 1 } {
+-             set slot2_width [expr $s2_a_w*2 + 16 + 8]
++             set slot2_width [expr $s2_a_w*2 + $b_w*2 + 8]
+           } elseif { $slot2_protocol == "AXI4" || $slot2_protocol == "AXI3" || $slot2_protocol == "AXI4LITE"} {
+-           set slot2_width [expr $show_id*$slot2_id_width*4 + $show_len*16+7]
++           set slot2_width [expr $show_data*$s2_d_w*2 + $s2_a_w*2 + $show_id*$slot2_id_width*4 + $show_len*$b_w*2+$f_w]
+            }  elseif { $slot2_protocol == "AXI4S" } {
+              set slot2_width [expr $show_tid*$slot2_tid_width+ $show_tdest*$slot2_tdest_width+ $show_tuser* $slot2_tuser_width+2]
+            }
+ 
+         #SLOT3       
+          if { $axi_debug == 1 && $en_trigger == 1 } {
+-             set slot3_width [expr $s3_a_w*2 + 16 + 8]
++             set slot3_width [expr $s3_a_w*2 + $b_w*2 + 8]
+           } elseif { $slot3_protocol == "AXI4" || $slot3_protocol == "AXI3" || $slot3_protocol == "AXI4LITE"} {
+-           set slot3_width [expr $show_id*$slot3_id_width*4 + $show_len*16+7]
++           set slot3_width [expr $show_data*$s3_d_w*2 + $s3_a_w*2 + $show_id*$slot3_id_width*4 + $show_len*$b_w*2+$f_w]
+             } elseif { $slot3_protocol == "AXI4S" } {
+            set slot3_width [expr $show_tid*$slot3_tid_width+ $show_tdest*$slot3_tdest_width+ $show_tuser* $slot3_tuser_width+2]
+          }
+ 
+         #SLOT4       
+          if { $axi_debug == 1 && $en_trigger == 1 } {
+-             set slot4_width [expr $s4_a_w*2 + 16 + 8]
++             set slot4_width [expr $s4_a_w*2 + $b_w*2 + 8]
+           } elseif { $slot4_protocol == "AXI4" || $slot4_protocol == "AXI3" || $slot4_protocol == "AXI4LITE"} {
+-            set slot4_width [expr $show_id*$slot4_id_width*4 + $show_len*16+7]
++            set slot4_width [expr $show_data*$s4_d_w*2 + $s4_a_w*2 + $show_id*$slot4_id_width*4 + $show_len*$b_w*2+$f_w]
+             } elseif { $slot4_protocol == "AXI4S" } {
+                       set slot4_width [expr $show_tid*$slot4_tid_width+ $show_tdest*$slot4_tdest_width+ $show_tuser* $slot4_tuser_width+2]
+            }
+          #SLOT5       
+          if { $axi_debug == 1 && $en_trigger == 1 } {
+-             set slot5_width [expr $s5_a_w*2 + 16 + 8]
++             set slot5_width [expr $s5_a_w*2 + $b_w*2 + 8]
+           } elseif { $slot5_protocol == "AXI4" || $slot5_protocol == "AXI3" || $slot5_protocol == "AXI4LITE"} {
+-            set slot5_width [expr $show_id*$slot5_id_width*4 + $show_len*16+7]
++            set slot5_width [expr $show_data*$s5_d_w*2 + $s5_a_w*2 + $show_id*$slot5_id_width*4 + $show_len*$b_w*2+$f_w]
+             } elseif { $slot5_protocol == "AXI4S" } {
+                       set slot5_width [expr $show_tid*$slot5_tid_width+ $show_tdest*$slot5_tdest_width+ $show_tuser* $slot5_tuser_width+2]
+          }
+ 
+          #SLOT6       
+          if { $slot6_protocol == "AXI4" || $slot6_protocol == "AXI3" || $slot6_protocol == "AXI4LITE"} {
+-            set slot6_width [expr $show_id*$slot6_id_width*4 + $show_len*16+7]
++            set slot6_width [expr $show_id*$slot6_id_width*4 + $show_len*$b_w*2+$f_w]
+             } elseif { $slot6_protocol == "AXI4S" } {
+             set slot6_width [expr $show_tid*$slot6_tid_width+ $show_tdest*$slot6_tdest_width+ $show_tuser* $slot6_tuser_width+2]
+             }
+ 
+          #SLOT7       
+          if { $slot7_protocol == "AXI4" || $slot7_protocol == "AXI3" || $slot7_protocol == "AXI4LITE"} {
+-            set slot7_width [expr $show_id*$slot7_id_width*4 + $show_len*16+7]
++            set slot7_width [expr $show_id*$slot7_id_width*4 + $show_len*$b_w*2+$f_w]
+             } elseif { $slot7_protocol == "AXI4S" } {
+             set slot7_width [expr $show_tid*$slot7_tid_width+ $show_tdest*$slot7_tdest_width+ $show_tuser* $slot7_tuser_width+2]
+             }
+ 
++         # time stamp width
++         set ts 30
++         # event flags width
++         set ev  3
+          if { $a == 1 } { 
+-            set fifo_width_temp [expr $slot0_width+18+ $b*3]
++            set fifo_width_temp [expr $slot0_width+$en_trigger+$b*$ev*$a+$ts+2]
+             } elseif { $a == 2 } {
+-            set fifo_width_temp [expr $slot0_width+$slot1_width+18+$en_trigger+ $b*6]
++            set fifo_width_temp [expr $slot0_width+$slot1_width+$en_trigger+$b*$ev*$a+$ts+2]
+             } elseif { $a == 3 } {
+-            set fifo_width_temp [expr $slot0_width+$slot1_width+$slot2_width+18+$en_trigger+ $b*9]
++            set fifo_width_temp [expr $slot0_width+$slot1_width+$slot2_width+$en_trigger+$b*$ev*$a+$ts+2]
+             } elseif { $a == 4 } {
+-            set fifo_width_temp [expr $slot0_width+$slot1_width+$slot2_width+$slot3_width+18+$en_trigger+ $b*12]
++            set fifo_width_temp [expr $slot0_width+$slot1_width+$slot2_width+$slot3_width+$en_trigger+$b*$ev*$a+$ts+2]
+             } elseif { $a == 5 } {
+-            set fifo_width_temp [expr $slot0_width+$slot1_width+$slot2_width+$slot3_width+$slot4_width+18+$en_trigger+ $b*15]
++            set fifo_width_temp [expr $slot0_width+$slot1_width+$slot2_width+$slot3_width+$slot4_width+$en_trigger+$b*$ev*$a+$ts+2]
+             } elseif { $a == 6 } {
+-            set fifo_width_temp [expr $slot0_width+$slot1_width+$slot2_width+$slot3_width+$slot4_width+$slot5_width+18+$en_trigger+ $b*19]
++            set fifo_width_temp [expr $slot0_width+$slot1_width+$slot2_width+$slot3_width+$slot4_width+$slot5_width+$en_trigger+$b*$ev*$a+$ts+2]
+             } elseif { $a == 7 } {
+-            set fifo_width_temp [expr $slot0_width+$slot1_width+$slot2_width+$slot3_width+$slot4_width+$slot5_width+$slot6_width+18+$en_trigger+21]
++            set fifo_width_temp [expr $slot0_width+$slot1_width+$slot2_width+$slot3_width+$slot4_width+$slot5_width+$slot6_width+$en_trigger+$ev*$a+$ts+2]
+             } elseif { $a == 8 } {
+-            set fifo_width_temp [expr $slot0_width+$slot1_width+$slot2_width+$slot3_width+$slot4_width+$slot5_width+$slot6_width+$slot7_width+18+$en_trigger+24]
++            set fifo_width_temp [expr $slot0_width+$slot1_width+$slot2_width+$slot3_width+$slot4_width+$slot5_width+$slot6_width+$slot7_width+$en_trigger+$ev*$a+$ts+2]
+            }
+ 
+           if { $fifo_width_temp < 50 } {
+@@ -2412,6 +2443,16 @@
+ 
+ 	return true
+ 
++}
++
++proc update_MODELPARAM_VALUE.C_SHOW_AXI_DATA { MODELPARAM_VALUE.C_SHOW_AXI_DATA PARAM_VALUE.C_SHOW_AXI_DATA} {
++
++	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
++
++	set_property value [get_property value  ${PARAM_VALUE.C_SHOW_AXI_DATA} ]  ${MODELPARAM_VALUE.C_SHOW_AXI_DATA} 
++
++	return true
++
+ }
+ 
+ proc update_MODELPARAM_VALUE.C_SLOT_1_AXIS_TDEST_WIDTH { MODELPARAM_VALUE.C_SLOT_1_AXIS_TDEST_WIDTH PARAM_VALUE.C_SLOT_1_AXIS_TDEST_WIDTH} {
