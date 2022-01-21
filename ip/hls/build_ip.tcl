@@ -6,7 +6,7 @@ foreach item $ip {
    if {[catch {glob -directory ${item}/solution1/impl/ip/ *.zip} zip_file]} {
 # Build IP only if a packaged IP does not exist
       puts "Building $item IP"
-      exec vivado_hls -f $item/script.tcl
+      exec vitis_hls -f $item/script.tcl
    } else {
 # Skip IP when a packaged IP exists in ip directory
       puts "Skipping building $item"

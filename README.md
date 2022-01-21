@@ -1,4 +1,4 @@
-# LiME
+## LiME
 Logic in Memory Emulator (LiME) is a hardware/software tool specially designed for memory system evaluation and experiment. Emerging memories display a wide range of bandwidths, latencies, and capacities, making it challenging for the computer architect to navigate the design space of potential memory configurations, and for the application developer to assess performance implications of using such memories. With the LiME framework, architectural ideas can be prototyped in great detail yet with sufficient performance to support realistic evaluation on long running applications. LiME consists of two fundamental components: 1) the hardware and OS infrastructure for the emulator, and 2) a suite of benchmark applications to assist in characterizing the performance of current and future computer architectures. Some of the applications have been collected from other open source projects.
 
 ### Uses

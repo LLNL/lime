@@ -239,8 +239,8 @@ void test_alias(void)
 		errb |= pa[i] != pb[i] || pb[i] != i;
 		errc |= pa[i] != pc[i] || pc[i] != i;
 	}
-	if (errb) {print("Error at 0x"); putnum((unsigned long)pb); puteol;}
-	if (errc) {print("Error at 0x"); putnum((unsigned long)pc); puteol;}
+	if (errb) {print("errb Error at 0x"); putnum((unsigned long)pb); puteol;}
+	if (errc) {print("errc Error at 0x"); putnum((unsigned long)pc); puteol;}
 	for (i = 0; i < 64; i++) {
 		pa[i] = 0; DATA_SYNC;
 		pb[i+0x20000000] = 0; DATA_SYNC;
@@ -249,7 +249,7 @@ void test_alias(void)
 	for (i = 0; i < 64; i++) {
 		errbh |= pc[i+0x20000000] != pb[i+0x20000000] || pb[i+0x20000000] != i;
 	}
-	if (errbh) {print("Error at 0x"); putnum((unsigned long)(pb+0x20000000)); puteol;}
+	if (errbh) {print("errh Error at 0x"); putnum((unsigned long)(pb+0x20000000)); puteol;}
 	if (!(errb || errc || errbh)) {print("Alias OK"); puteol;}
 #if defined(USE_CACHE)
 	Xil_DCacheEnable();

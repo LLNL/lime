@@ -13,6 +13,7 @@
 PROJ = proj
 SYSTEM = system
 WRAPPER = $(SYSTEM)_wrapper
+XSA = final
 IMPL = $(PROJ).runs/impl_1/$(WRAPPER)
 DESIGNS := $(patsubst %.tcl,%,$(wildcard *.tcl))
 LN := ln -f
@@ -26,6 +27,7 @@ define compile
   wait_on_run synth_1;
   launch_runs impl_1 -to_step write_bitstream -jobs 6;
   wait_on_run impl_1;
+  write_hw_platform -fixed -include_bit final.xsa;
   set bfid [open "board" w];
   puts \$$bfid [get_property board_part [current_project]];
   close \$$bfid;
@@ -46,8 +48,8 @@ $(DESIGNS:%=%/):
 	$(RM) *.jou *.log &&\
 	vivado -mode batch -source ../$< -notrace
 
-.PRECIOUS: %/$(IMPL).sysdef
-%/$(IMPL).sysdef : %/$(PROJ).xpr
+.PRECIOUS: %/$(IMPL).hwdef
+%/$(IMPL).hwdef : %/$(PROJ).xpr
 	cd $* && vivado -mode tcl <<< "$(strip $(compile))"
 #	mkdir -p $(@D) && echo "non-zero" > $@
 #	mkdir -p $(@D) && touch $@
@@ -57,9 +59,9 @@ $(DESIGNS:%=%/):
 ifneq ($(filter project,$(MAKECMDGOALS)),)
 $(DESIGNS): %: %/$(PROJ).xpr
 else
-$(DESIGNS): %: %/$(IMPL).sysdef
-	$(LN) $@/$(IMPL).sysdef $(WRAPPER).hdf
-	@if [ -s "$(WRAPPER).hdf" ]; then \
+$(DESIGNS): %: %/$(IMPL).hwdef
+	cp $@/$(XSA).xsa $(XSA).xsa
+	@if [ -s "$(XSA).xsa" ]; then \
 		cp $@/board board; \
 		tput setaf 2; echo "Build complete!"; tput sgr0; \
 	else tput setaf 1; echo "Build failed!"; tput sgr0; false; fi;
@@ -72,4 +74,4 @@ project:
 .PHONY: clean
 clean:
 	for i in $(DESIGNS); do $(RM) -r $$i; done
-	$(RM) $(WRAPPER).hdf board
+	$(RM) $(XSA).xsa board

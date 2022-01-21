@@ -26,10 +26,10 @@
   <pin index="29" name ="ddr4_ba1" iostandard="SSTL12_DCI" loc="AM24" output_impedance="RDRV_40_40" slew="FAST"/>
   <pin index="30" name ="ddr4_bg0" iostandard="SSTL12_DCI" loc="AR28" output_impedance="RDRV_40_40" slew="FAST"/>
   <pin index="31" name ="ddr4_bg1" iostandard="SSTL12_DCI" loc="AN28" output_impedance="RDRV_40_40" slew="FAST"/>  
-  <pin index="32" name ="ddr4_ck_c0" iostandard="SSTL12_DCI" loc="AT23" output_impedance="RDRV_40_40" slew="FAST"/>
-  <pin index="33" name ="ddr4_ck_c1" iostandard="SSTL12_DCI" loc="AP25" output_impedance="RDRV_40_40" slew="FAST"/>
-  <pin index="34" name ="ddr4_ck_t0" iostandard="SSTL12_DCI" loc="AR23" output_impedance="RDRV_40_40" slew="FAST"/>
-  <pin index="35" name ="ddr4_ck_t1" iostandard="SSTL12_DCI" loc="AP24" output_impedance="RDRV_40_40" slew="FAST"/>
+  <pin index="32" name ="ddr4_ck_c0" iostandard="DIFF_SSTL12_DCI" loc="AT23" output_impedance="RDRV_40_40" slew="FAST"/>
+  <pin index="33" name ="ddr4_ck_c1" iostandard="DIFF_SSTL12_DCI" loc="AP25" output_impedance="RDRV_40_40" slew="FAST"/>
+  <pin index="34" name ="ddr4_ck_t0" iostandard="DIFF_SSTL12_DCI" loc="AR23" output_impedance="RDRV_40_40" slew="FAST"/>
+  <pin index="35" name ="ddr4_ck_t1" iostandard="DIFF_SSTL12_DCI" loc="AP24" output_impedance="RDRV_40_40" slew="FAST"/>
   <pin index="36" name ="ddr4_cke0" iostandard="SSTL12_DCI" loc="AM28" output_impedance="RDRV_40_40" slew="FAST"/>
   <pin index="37" name ="ddr4_cke1" iostandard="SSTL12_DCI" loc="AU28" output_impedance="RDRV_40_40" slew="FAST"/>  
   <pin index="38" name ="ddr4_cs_n0" iostandard="SSTL12_DCI" loc="AN24" output_impedance="RDRV_40_40" slew="FAST"/>

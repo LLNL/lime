@@ -24,7 +24,7 @@ NEED_DEVTREE = %CLOCKS %STATS %TRACE $(NEED_STREAM)
 LIME := $(patsubst %/,%,$(dir $(MAKDIR)))
 # $(info LIME root directory is $(LIME))
 SHARED := $(LIME)/shared
-SCRIPTS := $(MAKDIR)/sdk
+SCRIPTS := $(MAKDIR)/vitis
 SC_IP := $(LIME)/ip/sysc
 DRIVERS := $(LIME)/linux/drivers
-SA_SDK := $(LIME)/standalone/sdk
+SA_VITIS := $(LIME)/standalone/vitis

@@ -23,7 +23,7 @@ check.log: $(TARG)
 
 .PRECIOUS: $(TARG)
 $(TARG):
-	vivado_hls -f $(firstword $(subst /, ,$@))/script.tcl
+	vitis_hls -f $(firstword $(subst /, ,$@))/script.tcl
 
 .PHONY: clean
 clean:
