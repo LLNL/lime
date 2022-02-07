@@ -1,0 +1,38 @@
+export CROSS_COMPILE=aarch64-linux-gnu-
+export ARCH=arm64
+
+## basically from the lime linux makefile, but had to use -rsf not -rf
+git clone https://github.com/Xilinx/linux-xlnx.git
+cd linux-xlnx
+git checkout xilinx-v2021.1
+
+## some syntactic modifications since below isn't a makefile ($$->$, $(ABC)->$ABC)
+export DEFCONFIG=linux-xlnx/arch/arm64/configs/xilinx_zynqmp_defconfig
+
+       #ln -rsf drivers linux-xlnx/drivers/lime
+        sed -i.bak '/endmenu/i\source "drivers/lime/Kconfig"\n' linux-xlnx/drivers/Kconfig
+        sed -i.bak '$a\\nobj-y += lime/' linux-xlnx/drivers/Makefile
+        sed -i.bak '$a\CONFIG_LMCACHE=y\nCONFIG_LMALLOC=y' $DEFCONFIG
+        make -C linux-xlnx/drivers/lime kpatch
+        # Fix for slowness caused by disabled caches and the DRM KMS driver
+        sed -i.bak '/CONFIG_DRM_XLNX=y/c\# CONFIG_DRM_XLNX=y' $DEFCONFIG
+        # Remove all the other DRM stuff just in case
+        sed -i.bak '/CONFIG_DRM=y/c\# CONFIG_DRM=y' $DEFCONFIG
+        sed -i.bak '/CONFIG_DRM_XILINX=y/c\# CONFIG_DRM_XILINX=y' $DEFCONFIG
+        # Remove the displayport stuff that is causing panic on boot
+        sed -i.bak '/CONFIG_SND_SOC_XILINX_DP=y/c\# CONFIG_SND_SOC_XILINX_DP=y' $DEFCONFIG
+        sed -i.bak '/CONFIG_VIDEO_XILINX=y/c\# CONFIG_VIDEO_XILINX=y' $DEFCONFIG
+        # Remove usb driver causing panic on shutdown
+        sed -i.bak '/CONFIG_USB_XHCI_HCD=y/c\# CONFIG_USB_XHCI_HCD=y' $DEFCONFIG
+	echo 'CONFIG_CMDLINE="earlycon clk_ignore_unused init=/sbin/init root=/dev/mmcblk0p2"' >> $DEFCONFIG 
+	echo 'CONFIG_CMDLINE_FORCE=y'>>$DEFCONFIG
+
+# Build Linux Kernel
+        cd linux-xlnx &&\
+        export CROSS_COMPILE=aarch64-linux-gnu- &&\
+        export ARCH=arm64 &&\
+        export CC=aarch64-linux-gnu-gcc &&\
+        make xilinx_zynqmp_defconfig &&\
+        echo make menuconfig &&\
+        make all -j `getconf _NPROCESSORS_ONLN`
+

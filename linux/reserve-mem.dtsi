@@ -1,0 +1,16 @@
+/{
+	reserved-memory {
+                #address-cells = <2>;
+                #size-cells = <2>;
+                ranges;
+
+                reserved: buffer@0 {
+                        compatible = "shared-dma-pool";
+                        reusable;
+                        /*reg = <0x10 0x10000000 0x2 0x00000000>; sidewinder*/
+                        reg = <0x10 0x10000000 0x0 0x40000000>;
+                        linux,cma-default;
+                        /*dma-coherent;*/
+                };
+        };
+};

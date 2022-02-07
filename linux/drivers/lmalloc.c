@@ -23,7 +23,8 @@
 #include <linux/uaccess.h>
 #include <linux/err.h>
 #include <linux/slab.h>
-#include <linux/dma-debug.h>
+/*#include <linux/dma-debug.h*/
+#include "linux/dma-map-ops.h"
 #include <linux/list.h>
 #include <asm/dma-mapping.h> /* arch_setup_dma_ops, before linux/dma-mapping.h */
 #include <linux/dma-mapping.h> /* dma_alloc_attrs, dma_free_attrs, dma_mmap_attrs */
@@ -120,10 +121,10 @@ static long lma_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 		struct vm_area_struct *vma;
 
 		printk_dbg("cmd_tran addr: 0x%p\n", lma.addr);
-		down_read(&mm->mmap_sem);
+		down_read(&mm->mmap_lock);
 		vma = find_vma(mm, start);
 		if (vma) ret = follow_pfn(vma, start, &pfn);
-		up_read(&mm->mmap_sem);
+		up_read(&mm->mmap_lock);
 		if (!ret) lma.paddr = PFN_PHYS(pfn)+offset;
 		printk_dbg("cmd_tran paddr: 0x%016lx\n", lma.paddr);
 		if (ret) return ret;
@@ -135,7 +136,7 @@ static long lma_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 		struct vm_area_struct *vma;
 		lma_alloc_inf_p lma_inf_ptr;
 
-		if (down_write_killable(&mm->mmap_sem))
+		if (down_write_killable(&mm->mmap_lock))
 			return -EINTR;
 
 		printk_dbg("-------Free block start--------\n");
@@ -146,11 +147,11 @@ static long lma_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 			printk_dbg("BEFORE: vma for 0x%p is 0x%p\n vma start:0x%p\n vma end: 0x%p\n", lma.addr, vma, vma->vm_start, vma->vm_end);
 		} else {
 			printk_dbg("No vma found for addr: 0x%p", lma.addr);
-			up_write(&mm->mmap_sem);
+			up_write(&mm->mmap_lock);
 			return ret;
 		}
 		ret = do_munmap(mm,vma->vm_start, vma->vm_end - vma->vm_start, NULL);
-		up_write(&mm->mmap_sem);
+		up_write(&mm->mmap_lock);
 		if (ret < 0) {
 			return ret;
 		}
@@ -294,6 +295,7 @@ static int __init lma_init(void)
 
 	/* arch_setup_dma_ops will attach arch specific dma ops to device. */
 	/* The parameters dma_base, size, & iommu are ignored for arm64. */
+        dma_set_coherent_mask(dev, DMA_BIT_MASK(44));
 	arch_setup_dma_ops(dev, 0, 0, NULL, false);
 
 	/* TODO: could also configure coherent memory pool */

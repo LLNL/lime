@@ -31,6 +31,6 @@ clean:
 kpatch:
 	# sed -i.bak '$$a\EXPORT_SYMBOL_GPL(__flush_dcache_area);\nEXPORT_SYMBOL_GPL(__inval_dcache_area);' $(KDIR)/arch/arm64/mm/flush.c
 	sed -i.bak '$$a\EXPORT_SYMBOL_GPL(arch_setup_dma_ops);' $(KDIR)/arch/arm64/mm/dma-mapping.c
-	sed -i.bak '$$a\#include <linux/export.h>\nEXPORT_SYMBOL_GPL(dma_alloc_from_contiguous);\nEXPORT_SYMBOL_GPL(dma_release_from_contiguous);' $(KDIR)/drivers/base/dma-contiguous.c
+	sed -i.bak '$$a\#include <linux/export.h>\nEXPORT_SYMBOL_GPL(dma_alloc_from_contiguous);\nEXPORT_SYMBOL_GPL(dma_release_from_contiguous);' $(KDIR)/kernel/dma/contiguous.c
 
 endif

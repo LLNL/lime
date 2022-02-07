@@ -1,0 +1,18 @@
+# in linux directory
+     	sed -i.bak -e 's/opp-hz = \/bits\/ 64 <299999997>/opp-hz = \/bits\/ 64 <137500000>/g' dts/zynqmp.dtsi
+        #sed -i.bak '/memory {/,/};/c\\tmemory {\n\t\tdevice_type = "memory";\n\t\tlinux,usable-memory = <0x10 0x00000000 0x4 \ 0x00000000>;\n\t};' dts/system-top.dts
+        sed -i.bak '/&sdhci1 {/ a\\tno-1-8-v;\n\tdisable-wp;' dts/pcw.dtsi
+	cp ./device-tree-xlnx/device_tree/data/kernel_dtsi/2020.1/BOARD/zcu102-rev1.0.dtsi dts
+        sed -i.bak '\_/ {_i\#include "zcu102-rev1.0.dtsi"' dts/system-top.dts
+        sed -i.bak '/memory {/,/};/c\\tmemory {\n\t\tdevice_type = "memory";\n\t\tlinux,usable-memory = <0x10 0x00000000 0x1 0x00000000>;\n\t};' dts/system-top.dts
+	cat reserve-mem.dtsi >> dts/system-top.dts
+	## these are now in zynqmp.dtsi; used to be in pcw.dtsi
+       # Disable drivers causing kernel panic during boot
+         sed -i.bak '/&xlnx_dpdma {/,/};/c\&xlnx_dpdma {\n\tstatus = "disabled";\n};' dts/zynqmp.dtsi
+         sed -i.bak '/&zynqmp_dp_snd_pcm0 {/,/};/c\&zynqmp_dp_snd_pcm0 {\n\tstatus = "disabled";\n};' dts/zynqmp.dtsi
+         sed -i.bak '/&zynqmp_dp_snd_pcm1 {/,/};/c\&zynqmp_dp_snd_pcm1 {\n\tstatus = "disabled";\n};' dts/zynqmp.dtsi
+         sed -i.bak '/&zynqmp_dp_snd_card0 {/,/};/c\&zynqmp_dp_snd_card0 {\n\tstatus = "disabled";\n};' dts/zynqmp.dtsi
+         sed -i.bak '/&zynqmp_dp_snd_codec0 {/,/};/c\&zynqmp_dp_snd_codec0 {\n\tstatus = "disabled";\n};' dts/zynqmp.dtsi
+         sed -i.bak '/&zynqmp_dpsub {/,/};/c\&zynqmp_dpsub {\n\tphy-names = "dp-phy0","dp-phy1";\n\tphys = <&lane1 5 0 3 \ 27000000>,\n\t\t<&lane0 5 1 3 27000000>;\n\tstatus = "disabled";\n\txlnx,max-lanes = <2>;\n};' dts/zynqmp.dtsi
+# #       # Disable drivers causing panic during shutdown
+         sed -i.bak '/&usb0 {/,/};/c\&usb0 {\n\tstatus = "disabled";\n\txlnx,usb-reset = <0x2faf080>;\n};' dts/zynqmp.dtsi

@@ -1,0 +1,1 @@
+bootgen -arch zynqmp -image bootgen.bif -o i BOOT.BIN -w on

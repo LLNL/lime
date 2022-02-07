@@ -1,0 +1,9 @@
+# Build Linux Kernel
+        cd linux-xlnx &&\
+        export CROSS_COMPILE=aarch64-linux-gnu- &&\
+        export ARCH=arm64 &&\
+        export CC=aarch64-linux-gnu-gcc &&\
+        make xilinx_zynqmp_defconfig &&\
+        echo make menuconfig &&\
+        make all -j 16
+
