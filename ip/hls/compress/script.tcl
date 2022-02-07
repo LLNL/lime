@@ -8,5 +8,5 @@ open_solution "solution1"
 set_part xczu9eg-ffvb1156-2-i 
 create_clock -period 3.333333 -name default
 csynth_design
-export_design -rtl verilog -format ip_catalog -description "APM Stream Compressor" -vendor "llnl.gov" -library "user" -display_name "APM Stream Compressor"
+export_design -rtl verilog -format ip_catalog -description "APM Stream Compressor" -vendor "llnl.gov" -library "user" -display_name "APM Stream Compressor" -version 2.0.1
 exit
