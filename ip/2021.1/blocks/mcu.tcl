@@ -180,7 +180,7 @@ proc create_hier_cell_mcu {parentCell nameHier} {
 		CONFIG.C_USE_DIV {1} \
 		CONFIG.C_USE_HW_MUL {1} \
 		CONFIG.C_USE_ICACHE {0} \
-		CONFIG.C_USE_INTERRUPT {0} \
+		CONFIG.C_USE_INTERRUPT {1} \
 		CONFIG.C_USE_REORDER_INSTR {0} \
 	] $microblaze_0
 	# Used when CONFIG.C_USE_ICACHE is set to {1}
